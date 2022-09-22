@@ -1,0 +1,68 @@
+﻿@model Device
+@{
+    ViewData["Title"] = "Details Page";
+}
+
+<div class="text-center">
+    <h1>Электронный магазин компьютерной техники: </h1>
+    <h2>Подробная информация об устройстве:</h2>
+    <h6 class="text-left">@Html.ActionLink("Назад", "Index")</h6>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Тип устройства</th>
+                <th>Название</th>
+                <th>Производитель</th>
+                <th>Цена устройства</th>
+                @if (Model.Size is not null)
+                {
+                    <th>Размер (дюйм.)</th>
+                }
+                @if (Model.ScreenResolution is not null)
+                {
+                    <th>Разрешение экрана</th>
+                }
+                @if (Model.CamMp is not null)
+                {
+                    <th>Камера (мп)</th>                
+                }
+                @if (Model.AccumCapacity is not null)
+                {
+                    <th>Емкость аккумулятора</th>            
+                }
+                @if (Model.RAM is not null)
+                {
+                    <th>Объем оперативной памяти</th>            
+                }
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+                    <td>@Html.DisplayFor(x => Model.DeviceType!.Name)</td>
+                    <td>@Html.DisplayFor(x => Model.Name)</td>
+                    <td>@Html.DisplayFor(x => Model.Producer!.Name)</td>
+                    <td>@Html.DisplayFor(x => Model.Cost)</td>
+                    @if (Model.Size is not null)
+                    {
+                        <td>@Html.DisplayFor(x => Model.Size)</td>
+                    }
+                    @if (Model.ScreenResolution is not null)
+                    {
+                        <td>@Html.DisplayFor(x => Model.ScreenResolution)</td>
+                    }
+                    @if (Model.CamMp is not null)
+                    {
+                        <td>@Html.DisplayFor(x => Model.CamMp)</td>
+                    }
+                    @if (Model.AccumCapacity is not null)
+                    {
+                        <td>@Html.DisplayFor(x => Model.AccumCapacity)</td>
+                    }
+                    @if (Model.RAM is not null)
+                    {
+                        <td>@Html.DisplayFor(x => Model.RAM)</td>
+                    }
+                </tr>    
+        </tbody>
+    </table>
+</div>

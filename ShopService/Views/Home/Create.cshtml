@@ -1,0 +1,74 @@
+﻿@using Azure.Core
+@model Device
+@{
+    ViewData["Title"] = "Create Page";
+}
+@{
+    @*Validation.RequireField("companyname", "Company name is required.");
+    Validation.RequireField("contactname", "Contact name is required.");
+    Validation.RequireField("employees", "Employee count is required.");
+    Validation.Add("employees", Validator.Integer());
+    if (IsPost) 
+    {
+        string companyname = Request.Form["companyname"];
+        string contactname = Request.Form["contactname"];
+        int employeecount = Request.Form["employees"].AsInt();
+
+        <text>
+          You entered: <br />
+          Company Name: @companyname <br />
+          Contact Name: @contactname <br />
+          Employee Count: @employeecount <br />
+        </text>
+        *@
+    }
+}
+    <div class="text-center">
+        <h1>Электронный магазин компьютерной техники: </h1>
+    </div>
+    <h6 class="text-left">@Html.ActionLink("Назад", "Index")</h6>
+    <form method="post" >
+        <fieldset>
+          <legend>Добавить новое устройство:</legend>
+          <div>
+            <label for="DeviceType.Name">Тип устройства:</label>
+            <input type="text" name="DeviceType.Name" value="" />
+          </div>
+          <div>
+            <label for="Name">Название устройства:</label>
+            <input type="text" name="Name" value="" />
+          </div>
+          <div>
+            <label for="Producer.Name">Название производителя:</label>
+            <input type="text" name="Producer.Name" value="" />
+          </div>
+          <div>
+            <label for="Cost">Цена устройства:</label>
+            <input type="number" name="Cost" value="" />
+          </div>
+          <div>
+            <label for="Size">Размер экрана устройства (при его наличии):</label>
+            <input type="number" name="Size" value="" />
+          </div>
+          <div>
+            <label for="ScreenResolution">Разрешение экрана устройства (при его наличии):</label>
+            <input type="number" name="ScreenResolution" value="" />
+          </div>
+          <div>
+            <label for="CamMp">Мегапиксели камеры (при ее наличии):</label>
+            <input type="number" name="CamMp" value="" />
+          </div>
+          <div>
+            <label for="AccumCapacity">Емкость аккумулятора (при его наличии):</label>
+            <input type="number" name="AccumCapacity" value="" />
+          </div>
+          <div>
+            <label for="RAM">Объем оперативной памяти (при ее наличии):</label>
+            <input type="number" name="RAM" value="" />
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <input type="submit" value="Добавить" class="submit" />
+          </div>
+        </fieldset>
+      </form>
