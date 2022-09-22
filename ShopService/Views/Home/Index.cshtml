@@ -39,9 +39,13 @@
         </tbody>
     </table>
 </div>
-<div class="text-lg-start">
+@if (User.Identity!.IsAuthenticated)
+{
+    <div class="text-lg-start">
         <h5>@Html.ActionLink("Добавить новое устройство", "Create")</h5>
-</div>
+    </div>    
+}
+
 </body>
 
 

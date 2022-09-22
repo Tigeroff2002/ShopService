@@ -4,6 +4,7 @@ using System.Diagnostics;
 using ShopService.Data;
 using Microsoft.Data.SqlClient;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShopService.Controllers
 {
@@ -19,6 +20,7 @@ namespace ShopService.Controllers
         private readonly RetailStoreDataContext _context;
         public IList<Device>? Devices { get; set; }
         [HttpGet]
+        [Authorize]
         public IActionResult Index()
         {
             try
