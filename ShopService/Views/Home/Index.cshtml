@@ -13,11 +13,13 @@
                 <th>Название</th>
                 <th>Производитель</th>
                 <th>Цена устройства</th>
-                <th>Размер (дюйм.)</th>
+                @*
+                    <th>Размер (дюйм.)</th>
                 <th>Разрешение экрана</th>
                 <th>Камера (мп)</th>
                 <th>Емкость аккумулятора</th>
                 <th>Объем оперативной памяти</th>
+                *@
             </tr>
         </thead>
         <tbody>
@@ -28,11 +30,13 @@
                     <td>@Html.DisplayFor(x => item.Name)</td>
                     <td>@Html.DisplayFor(x => item.Producer!.Name)</td>
                     <td>@Html.DisplayFor(x => item.Cost)</td>
-                    <td>@Html.DisplayFor(x => item.Size)</td>
+                    @*
+                        <td>@Html.DisplayFor(x => item.Size)</td>
                     <td>@Html.DisplayFor(x => item.ScreenResolution)</td>
                     <td>@Html.DisplayFor(x => item.CamMp)</td>
                     <td>@Html.DisplayFor(x => item.AccumCapacity)</td>
                     <td>@Html.DisplayFor(x => item.RAM)</td>
+                    *@
                     <td class="link">@Html.ActionLink("Подробнее", "Details", new {Id = item.Id})</td>
                 </tr>
             }
