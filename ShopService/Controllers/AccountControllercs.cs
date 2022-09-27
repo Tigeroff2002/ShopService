@@ -18,8 +18,7 @@ namespace ShopService.Controllers
             {
                 Id = User.FindFirst(x => x.Type == ClaimTypes.Authentication)?.Value,
                 Name = User.Identity!.Name,
-                EmailAdress = User.FindFirst(x => x.Type == ClaimTypes.Email)?.Value,
-
+                EmailAdress = User.FindFirst(x => x.Type == ClaimTypes.Email)?.Value
             });
         }
         public async Task Login(string returnUrl = "/")
@@ -33,7 +32,7 @@ namespace ShopService.Controllers
         public async Task Logout()
         {
             var authentificationProperties = new LogoutAuthenticationPropertiesBuilder()
-                .WithRedirectUri(Url.Action("Index", "Home"))
+                .WithRedirectUri(Url.Action("Index", "Home")!)
                 .Build();
             await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authentificationProperties);
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
