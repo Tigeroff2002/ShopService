@@ -1,4 +1,5 @@
-﻿@model IList<Device>
+﻿@using System.Security.Policy
+@model IList<Device>
 @{
     ViewData["Title"] = "Catalog Page";
 }
@@ -37,7 +38,9 @@
                     <td>@Html.DisplayFor(x => item.AccumCapacity)</td>
                     <td>@Html.DisplayFor(x => item.RAM)</td>
                     *@
-                    <td class="link">@Html.ActionLink("Подробнее", "Details", new {Id = item.Id})</td>
+                    <td class="link">
+                        <a href="@Url.Action("Details", "Home", new {Id = item.Id})" class="button">Подробнее</a>
+                    </td>
                 </tr>
             }
         </tbody>
