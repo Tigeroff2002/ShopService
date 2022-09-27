@@ -20,7 +20,7 @@ namespace ShopService.Controllers
         private readonly RetailStoreDataContext _context;
         public IList<Device>? Devices { get; set; }
         [HttpGet]
-        [Authorize]
+        
         public IActionResult Index()
         {
             try

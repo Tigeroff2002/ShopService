@@ -11,7 +11,8 @@ builder.Services.AddAuth0WebAppAuthentication(
     opt =>
     {
         opt.Domain = builder.Configuration["Auth0:Domain"];
-        opt.ClientId = builder.Configuration["ClientId"];
+        opt.ClientId = builder.Configuration["Auth0:ClientId"];
+        opt.Scope = "openid profile email";
     });
 var app = builder.Build();
 
@@ -28,6 +29,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
