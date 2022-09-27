@@ -41,7 +41,7 @@ namespace ShopService.Controllers
             Device? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
             if (device is null)
                 return NotFound("Устройство не найдено!");
-            return View(device);
+            return PartialView("Details", device);
         }
         [HttpPost]
         public IActionResult Create([Bind(include: "DeviceTypeId, Name, ProducerId")] Device device)
