@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RetailStoreDataContext>(opt =>
-    opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = RetailStore; Integrated Security = True"));
+    opt.UseNpgsql(builder.Configuration.GetSection("ConnectionString").Value));
 builder.Services.AddAuth0WebAppAuthentication(
     opt =>
     {
