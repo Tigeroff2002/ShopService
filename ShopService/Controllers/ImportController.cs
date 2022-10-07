@@ -12,6 +12,6 @@ namespace ShopService.Controllers
             _context = context;
         }
         [HttpGet]
-        public IEnumerable<string> Get() => _context.ImportData;
+        public IEnumerable<string> Get() => _context.Histories.Select(x => x.DeviceName).ToList()!;
     }
 }
