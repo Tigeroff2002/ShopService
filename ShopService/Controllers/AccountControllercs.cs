@@ -14,7 +14,7 @@ namespace ShopService.Controllers
         [Authorize]
         public IActionResult Profile()
         {
-            return View(new ProfileModel()
+            return View(new User()
             {
                 Id = User.FindFirst(x => x.Type == ClaimTypes.Authentication)?.Value,
                 Name = User.Identity!.Name,

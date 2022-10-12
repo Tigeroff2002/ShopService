@@ -7,7 +7,7 @@ namespace ShopService.Models
     {
         public Producer()
         {
-            Devices = new HashSet<Device>();
+            Products = new HashSet<Product>();
         }
         [Key]
         [Column("Id")]
@@ -22,6 +22,6 @@ namespace ShopService.Models
         public float Popularity { get; set; }
         [Column("WebSite")]
         public string? WebSite { get; set; }
-        public virtual ICollection<Device>? Devices { get; set; } 
+        public virtual ICollection<Product>? Products { get; set; } 
     }
 }

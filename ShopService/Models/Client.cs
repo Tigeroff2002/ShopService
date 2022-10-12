@@ -2,11 +2,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace ShopService.Models
 {
-    public class Client
+    public class Client : User
     {
         public Client()
         {
-            Tradings = new HashSet<Trading>();
+            Orders = new HashSet<Order>();
         }
         [Key]
         [Column("Id")]
@@ -26,6 +26,9 @@ namespace ShopService.Models
         public float TotalSum { get; set; }
         [Column("IndividDiscount")]
         public int? Discount { get; set; }
-        public virtual ICollection<Trading> Tradings { get; set; }
+        public int BasketId { get; set; }
+        public virtual Basket? Basket { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Review> Reviews { get; set; }
     }
 }

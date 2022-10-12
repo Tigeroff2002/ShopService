@@ -8,17 +8,17 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ShopService.Controllers
 {
-    public class HomeController : Microsoft.AspNetCore.Mvc.Controller
+    public class UserController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<UserController> _logger;
 
-        public HomeController(ILogger<HomeController> logger, RetailStoreDataContext context)
+        public UserController(ILogger<UserController> logger, RetailStoreDataContext context)
         {
             _logger = logger;
             _context = context;
         }
         private readonly RetailStoreDataContext _context;
-        public IList<Device>? Devices { get; set; }
+        public IList<Product>? Devices { get; set; }
         [HttpGet]
         
         public IActionResult Index()
@@ -29,7 +29,7 @@ namespace ShopService.Controllers
             }
             catch (InvalidOperationException)
             {
-                Devices = new List<Device>();
+                Devices = new List<Product>();
             }
             return View(Devices);
         }
@@ -38,13 +38,13 @@ namespace ShopService.Controllers
         {
             if (Id is null)
                 return BadRequest("Некорректный ресурс!");
-            Device? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
+            Product? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
             if (device is null)
                 return NotFound("Устройство не найдено!");
             return View(device);
         }
         [HttpPost]
-        public IActionResult Create([Bind(include: "DeviceTypeId, Name, ProducerId")] Device device)
+        public IActionResult Create([Bind(include: "DeviceTypeId, Name, ProducerId")] Product device)
         {
             if (ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace ShopService.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Device device)
+        public IActionResult Edit(Product device)
         {
             return View(device); 
         }
@@ -64,7 +64,7 @@ namespace ShopService.Controllers
         [HttpPost]
         public IActionResult Delete(int? Id)
         {
-            Device? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
+            Product? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
             return View(device);
         }
 

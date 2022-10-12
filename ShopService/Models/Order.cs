@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace ShopService.Models
 {
-    public class Trading
+    public class Order
     {
         [Key]
         [Column("Id")]
@@ -11,11 +11,10 @@ namespace ShopService.Models
         public int ClientId { get; set; }
         public virtual Client? Client { get; set; }
         [ForeignKey("DeviceId")]
-        public int DeviceId { get; set; }
-        public virtual Device? Device { get; set; } 
-        [ForeignKey("WarehouseId")]
-        public int WareHouseId { get; set; }
-        public virtual Warehouse? WareHouse { get; set; }
+        public int ProdcutId { get; set; }
+        public virtual Product? Product { get; set; } 
+        public int ShippingId { get; set; }
+        public virtual Shipping? Shipping { get; set; }
         [Column("TradingDate")]
         public DateTime Date { get; set; }
         [Column("ResultCost")]

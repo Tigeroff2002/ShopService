@@ -6,7 +6,7 @@ namespace ShopService.Models
     {
         public DeviceType()
         {
-            Devices = new HashSet<Device>();
+            Devices = new HashSet<Product>();
         }
         [Key]
         [Column("Id")]
@@ -16,6 +16,6 @@ namespace ShopService.Models
         public string? Name { get; set; }
         [Column("Description")]
         public string? Description { get; set; }
-        public virtual ICollection<Device>? Devices { get; set; }
+        public virtual ICollection<Product>? Devices { get; set; }
     }
 }
