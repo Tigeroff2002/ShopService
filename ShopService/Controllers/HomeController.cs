@@ -5,14 +5,15 @@ using ShopService.Data;
 using Microsoft.Data.SqlClient;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace ShopService.Controllers
 {
-    public class UserController : Controller
+    public class HomeController : Controller
     {
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<HomeController> _logger;
 
-        public UserController(ILogger<UserController> logger, RetailStoreDataContext context)
+        public HomeController(ILogger<HomeController> logger, RetailStoreDataContext context)
         {
             _logger = logger;
             _context = context;

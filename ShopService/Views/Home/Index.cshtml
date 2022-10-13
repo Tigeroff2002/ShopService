@@ -24,7 +24,7 @@
             @foreach(var item in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(x => item.DeviceType!.Name)</td>
+                    <td>@Html.DisplayFor(x => item.DeviceType!.DeviceTypeName)</td>
                     <td>@Html.DisplayFor(x => item.Name)</td>
                     <td>@Html.DisplayFor(x => item.Producer!.Name)</td>
                     <td>@Html.DisplayFor(x => item.Cost)</td>

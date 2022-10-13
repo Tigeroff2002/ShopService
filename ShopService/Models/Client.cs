@@ -9,14 +9,6 @@ namespace ShopService.Models
             Orders = new HashSet<Order>();
             Reviews = new HashSet<Review>();
         }
-        [Key]
-        [Column("Id")]
-        public int ClientId { get; set; }
-        [Column("Name")]
-        [MaxLength(40)]
-        public string? ClientName { get; set; }
-        [Column("TelephoneNumber")]
-        [MaxLength(40)]
         public string? TNumber { get; set; }
         //public int? CardId { get; set; }
         [Column("TotalPurchase")]

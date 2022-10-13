@@ -2,9 +2,9 @@
 using ShopService.Data;
 namespace ShopService.Controllers
 {
-    public class ClientController : UserController
+    public class ClientController : ProfileController
     {
-        public ClientController(ILogger<UserController> logger, RetailStoreDataContext context)
+        public ClientController(ILogger<ProfileController> logger, RetailStoreProfileContext context)
             : base(logger, context) { }
 
     }
