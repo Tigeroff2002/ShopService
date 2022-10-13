@@ -17,5 +17,6 @@ namespace ShopService.Models
         [MaxLength(40)]
         public string? WorkingTime { get; set; }
         public virtual ICollection<Shipping>? Shippings { get; set; }
+        public virtual ICollection<(Product? product, int quantity)>? ProductQuantities { get; set; }
     }
 }

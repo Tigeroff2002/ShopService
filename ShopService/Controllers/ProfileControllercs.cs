@@ -9,7 +9,7 @@ using ShopService.Models;
 
 namespace ShopService.Controllers
 {
-    public class AccountControllercs : Controller
+    public class ProfileController : Controller
     {
         [Authorize]
         public IActionResult Profile()

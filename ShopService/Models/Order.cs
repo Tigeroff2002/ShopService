@@ -11,8 +11,12 @@ namespace ShopService.Models
         public int ClientId { get; set; }
         public virtual Client? Client { get; set; }
         [ForeignKey("DeviceId")]
-        public int ProdcutId { get; set; }
-        public virtual Product? Product { get; set; } 
+        public virtual ICollection<SummUpProduct>? SummUpProduct { get; set; }
+        public virtual ICollection<(Product? product, int quantity)>? ProductsQuantities { get; set; }
+        /*
+        public int? BasketId { get; set; }
+        public virtual Basket? Basket { get; set; }
+        */
         public int ShippingId { get; set; }
         public virtual Shipping? Shipping { get; set; }
         [Column("TradingDate")]

@@ -7,23 +7,20 @@ namespace ShopService.Models
         public Client()
         {
             Orders = new HashSet<Order>();
+            Reviews = new HashSet<Review>();
         }
         [Key]
         [Column("Id")]
-        public int Id { get; set; }
+        public int ClientId { get; set; }
         [Column("Name")]
         [MaxLength(40)]
-        public string? Name { get; set; }
-        [Column("Surname")]
-        [MaxLength(40)]
-        public string? Surname { get; set; }
+        public string? ClientName { get; set; }
         [Column("TelephoneNumber")]
         [MaxLength(40)]
         public string? TNumber { get; set; }
-        [Column("RegistrationLK")]
-        public bool IsRegistredLk { get; set; }
+        //public int? CardId { get; set; }
         [Column("TotalPurchase")]
-        public float TotalSum { get; set; }
+        public float TotalPurchase { get; set; }
         [Column("IndividDiscount")]
         public int? Discount { get; set; }
         public int BasketId { get; set; }

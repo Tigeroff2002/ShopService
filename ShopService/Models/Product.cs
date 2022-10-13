@@ -2,11 +2,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace ShopService.Models
 {
-    public partial class Product
+    public class Product
     {
         public Product()
         {
-            Tradings = new HashSet<Order>();
+            Orders = new HashSet<Order>();
         }
         [Key]
         [Column("Id")]
@@ -33,6 +33,6 @@ namespace ShopService.Models
         public float? AccumCapacity { get; set; }
         [Column("RAM")]
         public float? RAM { get; set; }
-        public virtual ICollection<Order>? Tradings { get; set; }
+        public virtual ICollection<Order>? Orders { get; set; }
     }
 }
