@@ -19,13 +19,18 @@ namespace ShopService.Controllers
         }
         private readonly RetailStoreDataContext _context;
         public IList<Product>? Devices { get; set; }
+        [HttpGet("product/{devicetype}")]
+        public List<Product> GetProductsByDeviceType(int deviceType)
+        {
+            return _context.Products.Where(x => x.DeviceTypeId == deviceType)
+                                    .ToList();
+        }
         [HttpGet]
-        
         public IActionResult Index()
         {
             try
             {
-                Devices = _context.Devices.ToList();
+                Devices = _context.Products.ToList();
             }
             catch (InvalidOperationException)
             {
@@ -33,12 +38,13 @@ namespace ShopService.Controllers
             }
             return View(Devices);
         }
+
         [HttpGet]
         public IActionResult Details(int? Id)
         {
             if (Id is null)
                 return BadRequest("Некорректный ресурс!");
-            Product? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
+            Product? device = _context!.Products.FirstOrDefault(x => x.Id == Id);
             if (device is null)
                 return NotFound("Устройство не найдено!");
             return View(device);
@@ -48,7 +54,7 @@ namespace ShopService.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Devices.Add(device);
+                _context.Products.Add(device);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -64,10 +70,9 @@ namespace ShopService.Controllers
         [HttpPost]
         public IActionResult Delete(int? Id)
         {
-            Product? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
+            Product? device = _context!.Products.FirstOrDefault(x => x.Id == Id);
             return View(device);
         }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

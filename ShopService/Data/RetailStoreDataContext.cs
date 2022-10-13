@@ -27,13 +27,11 @@ namespace ShopService.Data
         }
         public DbSet<Producer> Producers { get; set; }
         public DbSet<DeviceType> DeviceTypes { get; set; }
-        public DbSet<Product> Devices { get; set; }
+        public DbSet<Product> Products { get; set; }
         public DbSet<Client> Clients { get; set; }
-        public DbSet<Basket> Baskets { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Shipping> Shippings { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
-        //public DbSet<Manager> Managers { get; set; }
     }
 }

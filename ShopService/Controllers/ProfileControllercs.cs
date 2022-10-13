@@ -37,5 +37,10 @@ namespace ShopService.Controllers
             await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authentificationProperties);
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
+        public async Task Register()
+        {
+            // Logic
+            await HttpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme);
+        }
     }
 }
