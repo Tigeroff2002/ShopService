@@ -2,11 +2,10 @@
 {
     public enum RoleType: byte
     {
-        NewUser = 1,
-        AuthUser = 2,
-        Operator = 3,
-        Manager = 4,
-        Admin = 5
+        AuthUser = 1,
+        Operator = 2,
+        Manager = 3,
+        Admin = 4
     }
     public class Role
     {
@@ -14,6 +13,6 @@
         public RoleType RoleType { get; set; }
         public string? RoleCaption { get; set; }
         public ICollection<User>? Users { get; set; }
-        public ICollection<Option>? Actions { get; set; }
+        public ICollection<Option>? Options { get; set; }
     }
 }
