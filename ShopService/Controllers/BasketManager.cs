@@ -37,8 +37,8 @@ namespace ShopService.Controllers
         
         private int FindQuantityProductsBasket(int id)
         {
-            if (_context!.Clients!.First(x => x.Id == ClientId).Basket!.SummUpProducts!.Any(x => x.ProductId == id))
-                return _context!.Clients!.First(x => x.Id == ClientId).Basket!.SummUpProducts!.First(x => x.ProductId == id).Quantity;
+            if (_context!.Clients!.First(x => x.Id == ClientId).Basket!.SummUpProducts!.Any(x => x.Product!.Id == id))
+                return _context!.Clients!.First(x => x.Id == ClientId).Basket!.SummUpProducts!.First(x => x.Product!.Id == id).Quantity;
             else
                 return 0;
         }
@@ -63,7 +63,7 @@ namespace ShopService.Controllers
             {
                 _context!.Clients.Where(x => x.Id == ClientId)
                              .ToList()
-                             .Select(x => { x.Basket!.SummUpProducts!.First(x => x.ProductId == id).Quantity = ++count; return x; });
+                             .Select(x => { x.Basket!.SummUpProducts!.First(x => x.Product!.Id == id).Quantity = ++count; return x; });
             }
             _context!.Entry(product).State = EntityState.Modified;
             try
@@ -109,7 +109,7 @@ namespace ShopService.Controllers
             {
                 _context!.Clients.Where(x => x.Id == ClientId)
                              .ToList()
-                             .Select(x => { x.Basket!.SummUpProducts!.First(x => x.ProductId == id).Quantity = --count; return x; });
+                             .Select(x => { x.Basket!.SummUpProducts!.First(x => x.Product!.Id == id).Quantity = --count; return x; });
             }
             _context!.Entry(product).State = EntityState.Modified;
             try
@@ -130,6 +130,10 @@ namespace ShopService.Controllers
             return CreatedAtAction("GetProductItem", new { id = product!.Id }, product);
         }
 
+        private bool ClientExists(int id)
+        {
+            return _context!.Clients!.Any(x => x.Id == id);
+        }
 
         private bool SummUpProductExists(int id)
         {

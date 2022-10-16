@@ -11,7 +11,9 @@ using System.Text.Json;
 
 namespace ShopService.Controllers
 {
-    public class ProfileController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProfileController : ControllerBase
     {
         private readonly ILogger<ProfileController> _logger;    
         private readonly RetailStoreProfileContext? _context;
@@ -28,6 +30,7 @@ namespace ShopService.Controllers
             PropertyNameCaseInsensitive = true,
         };
 
+        /*
         [HttpGet]
         [Authorize]
         public IActionResult Profile()
@@ -39,6 +42,7 @@ namespace ShopService.Controllers
                 EmailAdress = User.FindFirst(x => x.Type == ClaimTypes.Email)?.Value
             });
         }
+        */
         [HttpPost]
         public async Task Login(string returnUrl = "/")
         {
