@@ -21,9 +21,9 @@ namespace ShopService.Controllers
         private readonly RetailStoreDataContext _context;
         public IList<Product>? Devices { get; set; }
         [HttpGet("product/{devicetype}")]
-        public List<Product> GetProductsByDeviceType(int deviceType)
+        public List<Product> GetProductsByDeviceType(int deviceTypeId)
         {
-            return _context.Products.Where(x => x.DeviceTypeId == deviceType)
+            return _context.Products.Where(x => x.DeviceType!.Id == deviceTypeId)
                                     .ToList();
         }
         [HttpGet]
