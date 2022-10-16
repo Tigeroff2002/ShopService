@@ -40,6 +40,10 @@ namespace ShopService.Models
             else
                 return false;
         }
+        public override int GetHashCode()
+        {
+            return this.Id;
+        }
         public bool Equals(Product? product)
         {
             if (product == null)
