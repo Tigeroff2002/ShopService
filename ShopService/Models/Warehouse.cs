@@ -4,10 +4,6 @@ namespace ShopService.Models
 {
     public class Warehouse
     {
-        public Warehouse()
-        {
-            Tradings = new HashSet<Trading>();
-        }
         [Key]
         [Column("Id")]
         public int Id { get; set; }
@@ -20,6 +16,7 @@ namespace ShopService.Models
         [Column("WorkingTime")]
         [MaxLength(40)]
         public string? WorkingTime { get; set; }
-        public virtual ICollection<Trading>? Tradings { get; set; }
+        public virtual ICollection<Shipping>? Shippings { get; set; }
+        public virtual ICollection<(Product? product, int quantity)>? ProductQuantities { get; set; }
     }
 }

@@ -1,11 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using ShopService.Data;
+using Auth0.AspNetCore.Authentication;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RetailStoreDataContext>(opt =>
-    opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = RetailStore; Integrated Security = True"));
+    opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;" +
+    $"Integrated Security=True"));
+builder.Services.AddAuth0WebAppAuthentication(
+    opt =>
+    {
+        opt.Domain = builder.Configuration["Auth0:Domain"];
+        opt.ClientId = builder.Configuration["Auth0:ClientId"];
+        opt.Scope = "openid profile email";
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,6 +30,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -4,10 +4,12 @@ using System.Diagnostics;
 using ShopService.Data;
 using Microsoft.Data.SqlClient;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace ShopService.Controllers
 {
-    public class HomeController : Microsoft.AspNetCore.Mvc.Controller
+    public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -17,36 +19,43 @@ namespace ShopService.Controllers
             _context = context;
         }
         private readonly RetailStoreDataContext _context;
-        public IList<Device>? Devices { get; set; }
+        public IList<Product>? Devices { get; set; }
+        [HttpGet("product/{devicetype}")]
+        public List<Product> GetProductsByDeviceType(int deviceType)
+        {
+            return _context.Products.Where(x => x.DeviceTypeId == deviceType)
+                                    .ToList();
+        }
         [HttpGet]
         public IActionResult Index()
         {
             try
             {
-                Devices = _context.Devices.ToList();
+                Devices = _context.Products.ToList();
             }
             catch (InvalidOperationException)
             {
-                Devices = new List<Device>();
+                Devices = new List<Product>();
             }
             return View(Devices);
         }
+
         [HttpGet]
         public IActionResult Details(int? Id)
         {
             if (Id is null)
                 return BadRequest("Некорректный ресурс!");
-            Device? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
+            Product? device = _context!.Products.FirstOrDefault(x => x.Id == Id);
             if (device is null)
                 return NotFound("Устройство не найдено!");
             return View(device);
         }
         [HttpPost]
-        public IActionResult Create([Bind(include: "DeviceTypeId, Name, ProducerId")] Device device)
+        public IActionResult Create([Bind(include: "DeviceTypeId, Name, ProducerId")] Product device)
         {
             if (ModelState.IsValid)
             {
-                _context.Devices.Add(device);
+                _context.Products.Add(device);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -54,7 +63,7 @@ namespace ShopService.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Device device)
+        public IActionResult Edit(Product device)
         {
             return View(device); 
         }
@@ -62,10 +71,9 @@ namespace ShopService.Controllers
         [HttpPost]
         public IActionResult Delete(int? Id)
         {
-            Device? device = _context!.Devices.FirstOrDefault(x => x.Id == Id);
+            Product? device = _context!.Products.FirstOrDefault(x => x.Id == Id);
             return View(device);
         }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
