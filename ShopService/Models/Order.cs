@@ -18,5 +18,21 @@ namespace ShopService.Models
         public virtual Shipping? Shipping { get; set; }
         [Column("TradingDate")]
         public DateTime OrderDate { get; set; }
+
+        public bool Equals(Order? order)
+        {
+            if (order == null)
+                return false;
+            return GetHashCode() == order.GetHashCode() && Basket!.Equals(order!.Basket);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Order);
+        }
+        public override int GetHashCode()
+        {
+            return (Client!.Id, Basket!.BasketStatusId).GetHashCode();
+        }
     }
 }
