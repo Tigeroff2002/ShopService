@@ -34,5 +34,16 @@ namespace ShopService.Models
         {
             return (Client!.Id, Basket!.BasketStatusId).GetHashCode();
         }
+
+        public Order()
+        {
+            CreateOrderWithCurrentBasket();
+        }
+        public void CreateOrderWithCurrentBasket()
+        {
+            var currentDate = new DateTime();
+            this.OrderDate = currentDate;
+            this.ResultCost = Basket!.
+        }
     }
 }
