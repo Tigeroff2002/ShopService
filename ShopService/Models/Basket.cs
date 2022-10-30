@@ -1,15 +1,18 @@
-﻿using Microsoft.Build.Framework;
-using ShopService.Controllers;
-
-namespace ShopService.Models
+﻿namespace ShopService.Models
 {
     public class Basket
     {
-        public delegate void ChangeBasketState(object obj);
         public virtual User? Client { get; set; }
         public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
-        public int BasketStatusId { get; set; } = 0;
-        public float TotalCost { get; private set;  }
+        public int BasketStatusId { get; private set; }
+        public float TotalCost { get; private set; }
+
+        public Basket()
+        {
+            BasketStatusId = 1;
+            TotalCost = 0;
+            SummUpProducts = new List<SummUpProduct>();
+        }
         public override bool Equals(object? obj)
         {
             if (obj == null)
@@ -27,18 +30,28 @@ namespace ShopService.Models
         {
             if (basket == null)
                 return false;
-            var equals = Enumerable.SequenceEqual(SummUpProducts!.OrderBy(x => x.Id),
-                basket.SummUpProducts!.OrderBy(x => x.Id));
+            var equals = Enumerable.SequenceEqual(SummUpProducts!.OrderBy(x => x.Product!.Id),
+            basket.SummUpProducts!.OrderBy(x => x.Product!.Id));
             if (GetHashCode() != basket.GetHashCode() || !equals)
                 return false;
             return true;
         }
-
-        public event ChangeBasketState? ChangeBasket;
-        public void OnChanged(object obj)
+        public void RecalculateTotalPrice()
         {
-            ChangeBasketState? handler = ChangeBasket;
-            handler?.Invoke(obj!);
+            TotalCost = 0;
+            foreach (var item in SummUpProducts!)
+                TotalCost += item.TotalPrice;
+        }
+        public void ChangeBasketStatusId(Basket? basket)
+        {
+            if (!Equals(this, basket))
+                BasketStatusId += 1;
+        }
+        public void ResetBasket()
+        {
+            SummUpProducts!.Clear();
+            TotalCost = 0;
+            BasketStatusId = 1;
         }
         public void AddProductInBasket(Product? product)
         {
@@ -50,7 +63,6 @@ namespace ShopService.Models
             {
                 var summUpProduct = new SummUpProduct
                 {
-                    Id = id,
                     Product = product,
                     Quantity = 1,
                     TotalPrice = product!.Cost
@@ -72,7 +84,6 @@ namespace ShopService.Models
             {
                 var summUpProduct = new SummUpProduct
                 {
-                    Id = id,
                     Product = product,
                     Quantity = 1,
                     TotalPrice = product!.Cost

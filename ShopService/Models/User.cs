@@ -4,9 +4,13 @@
     {
         public User()
         {
+            Basket = new Basket();
+            TotalPurchase = 0;
+            Discount = 0.00f;
             Orders = new HashSet<Order>();
             Reviews = new HashSet<Review>();
             Notifications = new HashSet<Notification>();
+            Role = new Role((RoleType) 1);
         }
         public int Id { get; set; }
         public string? NickName { get; set; }
@@ -14,7 +18,7 @@
         public string? ContactNumber { get; set; }
         public string? EmailAdress { get; set; }
         public float TotalPurchase { get; set; }
-        public int? Discount { get; set; }
+        public float Discount { get; set; }
         public virtual Basket? Basket { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
