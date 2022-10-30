@@ -11,7 +11,7 @@ namespace ShopService.Models
         public float ResultCost { get; set; }
         public virtual Shipping? Shipping { get; set; }
         public DateTime OrderDate { get; set; }
-        public DateOnly ShippedDate { get; set; }
+        public DateTime ShippedDate { get; set; }
         public bool isReadyForConfirmation { get; set; } = false;
         public bool isReadyForPayment { get; set; } = false;
         public bool isReadyForShipping { get; set; } = false;
@@ -62,8 +62,8 @@ namespace ShopService.Models
 
         public void ManageShippingPayedOrder()
         {
-            Shipping = new Shipping(1);
-            ShippedDate = Shipping!.
+            Shipping = new Shipping((ShippingType) 1, default);
+            ShippedDate = OrderDate.AddDays(Shipping!.daysShipping);
         }
     }
 }

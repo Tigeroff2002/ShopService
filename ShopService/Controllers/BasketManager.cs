@@ -54,7 +54,6 @@ namespace ShopService.Controllers
                 _context!.Clients.First(x => x.Id == ClientId).Basket!.SummUpProducts!
                                  .Add(new SummUpProduct 
                                  {
-                                     Id = product.Id,
                                      Product = product, 
                                      Quantity = 1, 
                                      TotalPrice = product!.Cost 
@@ -99,7 +98,6 @@ namespace ShopService.Controllers
                     _context!.Clients.First(x => x.Id == ClientId).Basket!.SummUpProducts!
                                      .Remove(new SummUpProduct
                                      {
-                                        Id = product.Id,
                                         Product = product,
                                         Quantity = 1,
                                         TotalPrice = product!.Cost
@@ -137,12 +135,8 @@ namespace ShopService.Controllers
 
         private bool SummUpProductExists(int id)
         {
-            return _context!.Clients!.First(x => x.Id == 1).Basket!.SummUpProducts!.Any(x => x.Id == id);
+            return _context!.Clients!.First(x => x.Id == 1).Basket!.SummUpProducts!.Any(x => x.Product!.Id == id);
         }
 
-        private void ChangeStateBasket(int clientId)
-        {
-            _context!.Clients.FirstOrDefault(x => x.Id == clientId)!.Basket!.BasketStatusId += 1;
-        }
     }
 }
