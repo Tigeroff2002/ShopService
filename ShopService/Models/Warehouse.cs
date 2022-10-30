@@ -4,15 +4,6 @@ namespace ShopService.Models
 {
     public class Warehouse
     {
-        public class SummUpGood : SummUpProduct
-        {
-            public int Id;
-            public SummUpGood()
-            {
-                Id = Product!.Id;
-                Quantity = 0;
-            }
-        }
         [Key]
         [Column("Id")]
         public int Id { get; set; }
@@ -26,12 +17,12 @@ namespace ShopService.Models
         [MaxLength(40)]
         public string? WorkingTime { get; set; }
         public virtual ICollection<Shipping>? Shippings { get; set; }
-        public virtual ICollection<SummUpGood>? ProductQuantities { get; set; }
+        public virtual ICollection<SummUpProduct>? ProductQuantities { get; set; }
         
         public Warehouse()
         {
             Shippings = new List<Shipping>();
-            ProductQuantities = new List<SummUpGood>();
+            ProductQuantities = new List<SummUpProduct>();
         }
 
         public bool CheckExistenseGoodOnWarehouse(int _goodId)

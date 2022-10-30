@@ -28,17 +28,18 @@ namespace ShopService.Models
     }
     public partial class DeviceType
     {
-        public DeviceType()
+        public DeviceType(DeviceTypeEnum typeEntity)
         {
+            TypeEntity = typeEntity;
             Devices = new HashSet<Product>();
         }
         [Key]
         [Column("Id")]
         public int Id { get; set; }
-        public DeviceTypeEnum DeviceTypeEntity { get; set; } 
+        public DeviceTypeEnum TypeEntity { get; set; } 
         [Column("Name")]
         [MaxLength(40)]
-        public string? DeviceTypeName { get; set; }
+        public string? Name { get; set; }
         public virtual ICollection<Product>? Devices { get; set; }
     }
 }

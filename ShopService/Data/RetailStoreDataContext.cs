@@ -11,6 +11,15 @@ namespace ShopService.Data
         {
             optionsBuilder.UseLazyLoadingProxies();
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Basket>()
+                .HasKey(b => b.Id);
+            modelBuilder.Entity<User>()
+                .HasOne(e => e.Basket)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+        }
         public DbSet<Producer> Producers { get; set; }
         public DbSet<DeviceType> DeviceTypes { get; set; }
         public DbSet<Product> Products { get; set; }

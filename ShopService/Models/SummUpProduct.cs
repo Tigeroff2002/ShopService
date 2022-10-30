@@ -2,10 +2,15 @@
 {
     public class SummUpProduct : IEquatable<SummUpProduct>
     {
+        public int Id { get; set; }
         public virtual Product? Product { get; set; }
         public int Quantity { get; set;}
         public float TotalPrice { get; set; }
         
+        public SummUpProduct()
+        {
+            Id = GetHashCode();
+        }
         public override bool Equals(object? obj)
         {
             if (obj == null)

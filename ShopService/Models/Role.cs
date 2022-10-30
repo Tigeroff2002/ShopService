@@ -11,8 +11,8 @@
         public int Id { get; set; }
         public RoleType RoleType { get; set; }
         public string? RoleCaption { get; set; }
-        public ICollection<User>? Users { get; set; }
-        public ICollection<Option>? Options { get; set; }
+        public virtual ICollection<User>? Users { get; set; }
+        public virtual ICollection<Option>? Options { get; set; }
 
         public Role(RoleType roleType)
         {

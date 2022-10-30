@@ -1,14 +1,18 @@
-﻿namespace ShopService.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopService.Models
 {
     public class Basket
     {
+        public int Id { get; set; }
+        public int BasketStatusId { get; private set; }
         public virtual User? Client { get; set; }
         public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
-        public int BasketStatusId { get; private set; }
         public float TotalCost { get; private set; }
 
         public Basket()
         {
+            Id = Client!.Id;
             BasketStatusId = 1;
             TotalCost = 0;
             SummUpProducts = new List<SummUpProduct>();
