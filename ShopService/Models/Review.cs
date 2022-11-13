@@ -1,7 +1,10 @@
-﻿namespace ShopService.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopService.Models
 {
     public class Review
     {
+        [Key]
         public int Id { get; set; }
         public string? Text { get; set; }
         public DateTime EventTime { get; set; }

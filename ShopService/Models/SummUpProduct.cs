@@ -1,12 +1,19 @@
-﻿namespace ShopService.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopService.Models
 {
     public class SummUpProduct : IEquatable<SummUpProduct>
     {
+        [Key]
         public int Id { get; set; }
         public virtual Product? Product { get; set; }
         public int Quantity { get; set;}
         public float TotalPrice { get; set; }
         
+        public SummUpProduct()
+        {
+            Id = GetHashCode();
+        }
         public override bool Equals(object? obj)
         {
             if (obj == null)
@@ -29,6 +36,11 @@
         public override int GetHashCode()
         {
             return (Product!.Id, Quantity).GetHashCode();
+        }
+
+        public void RecalculateSummUpPrice()
+        {
+            TotalPrice = Product!.Cost * Quantity;
         }
     }
 }

@@ -13,26 +13,22 @@ namespace ShopService.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Producer>()
-                .HasData(
-                    new Producer
-                    {
-                        Id = 1,
-                        Name = "Samsung",
-                        Country = "Вьетнам",
-                        Popularity = 4.9f,
-                        WebSite = "www.samsung.com/ru"
-                    }
-                );
+           /* modelBuilder.Entity<User>()
+                .HasOne(e => e.Basket)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+           */
         }
         public DbSet<Producer> Producers { get; set; }
         public DbSet<DeviceType> DeviceTypes { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Clients { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Review> Reviews { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Shipping> Shippings { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<SummUpProduct> SummUpProducts { get; set; }
     }
 }

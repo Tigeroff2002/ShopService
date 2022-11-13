@@ -5,25 +5,21 @@ namespace ShopService.Models
     public class Order
     {
         [Key]
-        [Column("Id")]
         public int Id { get; set; }
-        [ForeignKey("ClientId")]
         public virtual User? Client { get; set; }
-        [ForeignKey("DeviceId")]
-        public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
-        [Column("ResultCost")]
         public float ResultCost { get; set; }
-        public virtual Basket? Basket { get; set; }
-        public int BasketStatusIdWhenOrderFormed { get; set; }
         public virtual Shipping? Shipping { get; set; }
-        [Column("TradingDate")]
         public DateTime OrderDate { get; set; }
+        public DateTime ShippedDate { get; set; }
+        public bool isReadyForConfirmation { get; set; } = false;
+        public bool isReadyForPayment { get; set; } = false;
+        public bool isReadyForShipping { get; set; } = false;
 
         public bool Equals(Order? order)
         {
             if (order == null)
                 return false;
-            return GetHashCode() == order.GetHashCode() && Basket!.Equals(order!.Basket);
+            return GetHashCode() == order.GetHashCode() && Client!.Basket!.Equals(order!.Client!.Basket);
         }
 
         public override bool Equals(object? obj)
@@ -32,7 +28,41 @@ namespace ShopService.Models
         }
         public override int GetHashCode()
         {
-            return (Client!.Id, Basket!.BasketStatusId).GetHashCode();
+            return (Client!.Id, Client!.Basket!.BasketStatusId).GetHashCode();
+        }
+
+        public Order()
+        {
+            isReadyForConfirmation = default;
+            isReadyForPayment = default;
+            isReadyForShipping = default;
+            CreateOrderWithCurrentBasket();
+        }
+        public void CreateOrderWithCurrentBasket()
+        {
+            var currentDate = new DateTime();
+            OrderDate = currentDate;
+            ResultCost = Client!.Basket!.TotalCost * (1 - Client!.Discount);
+            Client!.Basket!.ResetBasket();
+            isReadyForConfirmation = true;
+        }
+
+        public void ConfirmCreatedOrder()
+        {
+            // Actions for Confrimation Order
+            isReadyForPayment = true;
+        }
+
+        public void PayConfirmedOrder()
+        {
+            // Actions for Paying Order
+            isReadyForShipping = true;
+        }
+
+        public void ManageShippingPayedOrder()
+        {
+            Shipping = new Shipping((ShippingType) 1, default);
+            ShippedDate = OrderDate.AddDays(Shipping!.daysShipping);
         }
     }
 }
