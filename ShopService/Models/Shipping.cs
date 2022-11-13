@@ -1,4 +1,6 @@
-﻿namespace ShopService.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopService.Models
 {
     public enum ShippingType : byte
     {
@@ -8,6 +10,7 @@
     }
     public class Shipping
     {
+        [Key]
         public int Id { get; set; }
         public ShippingType ShipType { get; set; }
         public float ShippingPrice { get; set; }

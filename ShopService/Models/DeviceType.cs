@@ -34,11 +34,8 @@ namespace ShopService.Models
             Devices = new HashSet<Product>();
         }
         [Key]
-        [Column("Id")]
         public int Id { get; set; }
         public DeviceTypeEnum TypeEntity { get; set; } 
-        [Column("Name")]
-        [MaxLength(40)]
         public string? Name { get; set; }
         public virtual ICollection<Product>? Devices { get; set; }
     }

@@ -5,7 +5,6 @@ namespace ShopService.Models
     public class Order
     {
         [Key]
-        [Column("Id")]
         public int Id { get; set; }
         public virtual User? Client { get; set; }
         public float ResultCost { get; set; }

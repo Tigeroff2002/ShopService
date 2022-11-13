@@ -13,12 +13,11 @@ namespace ShopService.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Basket>()
-                .HasKey(b => b.Id);
-            modelBuilder.Entity<User>()
+           /* modelBuilder.Entity<User>()
                 .HasOne(e => e.Basket)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Cascade);
+           */
         }
         public DbSet<Producer> Producers { get; set; }
         public DbSet<DeviceType> DeviceTypes { get; set; }
@@ -28,5 +27,7 @@ namespace ShopService.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Shipping> Shippings { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<SummUpProduct> SummUpProducts { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopService.Data;
 
@@ -11,9 +12,11 @@ using ShopService.Data;
 namespace ShopService.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    partial class RetailStoreDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221113172729_AddingPrimaryKeys")]
+    partial class AddingPrimaryKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,8 +41,7 @@ namespace ShopService.Migrations
 
                     b.HasKey("BasketStatusId", "ClientId");
 
-                    b.HasIndex("ClientId")
-                        .IsUnique();
+                    b.HasIndex("ClientId");
 
                     b.ToTable("Basket");
                 });
@@ -84,7 +86,7 @@ namespace ShopService.Migrations
 
                     b.HasIndex("RecipientId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("ShopService.Models.Option", b =>
@@ -338,7 +340,7 @@ namespace ShopService.Migrations
 
                     b.HasIndex("BasketStatusId", "BasketClientId");
 
-                    b.ToTable("SummUpProducts");
+                    b.ToTable("SummUpProduct");
                 });
 
             modelBuilder.Entity("ShopService.Models.User", b =>
@@ -348,6 +350,12 @@ namespace ShopService.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BasketClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BasketStatusId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ContactNumber")
                         .HasColumnType("nvarchar(max)");
@@ -373,6 +381,8 @@ namespace ShopService.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("BasketStatusId", "BasketClientId");
 
                     b.ToTable("Clients");
                 });
@@ -402,8 +412,8 @@ namespace ShopService.Migrations
             modelBuilder.Entity("ShopService.Models.Basket", b =>
                 {
                     b.HasOne("ShopService.Models.User", "Client")
-                        .WithOne("Basket")
-                        .HasForeignKey("ShopService.Models.Basket", "ClientId")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -509,6 +519,13 @@ namespace ShopService.Migrations
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
 
+                    b.HasOne("ShopService.Models.Basket", "Basket")
+                        .WithMany()
+                        .HasForeignKey("BasketStatusId", "BasketClientId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Basket");
+
                     b.Navigation("Role");
                 });
 
@@ -541,8 +558,6 @@ namespace ShopService.Migrations
 
             modelBuilder.Entity("ShopService.Models.User", b =>
                 {
-                    b.Navigation("Basket");
-
                     b.Navigation("Notifications");
 
                     b.Navigation("Orders");

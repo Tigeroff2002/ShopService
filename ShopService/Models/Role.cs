@@ -1,4 +1,6 @@
-﻿namespace ShopService.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopService.Models
 {
     public enum RoleType: byte
     {
@@ -8,6 +10,7 @@
     }
     public class Role
     {
+        [Key]
         public int Id { get; set; }
         public RoleType RoleType { get; set; }
         public string? RoleCaption { get; set; }

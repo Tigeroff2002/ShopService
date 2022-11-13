@@ -1,4 +1,6 @@
-﻿namespace ShopService.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopService.Models
 {
     public class User
     {
@@ -12,6 +14,7 @@
             Notifications = new HashSet<Notification>();
             Role = new Role((RoleType) 1);
         }
+        [Key]
         public int Id { get; set; }
         public string? NickName { get; set; }
         public string? Password { get; set; }
