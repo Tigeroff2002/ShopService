@@ -12,8 +12,8 @@ using ShopService.Data;
 namespace ShopService.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    [Migration("20221113172729_AddingPrimaryKeys")]
-    partial class AddingPrimaryKeys
+    [Migration("20221113191433_AddRolesTable")]
+    partial class AddRolesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,8 @@ namespace ShopService.Migrations
 
                     b.HasKey("BasketStatusId", "ClientId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("ClientId")
+                        .IsUnique();
 
                     b.ToTable("Basket");
                 });
@@ -86,7 +87,7 @@ namespace ShopService.Migrations
 
                     b.HasIndex("RecipientId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("ShopService.Models.Option", b =>
@@ -273,7 +274,7 @@ namespace ShopService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("ShopService.Models.Shipping", b =>
@@ -340,7 +341,7 @@ namespace ShopService.Migrations
 
                     b.HasIndex("BasketStatusId", "BasketClientId");
 
-                    b.ToTable("SummUpProduct");
+                    b.ToTable("SummUpProducts");
                 });
 
             modelBuilder.Entity("ShopService.Models.User", b =>
@@ -350,12 +351,6 @@ namespace ShopService.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("BasketClientId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BasketStatusId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ContactNumber")
                         .HasColumnType("nvarchar(max)");
@@ -381,8 +376,6 @@ namespace ShopService.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("BasketStatusId", "BasketClientId");
 
                     b.ToTable("Clients");
                 });
@@ -412,8 +405,8 @@ namespace ShopService.Migrations
             modelBuilder.Entity("ShopService.Models.Basket", b =>
                 {
                     b.HasOne("ShopService.Models.User", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
+                        .WithOne("Basket")
+                        .HasForeignKey("ShopService.Models.Basket", "ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -519,13 +512,6 @@ namespace ShopService.Migrations
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
 
-                    b.HasOne("ShopService.Models.Basket", "Basket")
-                        .WithMany()
-                        .HasForeignKey("BasketStatusId", "BasketClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Basket");
-
                     b.Navigation("Role");
                 });
 
@@ -558,6 +544,8 @@ namespace ShopService.Migrations
 
             modelBuilder.Entity("ShopService.Models.User", b =>
                 {
+                    b.Navigation("Basket");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("Orders");

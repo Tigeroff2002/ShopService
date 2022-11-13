@@ -12,8 +12,8 @@ using ShopService.Data;
 namespace ShopService.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    [Migration("20221113172938_AddingNewTables")]
-    partial class AddingNewTables
+    [Migration("20221113184258_SeedProducers")]
+    partial class SeedProducers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

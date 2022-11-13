@@ -12,8 +12,8 @@ using ShopService.Data;
 namespace ShopService.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    [Migration("20221113171914_DeletingBasketId")]
-    partial class DeletingBasketId
+    [Migration("20221113192611_SeedProducts")]
+    partial class SeedProducts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,20 +31,18 @@ namespace ShopService.Migrations
             modelBuilder.Entity("ShopService.Models.Basket", b =>
                 {
                     b.Property<int>("BasketStatusId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasketStatusId"));
-
-                    b.Property<int?>("ClientId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<float>("TotalCost")
                         .HasColumnType("real");
 
-                    b.HasKey("BasketStatusId");
+                    b.HasKey("BasketStatusId", "ClientId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("ClientId")
+                        .IsUnique();
 
                     b.ToTable("Basket");
                 });
@@ -89,7 +87,7 @@ namespace ShopService.Migrations
 
                     b.HasIndex("RecipientId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("ShopService.Models.Option", b =>
@@ -276,7 +274,7 @@ namespace ShopService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("ShopService.Models.Shipping", b =>
@@ -317,6 +315,9 @@ namespace ShopService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BasketClientId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("BasketStatusId")
                         .HasColumnType("int");
 
@@ -334,19 +335,22 @@ namespace ShopService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BasketStatusId");
-
                     b.HasIndex("ProductId");
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("SummUpProduct");
+                    b.HasIndex("BasketStatusId", "BasketClientId");
+
+                    b.ToTable("SummUpProducts");
                 });
 
             modelBuilder.Entity("ShopService.Models.User", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContactNumber")
                         .HasColumnType("nvarchar(max)");
@@ -401,8 +405,10 @@ namespace ShopService.Migrations
             modelBuilder.Entity("ShopService.Models.Basket", b =>
                 {
                     b.HasOne("ShopService.Models.User", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
+                        .WithOne("Basket")
+                        .HasForeignKey("ShopService.Models.Basket", "ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Client");
                 });
@@ -485,10 +491,6 @@ namespace ShopService.Migrations
 
             modelBuilder.Entity("ShopService.Models.SummUpProduct", b =>
                 {
-                    b.HasOne("ShopService.Models.Basket", null)
-                        .WithMany("SummUpProducts")
-                        .HasForeignKey("BasketStatusId");
-
                     b.HasOne("ShopService.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
@@ -497,22 +499,18 @@ namespace ShopService.Migrations
                         .WithMany("ProductQuantities")
                         .HasForeignKey("WarehouseId");
 
+                    b.HasOne("ShopService.Models.Basket", null)
+                        .WithMany("SummUpProducts")
+                        .HasForeignKey("BasketStatusId", "BasketClientId");
+
                     b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ShopService.Models.User", b =>
                 {
-                    b.HasOne("ShopService.Models.Basket", "Basket")
-                        .WithMany()
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ShopService.Models.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
-
-                    b.Navigation("Basket");
 
                     b.Navigation("Role");
                 });
@@ -546,6 +544,8 @@ namespace ShopService.Migrations
 
             modelBuilder.Entity("ShopService.Models.User", b =>
                 {
+                    b.Navigation("Basket");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("Orders");
