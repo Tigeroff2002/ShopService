@@ -21,7 +21,7 @@ namespace AuthdService.Models
         [DataType(DataType.Password)]
         public string? ConfirmPassword { get; set; }
 
-        public string? ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; } = "/Home/Index";
 
         public RegisterModel()
         {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using ShopService.Data;
 using ShopService.Models;
 using System.Security.Claims;
 
@@ -10,7 +11,18 @@ namespace AuthdService.Controllers
     public class AccountController : Controller
     {
         public List<User> users = new List<User>();
-        public AccountController()
+        public AccountController(ILogger<AccountController> logger, RetailStoreDataContext context)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+
+            _logger.LogInformation("Account Controller was started");
+            
+            SeedSomeUserData();
+        }
+
+        [HttpPost]
+        public void SeedSomeUserData()
         {
             users.Add(new User()
             {
@@ -45,8 +57,9 @@ namespace AuthdService.Controllers
                 Discount = 0f,
                 Role = new Role(RoleType.Admin)
             });
-        }
 
+            _logger!.LogInformation("Three different users were added to DB");
+        }
         public IActionResult Login(string ReturnUrl = "/")
         {
             LoginModel objLoginModel = new LoginModel();
@@ -86,10 +99,14 @@ namespace AuthdService.Controllers
                     {
                         IsPersistent = objLoginModel.RememberLogin
                     });
+
+                    _logger!.LogInformation("User was successfuly authorized!");
+
                     return LocalRedirect(objLoginModel.ReturnUrl!);
                 }
             }
-            //return View(objLoginModel);
+
+
             return NoContent();
         }
 
@@ -97,6 +114,8 @@ namespace AuthdService.Controllers
         public async Task<IActionResult> LogOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            _logger!.LogInformation("User was successfuly unauthorized!");
 
             return LocalRedirect("/");
         }
@@ -134,6 +153,9 @@ namespace AuthdService.Controllers
                     {
                         IsPersistent = true
                     });
+
+                    _logger!.LogInformation("User was successfuly registered in system!");
+
                     return LocalRedirect(objRegisterModel!.ReturnUrl!);
                 }
                 else
@@ -144,5 +166,8 @@ namespace AuthdService.Controllers
             }
             return View(objRegisterModel);
         }
+
+        private ILogger<AccountController>? _logger;
+        private RetailStoreDataContext? _context;
     }
 }
