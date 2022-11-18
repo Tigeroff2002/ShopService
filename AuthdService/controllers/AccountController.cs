@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using ShopService.Data;
 using ShopService.Models;
 using System.Security.Claims;
 
@@ -10,9 +11,10 @@ namespace AuthdService.Controllers
     public class AccountController : Controller
     {
         public List<User> users = new List<User>();
-        public AccountController(ILogger<AccountController> logger)
+        public AccountController(ILogger<AccountController> logger, RetailStoreDataContext context)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
 
             _logger.LogInformation("Account Controller was started");
             
@@ -166,5 +168,6 @@ namespace AuthdService.Controllers
         }
 
         private ILogger<AccountController>? _logger;
+        private RetailStoreDataContext? _context;
     }
 }
