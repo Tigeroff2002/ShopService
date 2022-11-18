@@ -28,6 +28,17 @@
                 <span asp-validation-for="NickName" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        @Html.DisplayNameFor(model => model.Role)
+                        <br />
+                        <input type="radio" asp-for="Role" id="Role" value="User"/>User<br /> 
+                        <input type="radio" asp-for="Role" id="Role" value="Manager" />Manager<br /> 
+                        <input type="radio" asp-for="Role" id="Role" value="Admin" />Administrator<br />
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
