@@ -89,7 +89,8 @@ namespace AuthdService.Controllers
                     return LocalRedirect(objLoginModel.ReturnUrl!);
                 }
             }
-            return View(objLoginModel);
+            //return View(objLoginModel);
+            return NoContent();
         }
 
         [HttpGet]
