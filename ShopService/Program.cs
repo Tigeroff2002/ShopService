@@ -1,10 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Data.Contexts;
-using Auth0.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
 builder.Services.AddDbContext<RetailStoreDataContext>(opt =>
     opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;" +
     $"Integrated Security=True"));
@@ -25,6 +30,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseDeveloperExceptionPage();
 
 app.MapControllerRoute(
     name: "default",

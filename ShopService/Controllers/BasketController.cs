@@ -5,12 +5,14 @@ using Data.Contexts;
 
 namespace ShopService.Controllers
 {
-    public class BasketManager : ControllerBase
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BasketController : ControllerBase
     {
-        private readonly ILogger<BasketManager> _logger;
+        private readonly ILogger<BasketController> _logger;
         private readonly RetailStoreDataContext? _context;
         private int ClientId { get; set; } 
-        public BasketManager(ILogger<BasketManager> logger, RetailStoreDataContext context)
+        public BasketController(ILogger<BasketController> logger, RetailStoreDataContext context)
         {
             _logger = logger;
             _context = context;

@@ -7,8 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(x => x.LoginPath = "/accounts/login");
+    .AddCookie(x => x.LoginPath = "/login");
 
 // Configuring Serilog
 

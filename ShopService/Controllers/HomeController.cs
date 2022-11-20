@@ -7,23 +7,29 @@ using Data.Contexts;
 
 namespace ShopService.Controllers
 {
+    [Route("api/home")]
+    [ApiController]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly RetailStoreDataContext _context;
+        private IList<Product>? Devices { get; set; }
 
         public HomeController(ILogger<HomeController> logger, RetailStoreDataContext context)
         {
             _logger = logger;
             _context = context;
         }
-        private readonly RetailStoreDataContext _context;
-        public IList<Product>? Devices { get; set; }
-        [HttpGet("product/{devicetype}")]
-        public List<Product> GetProductsByDeviceType(int deviceTypeId)
+
+        [HttpGet("devicetype/{deviceTypeId:int}")]
+        public IActionResult GetProductsByDeviceType(int deviceTypeId)
         {
-            return _context.Products.Where(x => x.DeviceType!.Id == deviceTypeId)
+            Devices = _context.Products.Where(x => x.DeviceType!.Id == deviceTypeId)
                                     .ToList();
+
+            return View(Devices);
         }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -38,7 +44,7 @@ namespace ShopService.Controllers
             return View(Devices);
         }
 
-        [HttpGet]
+        [HttpGet("{id:int}")]
         public IActionResult Details(int? Id)
         {
             if (Id is null)
@@ -48,7 +54,8 @@ namespace ShopService.Controllers
                 return NotFound("Устройство не найдено!");
             return View(device);
         }
-        [HttpPost]
+
+        [HttpPost("{id:int}")]
         public IActionResult Create([Bind(include: "DeviceTypeId, Name, ProducerId")] Product device)
         {
             if (ModelState.IsValid)
@@ -60,18 +67,19 @@ namespace ShopService.Controllers
             return View(device);
         }
 
-        [HttpPost]
+        [HttpPut("{id:int}")]
         public IActionResult Edit(Product device)
         {
             return View(device); 
         }
 
-        [HttpPost]
+        [HttpDelete("{id:int}")]
         public IActionResult Delete(int? Id)
         {
             Product? device = _context!.Products.FirstOrDefault(x => x.Id == Id);
             return View(device);
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

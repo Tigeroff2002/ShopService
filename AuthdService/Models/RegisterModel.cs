@@ -36,5 +36,10 @@ namespace AuthdService.Models
                 NickName = email.User;
             }
         }
+
+        public bool PasswordsEquals()
+        {
+            return Password == ConfirmPassword;
+        }
     }
 }
