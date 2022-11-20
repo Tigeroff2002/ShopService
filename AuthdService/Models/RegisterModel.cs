@@ -1,6 +1,6 @@
-﻿using ShopService.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
+using Models;
 
 namespace AuthdService.Models
 {

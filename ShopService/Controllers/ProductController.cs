@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ShopService.Models;
-using ShopService.Data;
+using Models;
+using Data.Contexts;
 
 namespace ShopService.Controllers
 {

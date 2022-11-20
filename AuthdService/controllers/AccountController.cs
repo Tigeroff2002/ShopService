@@ -2,15 +2,14 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using ShopService.Data;
-using ShopService.Models;
+using Models;
+using Data.Contexts;
 using System.Security.Claims;
 
 namespace AuthdService.Controllers
 {
     public class AccountController : Controller
     {
-        public List<User> users = new List<User>();
         public AccountController(ILogger<AccountController> logger, RetailStoreDataContext context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -24,41 +23,22 @@ namespace AuthdService.Controllers
         [HttpPost]
         public void SeedSomeUserData()
         {
-            users.Add(new User()
+            if (_context!.Clients.Count() < 4)
             {
-                Id = 1,
-                NickName = "Tigeroff",
-                Password = "tigeroff2002",
-                ContactNumber = "+79042555027",
-                EmailAdress = "parahinkv@gmail.com",
-                TotalPurchase = 0f,
-                Discount = 0f,
-                Role = new Role(RoleType.AuthUser)
-            });
-            users.Add(new User()
-            {
-                Id = 2,
-                NickName = "MLG",
-                Password = "tigeroff2002",
-                ContactNumber = "+79046485574",
-                EmailAdress = "parahinvs@gmail.com",
-                TotalPurchase = 0f,
-                Discount = 0f,
-                Role = new Role(RoleType.Manager)
-            });
-            users.Add(new User()
-            {
-                Id = 3,
-                NickName = "Tigeroff2002",
-                Password = "tigeroff2002",
-                ContactNumber = "+79046594765",
-                EmailAdress = "parahinnv@gmail.com",
-                TotalPurchase = 0f,
-                Discount = 0f,
-                Role = new Role(RoleType.Admin)
-            });
+                _context!.Clients.Add(new User()
+                {
+                    Id = 4,
+                    NickName = "TigeroffNew",
+                    Password = "tigeroff2002",
+                    ContactNumber = "+79042555027",
+                    EmailAdress = "parahinkv2002@gmail.com",
+                    TotalPurchase = 0f,
+                    Discount = 0f,
+                    Role = new Role(RoleType.AuthUser)
+                });
+            }
 
-            _logger!.LogInformation("Three different users were added to DB");
+            _logger!.LogInformation("Fourth user was added to DB");
         }
         public IActionResult Login(string ReturnUrl = "/")
         {
@@ -79,7 +59,7 @@ namespace AuthdService.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = users.Where(x => x.NickName == objLoginModel.NickName && x.Password == objLoginModel.Password).FirstOrDefault();
+                var user = _context!.Clients!.Where(x => x.NickName == objLoginModel.NickName && x.Password == objLoginModel.Password).FirstOrDefault();
                 if (user == null)
                 {
                     ViewBag.Message = "Invalid Credential";
@@ -128,7 +108,7 @@ namespace AuthdService.Controllers
                 objRegisterModel.CheckName();
                 User? user = new User()
                 {
-                    Id = users.Count + 1,
+                    Id = _context!.Clients.Count(),
                     NickName = objRegisterModel.NickName,
                     Password = objRegisterModel?.Password,
                     ContactNumber = objRegisterModel?.ContactNumber,
@@ -139,7 +119,7 @@ namespace AuthdService.Controllers
                 };
                 if (user != null)
                 {
-                    users.Add(user);
+                    _context!.Clients.Add(user);
                     var claims = new List<Claim>() {
                     new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user.Id)),
                         new Claim(ClaimTypes.Name, user.NickName!),

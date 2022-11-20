@@ -5,7 +5,11 @@ VisualStudioVersion = 17.2.32408.312
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopService", "ShopService\ShopService.csproj", "{17A83F68-259D-45A6-A9E0-B9E4FBA0C158}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthdService", "AuthdService\AuthdService.csproj", "{60AAA896-DCDB-4B90-8B97-7920C116C59E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthdService", "AuthdService\AuthdService.csproj", "{60AAA896-DCDB-4B90-8B97-7920C116C59E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{F82358F1-50FC-465F-A579-04CD689059B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{CD61BFC5-A851-475F-9FB3-C49BD9EDA91B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{60AAA896-DCDB-4B90-8B97-7920C116C59E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60AAA896-DCDB-4B90-8B97-7920C116C59E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60AAA896-DCDB-4B90-8B97-7920C116C59E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F82358F1-50FC-465F-A579-04CD689059B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F82358F1-50FC-465F-A579-04CD689059B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F82358F1-50FC-465F-A579-04CD689059B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F82358F1-50FC-465F-A579-04CD689059B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD61BFC5-A851-475F-9FB3-C49BD9EDA91B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD61BFC5-A851-475F-9FB3-C49BD9EDA91B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD61BFC5-A851-475F-9FB3-C49BD9EDA91B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD61BFC5-A851-475F-9FB3-C49BD9EDA91B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
