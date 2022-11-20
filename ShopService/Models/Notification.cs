@@ -12,7 +12,6 @@ namespace ShopService.Models
 
         public Notification()
         {
-            Id = 1;
             EventTime = DateTime.Now;
         }
     }

@@ -13,5 +13,10 @@ namespace ShopService.Models
         {
             Role = new Role((RoleType) 1);
         }
+
+        public Option(RoleType type)
+        {
+            Role = new Role(type);
+        }
     }
 }

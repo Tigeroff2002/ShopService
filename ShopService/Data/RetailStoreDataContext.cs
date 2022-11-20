@@ -23,6 +23,7 @@ namespace ShopService.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Shipping> Shippings { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<Shop> Shops { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<SummUpProduct> SummUpProducts { get; set; }
     }

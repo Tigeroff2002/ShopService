@@ -14,37 +14,19 @@ namespace ShopService.Models
         public int Id { get; set; }
         public ShippingType ShipType { get; set; }
         public float ShippingPrice { get; set; }
-        public bool IsThroughRegions { get; set; } = false;
-        public int daysShipping { get; set; }
-        private static readonly int COST_OF_DAY = 50;
-        private static readonly int KF_SHIP_TYPE = - 1;
         public virtual Warehouse? Warehouse { get; set; }
+        public virtual Shop? Shop { get; set; }
 
-        public Shipping(ShippingType shipType, bool isThroughRegions)
+        public Shipping(ShippingType shipType)
         {
             ShipType = shipType;
-            IsThroughRegions = isThroughRegions;
         }
 
-        public void CalculateShippingDays()
+        public void CalculateShippingCost()
         {
-            switch(ShipType)
-            {
-                case ShippingType.Casual: 
-                    daysShipping = IsThroughRegions? 6 : 3;
-                    break;
-                case ShippingType.Rapid:
-                    daysShipping = IsThroughRegions ? 4 : 2;
-                    break;
-                case ShippingType.Prioritet:
-                    daysShipping = IsThroughRegions ? 2 : 1;
-                    break;
-            }
+            ShippingPrice = (int) ShipType * COST_BY_TYPE;
         }
-        public void CalculateShippingPrice()
-        {
-            CalculateShippingDays();
-            ShippingPrice = COST_OF_DAY * daysShipping * ((byte)ShipType) * ((byte)ShipType + KF_SHIP_TYPE);
-        }
+
+        private const int COST_BY_TYPE = 1000;
     }
 }
