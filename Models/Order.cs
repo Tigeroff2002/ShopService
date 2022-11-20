@@ -33,11 +33,22 @@ namespace Models
 
         public Order()
         {
+            Shipping = new Shipping((ShippingType)1);
             isReadyForConfirmation = default;
             isReadyForPayment = default;
             isReadyForShipping = default;
             CreateOrderWithCurrentBasket();
         }
+
+        public Order(ShippingType type)
+        {
+            Shipping = new Shipping(type);
+            isReadyForConfirmation = default;
+            isReadyForPayment = default;
+            isReadyForShipping = default;
+            CreateOrderWithCurrentBasket();
+        }
+
         public void CreateOrderWithCurrentBasket()
         {
             var currentDate = new DateTime();
@@ -57,11 +68,6 @@ namespace Models
         {
             // Actions for Paying Order
             isReadyForShipping = true;
-        }
-
-        public void ManageShippingPayedOrder()
-        {
-            Shipping = new Shipping((ShippingType)1);
         }
     }
 }

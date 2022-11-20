@@ -7,7 +7,7 @@ namespace ShopService.Models
         [Key]
         public int Id { get; set; }
         public virtual User? Client { get; set; }
-        public float ResultCost { get; set; }
+        public float? ResultCost { get; set; }
         public virtual Shipping? Shipping { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime ShippedDate { get; set; }
@@ -15,6 +15,10 @@ namespace ShopService.Models
         public bool isReadyForPayment { get; set; } = false;
         public bool isReadyForShipping { get; set; } = false;
 
+        public Order(ShippingType type)
+        {
+            Shipping = new Shipping(type);
+        }
         public bool Equals(Order? order)
         {
             if (order == null)
@@ -57,12 +61,6 @@ namespace ShopService.Models
         {
             // Actions for Paying Order
             isReadyForShipping = true;
-        }
-
-        public void ManageShippingPayedOrder()
-        {
-            Shipping = new Shipping((ShippingType) 1, default);
-            ShippedDate = OrderDate.AddDays(Shipping!.daysShipping);
         }
     }
 }
