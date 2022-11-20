@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
-namespace ShopService.Models
+namespace Models
 {
     [PrimaryKey(nameof(BasketStatusId), nameof(ClientId))]
     public class Basket
@@ -41,7 +40,7 @@ namespace ShopService.Models
                 return false;
             return true;
         }
-        public void RecalculateTotalPrice()
+        public void CalculateTotalPrice()
         {
             TotalCost = 0;
             foreach (var item in SummUpProducts!)
