@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShopService.Models;
 using System.Diagnostics;
-using ShopService.Data;
-using Microsoft.Data.SqlClient;
-using System.Net;
-using Microsoft.AspNetCore.Authorization;
+using Models;
 using Microsoft.EntityFrameworkCore;
+using Data.Contexts;
 
 namespace ShopService.Controllers
 {

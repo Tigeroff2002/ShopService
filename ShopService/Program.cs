@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using ShopService.Data;
+using Data.Contexts;
 using Auth0.AspNetCore.Authentication;
 var builder = WebApplication.CreateBuilder(args);
 
