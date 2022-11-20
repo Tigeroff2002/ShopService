@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace ShopService.Migrations
+namespace Data.Migrations
 {
     /// <inheritdoc />
     public partial class SeedDeviceTypesData : Migration

@@ -24,5 +24,7 @@ namespace Data.Contexts
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<SummUpProduct> SummUpProducts { get; set; }
+        public DbSet<Option> Options { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
     }
 }

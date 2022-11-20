@@ -2,24 +2,24 @@
 
 #nullable disable
 
-namespace ShopService.Migrations
+namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTestClientData : Migration
+    public partial class AddUsersData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
-                table: "Role",
+                table: "Roles",
                 columns: new[] { "Id", "RoleType", "RoleCaption" },
                 values: new object[] { 1, 1, "Authorized User" });
             migrationBuilder.InsertData(
-                table: "Role",
+                table: "Roles",
                 columns: new[] { "Id", "RoleType", "RoleCaption" },
                 values: new object[] { 2, 2, "Manager" });
             migrationBuilder.InsertData(
-                table: "Role",
+                table: "Roles",
                 columns: new[] { "Id", "RoleType", "RoleCaption" },
                 values: new object[] { 3, 3, "Administrator" });
 
@@ -41,15 +41,15 @@ namespace ShopService.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DeleteData(
-                           table: "Role",
+                           table: "Roles",
                            keyColumn: "Id",
                            keyValue: 1);
             migrationBuilder.DeleteData(
-                           table: "Role",
+                           table: "Roles",
                            keyColumn: "Id",
                            keyValue: 2);
             migrationBuilder.DeleteData(
-                           table: "Role",
+                           table: "Roles",
                            keyColumn: "Id",
                            keyValue: 3);
 

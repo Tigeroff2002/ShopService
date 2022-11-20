@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ShopService.Migrations
+namespace Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitMigration : Migration
@@ -42,7 +42,7 @@ namespace ShopService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Role",
+                name: "Roles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -52,7 +52,22 @@ namespace ShopService.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Role", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shops",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WorkingTime = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shops", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,9 +76,7 @@ namespace ShopService.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    WorkingTime = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -119,14 +132,14 @@ namespace ShopService.Migrations
                 {
                     table.PrimaryKey("PK_Clients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Clients_Role_RoleId",
+                        name: "FK_Clients_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Role",
+                        principalTable: "Roles",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Option",
+                name: "Options",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -136,11 +149,11 @@ namespace ShopService.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Option", x => x.Id);
+                    table.PrimaryKey("PK_Options", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Option_Role_RoleId",
+                        name: "FK_Options_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Role",
+                        principalTable: "Roles",
                         principalColumn: "Id");
                 });
 
@@ -152,13 +165,17 @@ namespace ShopService.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ShipType = table.Column<byte>(type: "tinyint", nullable: false),
                     ShippingPrice = table.Column<float>(type: "real", nullable: false),
-                    IsThroughRegions = table.Column<bool>(type: "bit", nullable: false),
-                    daysShipping = table.Column<int>(type: "int", nullable: false),
-                    WarehouseId = table.Column<int>(type: "int", nullable: true)
+                    WarehouseId = table.Column<int>(type: "int", nullable: true),
+                    ShopId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Shippings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Shippings_Shops_ShopId",
+                        column: x => x.ShopId,
+                        principalTable: "Shops",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Shippings_Warehouses_WarehouseId",
                         column: x => x.WarehouseId,
@@ -167,18 +184,18 @@ namespace ShopService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Basket",
+                name: "Baskets",
                 columns: table => new
                 {
                     BasketStatusId = table.Column<int>(type: "int", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: false),
-                    TotalCost = table.Column<float>(type: "real", nullable: false)
+                    TotalCost = table.Column<float>(type: "real", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Basket", x => new { x.BasketStatusId, x.ClientId });
+                    table.PrimaryKey("PK_Baskets", x => new { x.BasketStatusId, x.ClientId });
                     table.ForeignKey(
-                        name: "FK_Basket_Clients_ClientId",
+                        name: "FK_Baskets_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
@@ -239,7 +256,7 @@ namespace ShopService.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClientId = table.Column<int>(type: "int", nullable: true),
-                    ResultCost = table.Column<float>(type: "real", nullable: false),
+                    ResultCost = table.Column<float>(type: "real", nullable: true),
                     ShippingId = table.Column<int>(type: "int", nullable: true),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ShippedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -276,23 +293,29 @@ namespace ShopService.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    TotalPrice = table.Column<float>(type: "real", nullable: false),
+                    TotalPrice = table.Column<float>(type: "real", nullable: true),
                     BasketClientId = table.Column<int>(type: "int", nullable: true),
                     BasketStatusId = table.Column<int>(type: "int", nullable: true),
+                    ShopId = table.Column<int>(type: "int", nullable: true),
                     WarehouseId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SummUpProducts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SummUpProducts_Basket_BasketStatusId_BasketClientId",
+                        name: "FK_SummUpProducts_Baskets_BasketStatusId_BasketClientId",
                         columns: x => new { x.BasketStatusId, x.BasketClientId },
-                        principalTable: "Basket",
+                        principalTable: "Baskets",
                         principalColumns: new[] { "BasketStatusId", "ClientId" });
                     table.ForeignKey(
                         name: "FK_SummUpProducts_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SummUpProducts_Shops_ShopId",
+                        column: x => x.ShopId,
+                        principalTable: "Shops",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SummUpProducts_Warehouses_WarehouseId",
@@ -302,8 +325,8 @@ namespace ShopService.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Basket_ClientId",
-                table: "Basket",
+                name: "IX_Baskets_ClientId",
+                table: "Baskets",
                 column: "ClientId",
                 unique: true);
 
@@ -318,8 +341,8 @@ namespace ShopService.Migrations
                 column: "RecipientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Option_RoleId",
-                table: "Option",
+                name: "IX_Options_RoleId",
+                table: "Options",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
@@ -358,6 +381,11 @@ namespace ShopService.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Shippings_ShopId",
+                table: "Shippings",
+                column: "ShopId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Shippings_WarehouseId",
                 table: "Shippings",
                 column: "WarehouseId");
@@ -373,6 +401,11 @@ namespace ShopService.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SummUpProducts_ShopId",
+                table: "SummUpProducts",
+                column: "ShopId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SummUpProducts_WarehouseId",
                 table: "SummUpProducts",
                 column: "WarehouseId");
@@ -385,7 +418,7 @@ namespace ShopService.Migrations
                 name: "Notifications");
 
             migrationBuilder.DropTable(
-                name: "Option");
+                name: "Options");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -400,10 +433,13 @@ namespace ShopService.Migrations
                 name: "Shippings");
 
             migrationBuilder.DropTable(
-                name: "Basket");
+                name: "Baskets");
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Shops");
 
             migrationBuilder.DropTable(
                 name: "Warehouses");
@@ -418,7 +454,7 @@ namespace ShopService.Migrations
                 name: "Producers");
 
             migrationBuilder.DropTable(
-                name: "Role");
+                name: "Roles");
         }
     }
 }
