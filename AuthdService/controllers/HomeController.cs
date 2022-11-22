@@ -9,6 +9,7 @@ namespace AuthdService.Controllers
         {
             return View();
         }
+
         [Authorize]
         public IActionResult PrivateData()
         {

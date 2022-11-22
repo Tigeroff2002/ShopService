@@ -119,7 +119,14 @@ namespace AuthdService.Controllers
                 };
                 if (user != null)
                 {
-                    _context!.Clients.Add(user);
+                    if (CheckCurrentUserExistenseId(user) == -1)
+                        _context!.Clients.Add(user);
+                    else
+                    {
+                        _logger!.LogInformation("User with these data was found in system!");
+                        var objLoginModel = new LoginModel(user.EmailAdress!, user.Password!);
+                        return View(Login(objLoginModel));
+                    }
                     var claims = new List<Claim>() {
                     new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user.Id)),
                         new Claim(ClaimTypes.Name, user.NickName!),
@@ -145,6 +152,13 @@ namespace AuthdService.Controllers
                 }
             }
             return View(objRegisterModel);
+        }
+
+        private int CheckCurrentUserExistenseId(User? user)
+        {
+            if (_context!.Clients!.Any(x => x.Equals(user)))
+                return _context!.Clients!.FirstOrDefault(x => x.Equals(user))!.Id;
+            return -1;
         }
 
         private ILogger<AccountController>? _logger;

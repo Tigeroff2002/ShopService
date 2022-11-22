@@ -27,5 +27,28 @@ namespace Models
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual Role? Role { get; set; }
+
+        public bool Equals(User? user)
+        {
+            if (user == null)
+                return false;
+            if (GetHashCode() != user.GetHashCode())
+                return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return (Id, EmailAdress).GetHashCode();
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj == null)
+                return false;
+            if (obj is User user)
+                return Equals(user);
+            else
+                return false;
+        }
     }
 }
