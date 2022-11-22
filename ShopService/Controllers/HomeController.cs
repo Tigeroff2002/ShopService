@@ -25,7 +25,7 @@ namespace ShopService.Controllers
         public IActionResult GetProductsByDeviceType(int deviceTypeId)
         {
             Devices = _context.Products.Where(x => x.DeviceType!.Id == deviceTypeId)
-                                    .ToList();
+                                       .ToList();
 
             return View(Devices);
         }
