@@ -5,7 +5,7 @@ using Data.Contexts;
 
 namespace ShopService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/basket")]
     [ApiController]
     public class BasketController : ControllerBase
     {

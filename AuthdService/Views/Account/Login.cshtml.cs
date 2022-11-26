@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace AuthdService.Pages
+namespace AuthdService.Views
 {
     public class LoginModel : PageModel
     {
-        private readonly ILogger<PrivacyModel> _logger;
+        private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(ILogger<PrivacyModel> logger)
+        public LoginModel(ILogger<LoginModel> logger)
         {
             _logger = logger;
         }

@@ -8,6 +8,8 @@ using System.Security.Claims;
 
 namespace AuthdService.Controllers
 {
+    [ApiController]
+    [Route("api/account")]
     public class AccountController : Controller
     {
         public AccountController(ILogger<AccountController> logger, RetailStoreDataContext context)
@@ -20,7 +22,7 @@ namespace AuthdService.Controllers
             SeedSomeUserData();
         }
 
-        [HttpPost]
+        [HttpPost("data/add")]
         public void SeedSomeUserData()
         {
             if (_context!.Clients.Count() < 4)
@@ -40,30 +42,36 @@ namespace AuthdService.Controllers
 
             _logger!.LogInformation("Fourth user was added to DB");
         }
-        public IActionResult Login(string ReturnUrl = "/")
+
+        [HttpGet("login")]
+        public IActionResult Login()
         {
             LoginModel objLoginModel = new LoginModel();
-            objLoginModel.ReturnUrl = ReturnUrl;
             return View(objLoginModel);
         }
 
-        public IActionResult Register(string ReturnUrl = "/")
+        [HttpGet("register")]
+        public IActionResult Register()
         {
             RegisterModel objRegisterModel = new RegisterModel();
-            objRegisterModel.ReturnUrl = ReturnUrl;
             return View(objRegisterModel);
         }
 
-        [HttpPost]
+        [HttpPost("postlogin")]
         public async Task<IActionResult> Login(LoginModel objLoginModel)
         {
             if (ModelState.IsValid)
             {
-                var user = _context!.Clients!.Where(x => x.NickName == objLoginModel.NickName && x.Password == objLoginModel.Password).FirstOrDefault();
+                var user = _context!.Clients!
+                    .Where(
+                        x => x.NickName == objLoginModel.NickName &&
+                        x.Password == objLoginModel.Password)
+                    .FirstOrDefault();
+
                 if (user == null)
                 {
                     ViewBag.Message = "Invalid Credential";
-                    return View(objLoginModel);
+                    return Redirect("http://www.example.com");
                 }
                 else
                 {
@@ -82,15 +90,14 @@ namespace AuthdService.Controllers
 
                     _logger!.LogInformation("User was successfuly authorized!");
 
-                    return LocalRedirect(objLoginModel.ReturnUrl!);
+                    return Redirect("http://www.example.com");
                 }
             }
 
-
-            return NoContent();
+            return Redirect("http://www.example.com");
         }
 
-        [HttpGet]
+        [HttpGet("logout")]
         public async Task<IActionResult> LogOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -100,7 +107,7 @@ namespace AuthdService.Controllers
             return LocalRedirect("/");
         }
 
-        [HttpPost]
+        [HttpPost("postregister")]
         public async Task<IActionResult> Register(RegisterModel objRegisterModel)
         {
             if (ModelState.IsValid)
@@ -119,7 +126,14 @@ namespace AuthdService.Controllers
                 };
                 if (user != null)
                 {
-                    _context!.Clients.Add(user);
+                    if (CheckCurrentUserExistenseId(user) == -1)
+                        _context!.Clients.Add(user);
+                    else
+                    {
+                        _logger!.LogInformation("User with these data was found in system!");
+                        var objLoginModel = new LoginModel(user.EmailAdress!, user.Password!);
+                        return View(Login(objLoginModel));
+                    }
                     var claims = new List<Claim>() {
                     new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user.Id)),
                         new Claim(ClaimTypes.Name, user.NickName!),
@@ -145,6 +159,13 @@ namespace AuthdService.Controllers
                 }
             }
             return View(objRegisterModel);
+        }
+
+        private int CheckCurrentUserExistenseId(User? user)
+        {
+            if (_context!.Clients!.Any(x => x.Equals(user)))
+                return _context!.Clients!.FirstOrDefault(x => x.Equals(user))!.Id;
+            return -1;
         }
 
         private ILogger<AccountController>? _logger;

@@ -1,12 +1,17 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
+using Data.Contexts;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<RetailStoreDataContext>(options =>
+    options.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;" +
+    $"Integrated Security=True"));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(x => x.LoginPath = "/login");
@@ -42,9 +47,9 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}"
-        );
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
 });
 
 app.MapRazorPages();
