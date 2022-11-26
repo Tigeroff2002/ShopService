@@ -4,10 +4,19 @@ namespace Models
 {
     public class Product : IEquatable<Product>
     {
-        public Product()
+        public Product(int id, DeviceType deviceType, Producer producer)
         {
+            if (id <= 0)
+                throw new ArgumentException(nameof(id));
+
+            DeviceType = deviceType ?? throw new ArgumentNullException(nameof(deviceType));
+            Producer = producer ?? throw new ArgumentNullException(nameof(producer));
+
+            Baskets = new HashSet<Basket>();
             Orders = new HashSet<Order>();
+            SummUpProducts = new HashSet<SummUpProduct>();
         }
+
         [Key]
         public int Id { get; set; }
         public virtual DeviceType? DeviceType { get; set; }
@@ -20,6 +29,8 @@ namespace Models
         public float? AccumCapacity { get; set; }
         public float? RAM { get; set; }
         public virtual ICollection<Order>? Orders { get; set; }
+        public virtual ICollection<Basket>? Baskets { get; set; }
+        public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -32,7 +43,7 @@ namespace Models
         }
         public override int GetHashCode()
         {
-            return this.Id;
+            return Id;
         }
         public bool Equals(Product? product)
         {
