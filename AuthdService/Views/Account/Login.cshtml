@@ -1,12 +1,12 @@
 ﻿@page
 @model AuthdService.Models.LoginModel
-@{  
-    Layout = "~/Views/Shared/_Layout.cshtml";   
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  
 }
 <h2>Login</h2>    
 <hr />    
-<div class="row">
-        <div class="col-md-4">    
+<div class="row">    
+    <div class="col-md-4">    
         <form asp-action="Login">    
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>    
             @if (!string.IsNullOrEmpty(ViewBag.Message))    
@@ -14,23 +14,25 @@
                 <span class="text-danger">    
                     @ViewBag.Message    
                 </span>    
-            }     
-            <div class="form-group"> 
-                <label asp-for="NickName" class="control-label">@Html.DisplayNameFor(model => model.NickName) </label>    
+            }    
+            @Html.HiddenFor(x => x.ReturnUrl)    
+            <div class="form-group">    
+                <label asp-for="NickName" class="control-label"> @Html.DisplayNameFor(model => model.NickName)</label>    
                 <input asp-for="NickName" class="form-control" />    
                 <span asp-validation-for="NickName" class="text-danger"></span>    
             </div>    
-            <div class="form-group">    
-                <label asp-for="Password" class="control-label">@Html.DisplayNameFor(model => model.Password)</label>    
+            <div class="form-group"> 
+                <label asp-for="Password" class="control-label"> @Html.DisplayNameFor(model => model.Password)</label>    
                 <input asp-for="Password" class="form-control" />    
                 <span asp-validation-for="Password" class="text-danger"></span>    
             </div>    
             <div class="form-group">    
-                <div class="checkbox">    
-                    <label>    
+                <div class="checkbox">
+                    <label>
                         @Html.DisplayNameFor(model => model.RememberLogin)
-                        <input asp-for="RememberLogin" />  
-                    </label>    
+                        <br />
+                        <input type="checkbox" asp-for="RememberLogin" checked="checked"/>Остаться<br /> 
+                    </label>
                 </div>    
             </div>    
             <div class="form-group">    

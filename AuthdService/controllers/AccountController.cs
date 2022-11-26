@@ -8,6 +8,8 @@ using System.Security.Claims;
 
 namespace AuthdService.Controllers
 {
+    [ApiController]
+    [Route("api/account")]
     public class AccountController : Controller
     {
         public AccountController(ILogger<AccountController> logger, RetailStoreDataContext context)
@@ -20,7 +22,7 @@ namespace AuthdService.Controllers
             SeedSomeUserData();
         }
 
-        [HttpPost]
+        [HttpPost("data/add")]
         public void SeedSomeUserData()
         {
             if (_context!.Clients.Count() < 4)
@@ -40,21 +42,22 @@ namespace AuthdService.Controllers
 
             _logger!.LogInformation("Fourth user was added to DB");
         }
-        public IActionResult Login(string ReturnUrl = "/")
+
+        [HttpGet("login")]
+        public IActionResult Login()
         {
             LoginModel objLoginModel = new LoginModel();
-            objLoginModel.ReturnUrl = ReturnUrl;
             return View(objLoginModel);
         }
 
-        public IActionResult Register(string ReturnUrl = "/")
+        [HttpGet("register")]
+        public IActionResult Register()
         {
             RegisterModel objRegisterModel = new RegisterModel();
-            objRegisterModel.ReturnUrl = ReturnUrl;
             return View(objRegisterModel);
         }
 
-        [HttpPost]
+        [HttpPost("login/post")]
         public async Task<IActionResult> Login(LoginModel objLoginModel)
         {
             if (ModelState.IsValid)
@@ -86,11 +89,10 @@ namespace AuthdService.Controllers
                 }
             }
 
-
-            return NoContent();
+            return View("~/Views/Home/Index.cshtml");
         }
 
-        [HttpGet]
+        [HttpGet("logout")]
         public async Task<IActionResult> LogOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -100,7 +102,7 @@ namespace AuthdService.Controllers
             return LocalRedirect("/");
         }
 
-        [HttpPost]
+        [HttpPost("register/post")]
         public async Task<IActionResult> Register(RegisterModel objRegisterModel)
         {
             if (ModelState.IsValid)
