@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace AuthdService.Pages
+namespace AuthdService.Views
 {
     public class IndexModel : PageModel
     {
