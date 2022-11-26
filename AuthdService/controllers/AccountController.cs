@@ -62,11 +62,16 @@ namespace AuthdService.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _context!.Clients!.Where(x => x.NickName == objLoginModel.NickName && x.Password == objLoginModel.Password).FirstOrDefault();
+                var user = _context!.Clients!
+                    .Where(
+                        x => x.NickName == objLoginModel.NickName &&
+                        x.Password == objLoginModel.Password)
+                    .FirstOrDefault();
+
                 if (user == null)
                 {
                     ViewBag.Message = "Invalid Credential";
-                    return View(objLoginModel);
+                    return Redirect("http://www.example.com");
                 }
                 else
                 {
@@ -85,11 +90,11 @@ namespace AuthdService.Controllers
 
                     _logger!.LogInformation("User was successfuly authorized!");
 
-                    return LocalRedirect(objLoginModel.ReturnUrl!);
+                    return Redirect("http://www.example.com");
                 }
             }
 
-            return View("~/Views/Home/Index.cshtml");
+            return Redirect("http://www.example.com");
         }
 
         [HttpGet("logout")]
