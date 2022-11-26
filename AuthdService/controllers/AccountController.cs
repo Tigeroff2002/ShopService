@@ -57,7 +57,7 @@ namespace AuthdService.Controllers
             return View(objRegisterModel);
         }
 
-        [HttpPost("login/post")]
+        [HttpPost("postlogin")]
         public async Task<IActionResult> Login(LoginModel objLoginModel)
         {
             if (ModelState.IsValid)
@@ -102,7 +102,7 @@ namespace AuthdService.Controllers
             return LocalRedirect("/");
         }
 
-        [HttpPost("register/post")]
+        [HttpPost("postregister")]
         public async Task<IActionResult> Register(RegisterModel objRegisterModel)
         {
             if (ModelState.IsValid)
