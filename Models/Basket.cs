@@ -11,9 +11,15 @@ namespace Models
         public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
         public float? TotalCost { get; private set; }
 
-        public Basket()
+        public Basket(int statusId, User? client)
         {
-            BasketStatusId = 1;
+            if (statusId <= 0)
+            {
+                throw new ArgumentException(nameof(statusId));
+            }
+
+            Client = client ?? throw new ArgumentNullException(nameof(client));
+
             TotalCost = 0;
             SummUpProducts = new List<SummUpProduct>();
         }

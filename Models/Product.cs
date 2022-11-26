@@ -9,6 +9,8 @@ namespace Models
             if (id <= 0)
                 throw new ArgumentException(nameof(id));
 
+            Id = id;
+
             DeviceType = deviceType ?? throw new ArgumentNullException(nameof(deviceType));
             Producer = producer ?? throw new ArgumentNullException(nameof(producer));
 
