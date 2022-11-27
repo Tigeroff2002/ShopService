@@ -17,16 +17,21 @@ namespace Models
         public virtual Warehouse? Warehouse { get; set; }
         public virtual Shop? Shop { get; set; }
 
-        public Shipping(ShippingType shipType)
+        public Shipping(int shipType)
         {
-            ShipType = shipType;
+            if (shipType < 1 || shipType > 3)
+                throw new ArgumentException(nameof(shipType));
+
+            ShipType = (ShippingType)shipType;
+
+            ShippingPrice = CalculateShippingCost();
         }
 
-        public void CalculateShippingCost()
+        public float CalculateShippingCost()
         {
-            ShippingPrice = (int)ShipType * COST_BY_TYPE;
+            return (int)ShipType * COST_BY_TYPE;
         }
 
-        private const int COST_BY_TYPE = 1000;
+        public const int COST_BY_TYPE  = 1000;
     }
 }

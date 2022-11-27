@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace Models
 {
@@ -11,9 +12,15 @@ namespace Models
         public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
         public float? TotalCost { get; private set; }
 
-        public Basket()
+        public Basket(int statusId, User? client)
         {
-            BasketStatusId = 1;
+            if (statusId <= 0)
+            {
+                throw new ArgumentException(nameof(statusId));
+            }
+
+            Client = client ?? throw new ArgumentNullException(nameof(client));
+
             TotalCost = 0;
             SummUpProducts = new List<SummUpProduct>();
         }
@@ -65,12 +72,7 @@ namespace Models
             var count = FindQuantityProductsInBasket(id);
             if (count == 0)
             {
-                var summUpProduct = new SummUpProduct
-                {
-                    Product = product,
-                    Quantity = 1,
-                    TotalPrice = product!.Cost
-                };
+                var summUpProduct = new SummUpProduct(RandomNumberGenerator.GetInt32(100), product, 1);
                 SummUpProducts!.Add(summUpProduct);
             }
             else
@@ -83,15 +85,11 @@ namespace Models
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
             var id = product.Id;
+            var summUpProductId = 1;
             var count = FindQuantityProductsInBasket(id);
             if (count == 1)
             {
-                var summUpProduct = new SummUpProduct
-                {
-                    Product = product,
-                    Quantity = 1,
-                    TotalPrice = product!.Cost
-                };
+                var summUpProduct = new SummUpProduct(summUpProductId, product, 1);
                 SummUpProducts!.Remove(summUpProduct);
             }
             else if (count > 1)

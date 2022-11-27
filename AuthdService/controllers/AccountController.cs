@@ -27,7 +27,7 @@ namespace AuthdService.Controllers
         {
             if (_context!.Clients.Count() < 4)
             {
-                _context!.Clients.Add(new User()
+                _context!.Clients.Add(new User(4, 1)
                 {
                     Id = 4,
                     NickName = "TigeroffNew",
@@ -112,8 +112,7 @@ namespace AuthdService.Controllers
         {
             if (ModelState.IsValid)
             {
-                objRegisterModel.CheckName();
-                User? user = new User()
+                User? user = new User(_context!.Clients.Count(), 1)
                 {
                     Id = _context!.Clients.Count(),
                     NickName = objRegisterModel.NickName,

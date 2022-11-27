@@ -28,9 +28,9 @@ namespace Models
     }
     public partial class DeviceType
     {
-        public DeviceType(DeviceTypeEnum typeEntity)
+        public DeviceType(int typeEntity)
         {
-            TypeEntity = typeEntity;
+            TypeEntity = (DeviceTypeEnum)typeEntity;
             Devices = new HashSet<Product>();
         }
         [Key]

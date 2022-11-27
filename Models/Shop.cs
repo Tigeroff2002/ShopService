@@ -12,8 +12,23 @@ namespace Models
         public virtual ICollection<Shipping>? Shippings { get; set; }
         public virtual ICollection<SummUpProduct>? ProductQuantities { get; set; }
 
-        public Shop()
+        public Shop(string name, string address, string workingTime)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException(nameof(name));
+
+            Name = name;
+
+            if (string.IsNullOrWhiteSpace(address))
+                throw new ArgumentException(nameof(address));
+
+            Address = address;
+
+            if (string.IsNullOrWhiteSpace(workingTime))
+                throw new ArgumentException(nameof(workingTime));
+
+            WorkingTime = workingTime;
+
             Shippings = new List<Shipping>();
             ProductQuantities = new List<SummUpProduct>();
         }

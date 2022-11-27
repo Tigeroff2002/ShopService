@@ -31,21 +31,20 @@ namespace Models
             return (Client!.Id, Client!.Basket!.BasketStatusId).GetHashCode();
         }
 
-        public Order()
+        public Order(int shippingType, User? client)
         {
-            Shipping = new Shipping((ShippingType)1);
-            isReadyForConfirmation = default;
-            isReadyForPayment = default;
-            isReadyForShipping = default;
-            CreateOrderWithCurrentBasket();
-        }
+            if (shippingType < 1 || shippingType > 3)
+                throw new ArgumentException(nameof(shippingType));
 
-        public Order(ShippingType type)
-        {
-            Shipping = new Shipping(type);
+            Client = client ?? throw new ArgumentNullException(nameof(client));
+
+            ArgumentNullException.ThrowIfNull(Client.Basket);
+
+            Shipping = new Shipping(shippingType);
             isReadyForConfirmation = default;
             isReadyForPayment = default;
             isReadyForShipping = default;
+
             CreateOrderWithCurrentBasket();
         }
 

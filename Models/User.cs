@@ -4,16 +4,23 @@ namespace Models
 {
     public class User
     {
-        public User()
+        public User(int id, int roleType)
         {
-            Basket = new Basket();
+            if (id < 1)
+                throw new ArgumentException(nameof(id));
+
+            if (roleType < 1 || roleType > 3)
+                throw new ArgumentException(nameof(roleType));
+
+            Id = id;
+            Role = new Role((RoleType)roleType);
             TotalPurchase = 0;
             Discount = 0.00f;
             Orders = new HashSet<Order>();
             Reviews = new HashSet<Review>();
             Notifications = new HashSet<Notification>();
-            Role = new Role((RoleType)1);
         }
+
         [Key]
         public int Id { get; set; }
         public string? NickName { get; set; }

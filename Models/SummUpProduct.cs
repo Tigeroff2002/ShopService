@@ -10,9 +10,21 @@ namespace Models
         public int Quantity { get; set; }
         public float? TotalPrice { get; set; }
 
-        public SummUpProduct()
+        public SummUpProduct(int id, Product? product, int quantity)
         {
-            Id = GetHashCode();
+            if (id <= 0)
+                throw new ArgumentException(nameof(id));
+
+            Id = id;
+
+            Product = product ?? throw new ArgumentNullException(nameof(product));
+
+            if (quantity < 0)
+                throw new ArgumentException(nameof(quantity));
+
+            Quantity = quantity;
+
+            TotalPrice = CalculateSummUpPrice();
         }
         public override bool Equals(object? obj)
         {
@@ -38,9 +50,9 @@ namespace Models
             return (Product!.Id, Quantity).GetHashCode();
         }
 
-        public void RecalculateSummUpPrice()
+        public float CalculateSummUpPrice()
         {
-            TotalPrice = Product!.Cost * Quantity;
+            return Product!.Cost * Quantity;
         }
     }
 }
