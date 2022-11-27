@@ -40,7 +40,7 @@ namespace Models
 
             ArgumentNullException.ThrowIfNull(Client.Basket);
 
-            Shipping = new Shipping((ShippingType)shippingType);
+            Shipping = new Shipping(shippingType);
             isReadyForConfirmation = default;
             isReadyForPayment = default;
             isReadyForShipping = default;

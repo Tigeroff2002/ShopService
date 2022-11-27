@@ -74,9 +74,9 @@ namespace Models.Tests
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
 
-        [Fact(DisplayName = $"{nameof(Product)} (s) can be compared correctly")]
+        [Fact(DisplayName = $"{nameof(Product)} (s) can be compared correctly with false result")]
         [Trait("Category", "Unit")]
-        public void ProductsCanBeComparedCorrectly()
+        public void ProductsCanBeComparedCorrectlyWithFalse()
         {
             // Arrange
             var id1 = 1;
@@ -90,6 +90,26 @@ namespace Models.Tests
 
             // Assert
             product1.Equals(product2).Should().BeFalse();
+        }
+
+        [Fact(DisplayName = $"{nameof(Product)} (s) can be compared correctly with true result")]
+        [Trait("Category", "Unit")]
+        public void ProductsCanBeComparedCorrectlyWithTrue()
+        {
+            // Arrange
+            var id1 = 1;
+            var id2 = 1;
+            var producerMock = new Mock<Producer>();
+
+            var deviceTypeMock1 = new Mock<DeviceType>(1);
+            var deviceTypeMock2 = new Mock<DeviceType>(2);
+
+            // Act
+            var product1 = new Product(id1, deviceTypeMock1.Object, producerMock.Object);
+            var product2 = new Product(id2, deviceTypeMock2.Object, producerMock.Object);
+
+            // Assert
+            product1.Equals(product2).Should().BeTrue();
         }
     }
 }

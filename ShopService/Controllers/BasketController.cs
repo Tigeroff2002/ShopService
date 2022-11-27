@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Data.Contexts;
+using System.Security.Cryptography;
 
 namespace ShopService.Controllers
 {
@@ -54,12 +55,7 @@ namespace ShopService.Controllers
             int count = FindQuantityProductsBasket(id);
             if (count == 0)
                 _context!.Clients.First(x => x.Id == ClientId).Basket!.SummUpProducts!
-                                 .Add(new SummUpProduct 
-                                 {
-                                     Product = product, 
-                                     Quantity = 1, 
-                                     TotalPrice = product!.Cost 
-                                 });
+                                 .Add(new SummUpProduct(RandomNumberGenerator.GetInt32(100), product, 1));
             else
             {
                 _context!.Clients.Where(x => x.Id == ClientId)
@@ -92,18 +88,14 @@ namespace ShopService.Controllers
             if (product == null)
                 return NotFound();
             int count = FindQuantityProductsBasket(id);
+            var summUpProductId = 1;
             if (count < 2)
                 if (count == 0)
                     return BadRequest();
                 else if (count == 1)
                 {
                     _context!.Clients.First(x => x.Id == ClientId).Basket!.SummUpProducts!
-                                     .Remove(new SummUpProduct
-                                     {
-                                        Product = product,
-                                        Quantity = 1,
-                                        TotalPrice = product!.Cost
-                                     });
+                                     .Remove(new SummUpProduct(summUpProductId, product, 1));
                 }
             else
             {

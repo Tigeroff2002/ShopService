@@ -17,6 +17,7 @@ namespace Models.Tests
             // Arrange
             var shippingType = 1;
             var client = new Mock<User>(1, 1).Object;
+            client.Basket = new Basket(1, new User(1, 1));
 
             // Act
             var exception = Record.Exception(() => new Order(shippingType, client));
