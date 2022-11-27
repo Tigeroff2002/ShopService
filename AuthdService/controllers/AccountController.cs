@@ -112,7 +112,6 @@ namespace AuthdService.Controllers
         {
             if (ModelState.IsValid)
             {
-                objRegisterModel.CheckName();
                 User? user = new User(_context!.Clients.Count(), 1)
                 {
                     Id = _context!.Clients.Count(),
