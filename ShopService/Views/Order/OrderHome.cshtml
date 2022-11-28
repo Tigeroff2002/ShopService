@@ -1,4 +1,52 @@
-﻿@page
-@model ShopService.Views.Order.OrderHomeModel
+﻿@using Models
+@model IList<Order>
 @{
+    ViewData["Title"] = "Catalog Page";
 }
+<body class="back">
+    <div class="text-center">
+        <h1>Содержимое вашей корзины: </h1>
+        <h2>Каталог устройств:</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Тип устройства</th>
+                    <th>Название</th>
+                    <th>Производитель</th>
+                    <th>Цена устройства</th>
+                    <th>Кол-во товаров</th>
+                    <th>Общая стоимость группы</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(x => item.Product!.DeviceType!.Name)</td>
+                        <td>@Html.DisplayFor(x => item.Product!.Name)</td>
+                        <td>@Html.DisplayFor(x => item.Product!.Producer!.Name)</td>
+                        <td>@Html.DisplayFor(x => item.Product!.Cost)</td>
+                        <td>@Html.DisplayFor(x => item.Quantity)</td>
+                        <td>@Html.DisplayFor(x => item.TotalPrice)</td>
+                        <td class="link">@Html.ActionLink("Подробнее", "Details", new {Id = item.Product!.Id})</td>
+                        <td class="link">
+                            @Html.ActionLink(
+                        "Удалить единицу товара из корзины",
+                        "RemoveProductFromBasket",
+                        "Basket",
+                        new SummUpProduct
+                        {
+                        Id = 1,
+                        Product = item.Product,
+                        Quantity = item.Quantity - 1
+                        })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <h2>@Html.ActionLink("Очистить корзину", "CleanBasket", "Basket")</h2>
+        <br />
+        <h2>@Html.ActionLink("Создать заказ", "CreateOrder", "Order")<</h2>
+    </div>
+</body>
