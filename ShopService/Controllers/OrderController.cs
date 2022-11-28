@@ -18,7 +18,7 @@ namespace ShopService.Controllers
             _context = context;
         }
 
-        [HttpPost("create/{id:int}")]
+        [HttpPost("createOrder/{id:int}")]
         public IActionResult Create(Order order)
         {
             ArgumentNullException.ThrowIfNull(_context);
@@ -32,7 +32,39 @@ namespace ShopService.Controllers
             return View(order);
         }
 
-        [HttpPut("confirm/{id:int}")]
+        [HttpPut("changeOrder/{id:int}")]
+        public async Task<IActionResult> ChangeOrder(int id, Order? order)
+        {
+            ArgumentNullException.ThrowIfNull(_context);
+
+            if (id != order!.Id)
+                return BadRequest();
+
+            _context.Attach(order);
+
+            _context!.Entry(order).State = EntityState.Modified;
+            await _context!.SaveChangesAsync();
+
+            return Ok(order);
+        }
+
+        [HttpDelete("cancelOrder/{id:int}")]
+        public async Task<ActionResult> CancelOrder(int id)
+        {
+            ArgumentNullException.ThrowIfNull(_context);
+
+            var order = await _context!.Orders.FindAsync(id);
+            if (order == null)
+                return NotFound();
+
+            _context!.Orders.Remove(order);
+
+            await _context!.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("confirmOrder/{id:int}")]
         public IActionResult Confirm(Order order)
         {
             ArgumentNullException.ThrowIfNull(_context);
@@ -46,7 +78,7 @@ namespace ShopService.Controllers
         }
 
 
-        [HttpGet("check/{id:int}")]
+        [HttpGet("getOrder/{id:int}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
             var order = await _context!.Orders.FindAsync(id);
