@@ -37,6 +37,10 @@ namespace ShopService.Controllers
             {
                 Devices = _context.Products.ToList();
             }
+            catch (Microsoft.Data.SqlClient.SqlException)
+            {
+                Devices = new List<Product>();
+            }
             catch (InvalidOperationException)
             {
                 Devices = new List<Product>();

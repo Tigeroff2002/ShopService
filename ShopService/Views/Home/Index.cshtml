@@ -6,6 +6,16 @@
 <body class="back">
     <div class="text-center">
     <h1>Электронный магазин компьютерной техники: </h1>
+        <div class="text-lg-start">
+            <h5>@Html.ActionLink("Открыть корзину", "BasketPage", "Basket")</h5>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-dark display-6" asp-area=""
+                       asp-controller="basket"
+                       asp-action="getBasket">Открытие корзины</a>
+                </li>
+            </ul>
+        </div>
     <h2>Каталог устройств:</h2>
     <table class="table">
         <thead>
@@ -14,11 +24,6 @@
                 <th>Название</th>
                 <th>Производитель</th>
                 <th>Цена устройства</th>
-                <th>Размер (дюйм.)</th>
-                <th>Разрешение экрана</th>
-                <th>Камера (мп)</th>
-                <th>Емкость аккумулятора</th>
-                <th>Объем оперативной памяти</th>
             </tr>
         </thead>
         <tbody>
@@ -29,17 +34,24 @@
                     <td>@Html.DisplayFor(x => item.Name)</td>
                     <td>@Html.DisplayFor(x => item.Producer!.Name)</td>
                     <td>@Html.DisplayFor(x => item.Cost)</td>
-                    <td>@Html.DisplayFor(x => item.Size)</td>
-                    <td>@Html.DisplayFor(x => item.ScreenResolution)</td>
-                    <td>@Html.DisplayFor(x => item.CamMp)</td>
-                    <td>@Html.DisplayFor(x => item.AccumCapacity)</td>
-                    <td>@Html.DisplayFor(x => item.RAM)</td>
                     <td class="link">@Html.ActionLink("Подробнее", "Details", new {Id = item.Id})</td>
+                    <td class="link">
+                        @Html.ActionLink(
+                            "Добавить в корзину", 
+                            "AddProductToBasket", "Basket",
+                            new SummUpProduct 
+                            {
+                                Id = 1,
+                                Product = item,
+                                Quantity = 1
+                            })
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
 @if (User.Identity!.IsAuthenticated)
 {
     <div class="text-lg-start">

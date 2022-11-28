@@ -19,7 +19,7 @@ namespace AuthdService.Controllers
 
             _logger.LogInformation("Account Controller was started");
             
-            SeedSomeUserData();
+            //SeedSomeUserData();
         }
 
         [HttpPost("data/add")]

@@ -17,6 +17,10 @@ namespace Models
         public virtual Warehouse? Warehouse { get; set; }
         public virtual Shop? Shop { get; set; }
 
+        public Shipping()
+        {
+
+        }
         public Shipping(int shipType)
         {
             if (shipType < 1 || shipType > 3)

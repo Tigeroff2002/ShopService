@@ -15,20 +15,9 @@ namespace Models
         public bool isReadyForPayment { get; set; } = false;
         public bool isReadyForShipping { get; set; } = false;
 
-        public bool Equals(Order? order)
+        public Order()
         {
-            if (order == null)
-                return false;
-            return GetHashCode() == order.GetHashCode() && Client!.Basket!.Equals(order!.Client!.Basket);
-        }
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as Order);
-        }
-        public override int GetHashCode()
-        {
-            return (Client!.Id, Client!.Basket!.BasketStatusId).GetHashCode();
         }
 
         public Order(int shippingType, User? client)
@@ -46,6 +35,22 @@ namespace Models
             isReadyForShipping = default;
 
             CreateOrderWithCurrentBasket();
+        }
+
+        public bool Equals(Order? order)
+        {
+            if (order == null)
+                return false;
+            return GetHashCode() == order.GetHashCode() && Client!.Basket!.Equals(order!.Client!.Basket);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Order);
+        }
+        public override int GetHashCode()
+        {
+            return (Client!.Id, Client!.Basket!.BasketStatusId).GetHashCode();
         }
 
         public void CreateOrderWithCurrentBasket()

@@ -4,6 +4,10 @@ namespace Models
 {
     public class User
     {
+        public User()
+        {
+
+        }
         public User(int id, int roleType)
         {
             if (id < 1)
@@ -48,6 +52,7 @@ namespace Models
         {
             return (Id, EmailAdress).GetHashCode();
         }
+
         public override bool Equals(object? obj)
         {
             if (obj == null)

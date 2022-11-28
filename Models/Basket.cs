@@ -12,6 +12,10 @@ namespace Models
         public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
         public float? TotalCost { get; private set; }
 
+        public Basket()
+        {
+
+        }
         public Basket(int statusId, User? client)
         {
             if (statusId <= 0)

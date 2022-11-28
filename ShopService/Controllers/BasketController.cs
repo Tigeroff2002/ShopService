@@ -8,7 +8,7 @@ namespace ShopService.Controllers
 {
     [Route("api/basket")]
     [ApiController]
-    public class BasketController : ControllerBase
+    public class BasketController : Controller
     {
         private readonly ILogger<BasketController> _logger;
         private readonly RetailStoreDataContext? _context;
@@ -19,7 +19,7 @@ namespace ShopService.Controllers
             _context = context;
         }
 
-        [HttpGet("{clientId}")]
+        [HttpGet("getBasket")]
         public async Task<ActionResult<Basket>> GetBasket(int clientId)
         {
             var user = await _context!.Clients.FindAsync(clientId);
@@ -27,15 +27,15 @@ namespace ShopService.Controllers
             if (basket == null)
                 return NotFound();
 
-            return basket;
+            return View(basket);
         }
 
-        [HttpDelete]
+        [HttpDelete("cleanBasket")]
         public async Task<ActionResult> CleanBasket(int clientId)
         {
             _context!.Clients.First(x => x.Id == clientId).Basket!.SummUpProducts!.Clear();
             await _context!.SaveChangesAsync();
-            return NoContent();
+            return View(new Basket());
         }
         
         private int FindQuantityProductsBasket(int id)
@@ -46,7 +46,7 @@ namespace ShopService.Controllers
                 return 0;
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("addProduct/{id}")]
         public async Task<ActionResult<Basket>> AddProductToBasket(int id)
         {
             var product = await _context!.Products.FindAsync(id);
@@ -81,7 +81,7 @@ namespace ShopService.Controllers
             return CreatedAtAction("GetProductItem", new { id = product!.Id }, product);
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("removeProduct/{id}")]
         public async Task<ActionResult<Basket>> RemoveProductFromBasket(int id)
         {
             var product = await _context!.Products.FindAsync(id);

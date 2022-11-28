@@ -28,6 +28,10 @@ namespace Models
     }
     public partial class DeviceType
     {
+        public DeviceType()
+        {
+
+        }
         public DeviceType(int typeEntity)
         {
             TypeEntity = (DeviceTypeEnum)typeEntity;

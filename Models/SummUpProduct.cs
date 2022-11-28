@@ -10,6 +10,10 @@ namespace Models
         public int Quantity { get; set; }
         public float? TotalPrice { get; set; }
 
+        public SummUpProduct()
+        {
+
+        }
         public SummUpProduct(int id, Product? product, int quantity)
         {
             if (id <= 0)

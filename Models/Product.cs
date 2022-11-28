@@ -4,6 +4,11 @@ namespace Models
 {
     public class Product : IEquatable<Product>
     {
+        public Product()
+        {
+
+        }
+
         public Product(int id, DeviceType deviceType, Producer producer)
         {
             if (id <= 0)
