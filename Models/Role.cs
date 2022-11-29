@@ -20,6 +20,21 @@ namespace Models
         public Role(RoleType roleType)
         {
             RoleType = roleType;
+            switch (roleType)
+            {
+                case RoleType.Admin:
+                    RoleCaption = "Administrator";
+                    break;
+
+                case RoleType.Manager:
+                    RoleCaption = "Manager";
+                    break;
+
+                case RoleType.AuthUser:
+                    RoleCaption = "User";
+                    break;
+
+            }
             Options = new List<Option>();
         }
     }

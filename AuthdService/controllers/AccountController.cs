@@ -51,9 +51,22 @@ namespace AuthdService.Controllers
             return View("Login", objLoginModel);
         }
 
-        [HttpPost("postlogin")]
-        public async Task<IActionResult> Login(LoginModel objLoginModel)
+        public async Task<ActionResult> LoginPost(
+            string nickName,
+            string password)
         {
+            if (string.IsNullOrEmpty(nickName))
+            {
+                throw new ArgumentException(nameof(nickName));
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentException(nameof(password));
+            }
+
+            Views.Account.LoginModel objLoginModel = new Views.Account.LoginModel { NickName = nickName, Password = password };
+
             if (ModelState.IsValid)
             {
                 var user = _context!.Clients!
@@ -64,15 +77,16 @@ namespace AuthdService.Controllers
 
                 if (user == null)
                 {
-                    ViewBag.Message = "Invalid Credential";
-                    return Redirect("http://www.example.com");
+                    ViewBag.Message = "Such user was not registered in system yet";
+                    return View("Register", new Views.Account.RegisterModel());
                 }
                 else
                 {
                     var claims = new List<Claim>() {
                     new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user.Id)),
-                        new Claim(ClaimTypes.Name, user.NickName!),
+                        new Claim(ClaimTypes.Name, user!.EmailAdress!),
                         new Claim(ClaimTypes.Role, user!.Role!.RoleCaption!)};
+
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                     var principal = new ClaimsPrincipal(identity);
@@ -84,11 +98,11 @@ namespace AuthdService.Controllers
 
                     _logger!.LogInformation("User was successfuly authorized!");
 
-                    return Redirect("http://www.example.com");
+                    return View("Index1");
                 }
             }
 
-            return Redirect("http://www.example.com");
+            return View("Index1");
         }
 
         [HttpGet("logout")]
@@ -98,19 +112,33 @@ namespace AuthdService.Controllers
 
             _logger!.LogInformation("User was successfuly unauthorized!");
 
-            return LocalRedirect("/");
+            return View("Login", new Views.Account.LoginModel());
         }
 
         [HttpGet("register")]
         public async Task<ActionResult> Register()
         {
-            RegisterModel objRegisterModel = new();
+            Views.Account.RegisterModel objRegisterModel = new();
             return View("Register", objRegisterModel);
         }
 
-        [HttpPost("postregister")]
-        public async Task<IActionResult> Register(RegisterModel objRegisterModel)
+        [HttpGet("postregister")]
+        public async Task<IActionResult> RegisterPost(
+            string email,
+            string nickName,
+            int roleType,
+            string contactNumber,
+            string password,
+            string confirmPassword)
         {
+            Views.Account.RegisterModel objRegisterModel = new (
+                email,
+                nickName,
+                roleType,
+                contactNumber,
+                password,
+                confirmPassword);
+
             if (ModelState.IsValid)
             {
                 User? user = new User(_context!.Clients.Count(), 1)
@@ -124,19 +152,25 @@ namespace AuthdService.Controllers
                     Discount = 0f,
                     Role = new Role(RoleType.AuthUser)
                 };
+
                 if (user != null)
                 {
                     if (CheckCurrentUserExistenseId(user) == -1)
                         _context!.Clients.Add(user);
                     else
                     {
+                        ViewBag.Message = "Such user have already registered in system";
                         _logger!.LogInformation("User with these data was found in system!");
-                        var objLoginModel = new LoginModel(user.EmailAdress!, user.Password!);
-                        return View(Login(objLoginModel));
+                        return View("Login", new Views.Account.LoginModel());
                     }
+
+                    ArgumentNullException.ThrowIfNull(user!.EmailAdress);
+
+                    ArgumentNullException.ThrowIfNull(user!.Role.RoleCaption);
+
                     var claims = new List<Claim>() {
-                    new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user.Id)),
-                        new Claim(ClaimTypes.Name, user.NickName!),
+                    new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user!.Id)),
+                        new Claim(ClaimTypes.Name, user!.EmailAdress!),
                         new Claim(ClaimTypes.Role, user!.Role!.RoleCaption!)};
 
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -150,15 +184,16 @@ namespace AuthdService.Controllers
 
                     _logger!.LogInformation("User was successfuly registered in system!");
 
-                    return LocalRedirect(objRegisterModel!.ReturnUrl!);
+                    return View("Index1");
                 }
                 else
                 {
                     ViewBag.Message = "Invalid Credential";
-                    return View(objRegisterModel);
+                    return View("Register", new Views.Account.RegisterModel());
                 }
             }
-            return View(objRegisterModel);
+
+            return View("Index1");
         }
 
         private int CheckCurrentUserExistenseId(User? user)

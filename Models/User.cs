@@ -43,14 +43,12 @@ namespace Models
         {
             if (user == null)
                 return false;
-            if (GetHashCode() != user.GetHashCode())
-                return false;
-            return true;
+            return user.EmailAdress == EmailAdress;
         }
 
         public override int GetHashCode()
         {
-            return (Id, EmailAdress).GetHashCode();
+            return (EmailAdress!).GetHashCode();
         }
 
         public override bool Equals(object? obj)
