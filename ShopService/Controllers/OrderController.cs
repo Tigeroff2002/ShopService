@@ -18,18 +18,19 @@ namespace ShopService.Controllers
             _context = context;
         }
 
-        [HttpPost("createOrder/{id:int}")]
-        public IActionResult Create(Order order)
+        [HttpGet("createOrder")]
+        public async Task<ActionResult> CreateOrder()
         {
             ArgumentNullException.ThrowIfNull(_context);
-
-            if (ModelState.IsValid)
+            /*
+               if (ModelState.IsValid)
             {
                 _context.Orders.Add(order);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(order);
+             */
+            return View("OrderHome", new Order());
         }
 
         [HttpPut("changeOrder/{id:int}")]

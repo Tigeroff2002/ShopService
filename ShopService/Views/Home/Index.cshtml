@@ -7,14 +7,24 @@
     <div class="text-center">
     <h1>Электронный магазин компьютерной техники: </h1>
         <div class="text-lg-start">
-            <h5>@Html.ActionLink("Открыть корзину", "BasketPage", "Basket")</h5>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-dark display-6" asp-area=""
-                       asp-controller="basket"
-                       asp-action="getBasket">Открытие корзины</a>
-                </li>
-            </ul>
+            <table align="right">
+                <thead>
+                    <tr>
+                        <th align="right">
+                            <h4>
+                                 <input type="button" value="Открыть корзину" 
+                                         onclick="location.href='@Url.Action("CleanBasket", "Basket")'" />
+                            </h4>
+                        </th>
+                        <th align="right">
+                            <h4>
+                                <input type="button" value="Войти/Зарегистрироваться" 
+                                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                            </h4>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     <h2>Каталог устройств:</h2>
     <table class="table">
@@ -24,6 +34,8 @@
                 <th>Название</th>
                 <th>Производитель</th>
                 <th>Цена устройства</th>
+                <th>Информация о товаре</th>
+                <th>В корзину</th>
             </tr>
         </thead>
         <tbody>
@@ -34,17 +46,13 @@
                     <td>@Html.DisplayFor(x => item.Name)</td>
                     <td>@Html.DisplayFor(x => item.Producer!.Name)</td>
                     <td>@Html.DisplayFor(x => item.Cost)</td>
-                    <td class="link">@Html.ActionLink("Подробнее", "Details", new {Id = item.Id})</td>
+                    <td class="link">                   
+                    <input type="button" value="Подробнее" 
+                        onclick="location.href='@Url.Action("Details", "Home", new {id = item.Id})'" />          
+                   </td>
                     <td class="link">
-                        @Html.ActionLink(
-                            "Добавить в корзину", 
-                            "AddProductToBasket", "Basket",
-                            new SummUpProduct 
-                            {
-                                Id = 1,
-                                Product = item,
-                                Quantity = 1
-                            })
+                    <input type="button" value="Добавить в корзину" 
+                        onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = item.Id, count = 1})'" />   
                     </td>
                 </tr>
             }

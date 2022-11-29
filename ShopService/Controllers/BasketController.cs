@@ -23,19 +23,25 @@ namespace ShopService.Controllers
         public async Task<ActionResult<Basket>> GetBasket(int clientId)
         {
             var user = await _context!.Clients.FindAsync(clientId);
-            var basket = user!.Basket!;
-            if (basket == null)
+            if (user == null)
+            {
+                user = new User(1, 1);
+                var basket = user.Basket = new Basket(1, user);
+                return View(basket);
+            }
+            var existedBasket = user!.Basket!;
+            if (existedBasket == null)
                 return NotFound();
 
-            return View(basket);
+            return View("BasketPage", existedBasket);
         }
 
-        [HttpDelete("cleanBasket")]
-        public async Task<ActionResult> CleanBasket(int clientId)
+        [HttpGet("cleanBasket")]
+        public async Task<ActionResult> CleanBasket()
         {
-            _context!.Clients.First(x => x.Id == clientId).Basket!.SummUpProducts!.Clear();
-            await _context!.SaveChangesAsync();
-            return View(new Basket());
+            //_context!.Clients.First(x => x.Id == clientId).Basket!.SummUpProducts!.Clear();
+            //await _context!.SaveChangesAsync();
+            return View("BasketPage", new Basket());
         }
         
         private int FindQuantityProductsBasket(int id)
@@ -46,39 +52,41 @@ namespace ShopService.Controllers
                 return 0;
         }
 
-        [HttpPost("addProduct/{id}")]
-        public async Task<ActionResult<Basket>> AddProductToBasket(int id)
+        public async Task<ActionResult<Basket>> AddProductToBasket(int id, int count)
+        {
+            var group = await TryAddProductToBasket(id, count);
+
+            if (group == null)
+            {
+                return View("BasketPage", new Basket());
+            }
+
+            var basket = new Basket
+            {
+                BasketStatusId = 1,
+                SummUpProducts = new HashSet<SummUpProduct>(),
+                TotalCost = group.TotalPrice
+            };
+
+            basket.SummUpProducts.Add(group);
+
+            return View("BasketPage", basket);
+        }
+
+        private async Task<SummUpProduct> TryAddProductToBasket(int id, int count)
         {
             var product = await _context!.Products.FindAsync(id);
             if (product == null)
-                return NotFound();
-            int count = FindQuantityProductsBasket(id);
-            if (count == 0)
-                _context!.Clients.First(x => x.Id == ClientId).Basket!.SummUpProducts!
-                                 .Add(new SummUpProduct(RandomNumberGenerator.GetInt32(100), product, 1));
-            else
+                return null!;
+            var summUpProduct = new SummUpProduct
             {
-                _context!.Clients.Where(x => x.Id == ClientId)
-                             .ToList()
-                             .Select(x => { x.Basket!.SummUpProducts!.First(x => x.Product!.Id == id).Quantity = ++count; return x; });
-            }
-            _context!.Entry(product).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientExists(ClientId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }     
-            }
-            return CreatedAtAction("GetProductItem", new { id = product!.Id }, product);
+                Id = 1,
+                Product = product,
+                Quantity = count,
+                TotalPrice = product.Cost * count
+            };
+            return summUpProduct;
+
         }
 
         [HttpPost("removeProduct/{id}")]

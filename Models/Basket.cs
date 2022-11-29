@@ -6,11 +6,11 @@ namespace Models
     [PrimaryKey(nameof(BasketStatusId), nameof(ClientId))]
     public class Basket
     {
-        public int BasketStatusId { get; private set; }
+        public int BasketStatusId { get; set; }
         public int ClientId { get; set; }
         public virtual User? Client { get; set; }
         public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
-        public float? TotalCost { get; private set; }
+        public float? TotalCost { get; set; }
 
         public Basket()
         {

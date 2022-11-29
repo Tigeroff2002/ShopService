@@ -7,7 +7,6 @@
 <div class="text-center">
     <h1>Электронный магазин компьютерной техники: </h1>
     <h2>Подробная информация об устройстве:</h2>
-    <h6 class="text-left">@Html.ActionLink("Назад", "Index")</h6>
     <table class="table">
         <thead>
             <tr>
@@ -65,5 +64,23 @@
                     }
                 </tr>    
         </tbody>
+    </table>
+    <table>
+        <thead>
+        <tr>
+            <th>
+                <h4>
+                    <input type="button" value="Добавить в корзину" 
+                        onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = Model.Id})'" />   
+                </h4>
+            </th>
+            <th>
+                <h4>
+                    <input type="button" value="Назад на главную" 
+                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                </h4>
+            </th>
+        </tr>
+        </thead>
     </table>
 </div>

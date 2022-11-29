@@ -1,11 +1,26 @@
 ﻿@using Models
-@model IList<Basket>
+@model Basket
 @{
     ViewData["Title"] = "Catalog Page";
 }
 <body class="back">
     <div class="text-center">
-        <h1>Содержимое вашей корзины: </h1>
+    @{var item = Model; }
+    @{var groups = item.SummUpProducts!;}
+    @if (groups == null)
+    {
+        <div>
+            <h4>
+                Корзина пуста
+            </h4>
+            <br>
+            <input type="button" value="Назад на главную" 
+                   onclick="location.href='@Url.Action("Index", "Home")'" />
+        </div>
+    }
+    @if (groups is not null)
+        {
+                    <h1>Содержимое вашей корзины: </h1>
         <h2>Каталог устройств:</h2>
         <table class="table">
             <thead>
@@ -20,9 +35,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
-                {
-                    var groups = item.SummUpProducts!;
+
                     @foreach(var group in groups)
                     {
                         var i = 0;
@@ -34,18 +47,17 @@
                             <td>@Html.DisplayFor(x => group.Product!.Cost)</td>
                             <td>@Html.DisplayFor(x => group.Quantity)</td>
                             <td>@Html.DisplayFor(x => group.TotalPrice)</td>
-                            <td class="link">@Html.ActionLink("Подробнее", "Details", new {Id = group.Product!.Id})</td>
+                            <td class="link">                    
+                                <input type="button" value="Подробнее" 
+                                    onclick="location.href='@Url.Action("Details", "Home", new {id = group.Product!.Id})'" />
+                                </td>
                             <td class="link">
-                                @Html.ActionLink(
-                        "Удалить единицу товара из корзины",
-                        "RemoveProductFromBasket",
-                        "Basket",
-                        new SummUpProduct
-                        {
-                        Id = 1,
-                        Product = group.Product,
-                        Quantity = group.Quantity - 1
-                        })
+                             <input type="button" value="+" 
+                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = group.Product!.Id, count = 2})'" />   
+                            </td>
+                            <td class="link">
+                            <input type="button" value="-" 
+                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = group.Product!.Id, count = 0})'" />   
                             </td>
                         </tr>
                     }
@@ -58,11 +70,17 @@
                         <th></th>
                         <th>@Html.DisplayFor(x => item.TotalCost)</th>
                     </tr>
-                }
             </tbody>
         </table>
-        <h2>@Html.ActionLink("Очистить корзину", "CleanBasket", "Basket")</h2>
+        <h5>
+            <input type="button" value="Очистить корзину" 
+                  onclick="location.href='@Url.Action("CleanBasket", "Basket")'" />
+            </h5>
         <br />
-        <h2>@Html.ActionLink("Создать заказ", "CreateOrder", "Order")<</h2>
+        <h5>
+            <input type="button" value="Создать заказ" 
+                  onclick="location.href='@Url.Action("CreateOrder", "Order")'" />
+        </h5>
+        }
     </div>
 </body>

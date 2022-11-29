@@ -48,15 +48,15 @@ namespace ShopService.Controllers
             return View(Devices);
         }
 
-        [HttpGet("{id:int}")]
-        public IActionResult Details(int? Id)
+        [HttpGet("Details/{id:int}")]
+        public IActionResult Details(int? id)
         {
-            if (Id is null)
+            if (id == null)
                 return BadRequest("Некорректный ресурс!");
-            Product? device = _context!.Products.FirstOrDefault(x => x.Id == Id);
+            Product? device = _context!.Products.FirstOrDefault(x => x.Id == id);
             if (device is null)
                 return NotFound("Устройство не найдено!");
-            return View(device);
+            return View("Details", device);
         }
 
         [HttpPost("{id:int}")]

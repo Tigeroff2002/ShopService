@@ -1,12 +1,12 @@
 ﻿@using Models
-@model ShopService.Views.Order.OrderHomeModel
+@model Order
 @{
     ViewData["Title"] = "Catalog Page";
 }
 <body class="back">
     <div class="text-center">
-        <h1>Содержимое вашей корзины: </h1>
-        <h2>Каталог устройств:</h2>
+        <h5>Содержимое вашей корзины: </h5>
+        <h5>Каталог устройств:</h5>
         <table class="table">
             <thead>
 
@@ -15,8 +15,9 @@
               
             </tbody>
         </table>
-        <h2>@Html.ActionLink("Отложить создание заказа", "GetBasket", "Basket")</h2>
-        <br />
-        <h2>@Html.ActionLink("Отменить заказ", "CreateOrder", "Order")<</h2>
+        <h4>
+            <input type="button" value="Отменить заказ" 
+                  onclick="location.href='@Url.Action("CleanBasket", "Basket")'" />
+        </h4>
     </div>
 </body>
