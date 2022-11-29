@@ -44,17 +44,11 @@ namespace AuthdService.Controllers
         }
 
         [HttpGet("login")]
-        public IActionResult Login()
+        public async Task<ActionResult> Login()
         {
-            LoginModel objLoginModel = new LoginModel();
-            return View(objLoginModel);
-        }
-
-        [HttpGet("register")]
-        public IActionResult Register()
-        {
-            RegisterModel objRegisterModel = new RegisterModel();
-            return View(objRegisterModel);
+            AuthdService.Views.Account.LoginModel objLoginModel = new ();
+            //return View("Login", objLoginModel);
+            return View("Login", objLoginModel);
         }
 
         [HttpPost("postlogin")]
@@ -105,6 +99,13 @@ namespace AuthdService.Controllers
             _logger!.LogInformation("User was successfuly unauthorized!");
 
             return LocalRedirect("/");
+        }
+
+        [HttpGet("register")]
+        public async Task<ActionResult> Register()
+        {
+            RegisterModel objRegisterModel = new();
+            return View("Register", objRegisterModel);
         }
 
         [HttpPost("postregister")]

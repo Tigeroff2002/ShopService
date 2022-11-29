@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace AuthdService.Views
+namespace AuthdService.Views.Account
 {
-    public class RegisterModel : PageModel
+    public class IndexModel : PageModel
     {
-        public RegisterModel()
-        {
-        }
         public void OnGet()
         {
         }

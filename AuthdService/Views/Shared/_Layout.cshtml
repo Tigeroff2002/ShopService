@@ -26,12 +26,14 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Shared/PrivateData">PrivateData</a>
                         </li>
                     </ul>
-        <ul>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-page="~/Views/Home/Register">Register</a>
+        <ul class="d-table">
+            <li class="btn">
+                <input type="button" value="Зарегистрироваться" 
+                       onclick="location.href='@Url.Action("Register", "Account")'" />
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-page="~/Views/Home/Login">Login</a>
+            <li class="btn">
+                <input type="button" value="Войти" 
+                      onclick="location.href='@Url.Action("Login", "Account")'" />
             </li>
         </ul>
                 </div>
