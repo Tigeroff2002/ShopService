@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 
 namespace Models
 {
@@ -7,6 +8,7 @@ namespace Models
         [Key]
         public int Id { get; set; }
         public string? Name { get; set; }
+        public string? Address { get; set; }
         public virtual ICollection<Shipping>? Shippings { get; set; }
         public virtual ICollection<SummUpProduct>? ProductQuantities { get; set; }
 
@@ -24,6 +26,11 @@ namespace Models
             if (quantity > 0)
                 return true;
             return false;
+        }
+
+        public bool TakeShipFrom()
+        {
+            return RandomNumberGenerator.GetInt32(2) == 0;
         }
     }
 }

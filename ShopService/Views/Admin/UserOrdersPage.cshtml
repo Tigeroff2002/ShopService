@@ -15,14 +15,19 @@
         </h4>
     </div>
     }
-        
+      
+    @{var i = 0;}
     @if(users.Count > 0)
     {
         @Html.DisplayName($"Пользователей в системе : {users.Count}")
-        <br />
+            <br />
         @foreach(var user in users)
         {
             <div>
+                <h4>
+                    @Html.DisplayName($"Пользователь # {i++} по имени {user.NickName} :")
+                </h4>
+                <br>
             <table>
                 <tr>
                     <th>Номер заказа</th>

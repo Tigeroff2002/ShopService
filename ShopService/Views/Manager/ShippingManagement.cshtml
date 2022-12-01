@@ -1,5 +1,84 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Models
+@model IList<Warehouse>
 @{
+    ViewData["Title"] = "Management Shipping from Warehouses Page";
 }
+<body class="back">
+<div class="text-center">
+@{var warehouses = Model;}
+
+    <div>
+        <h4>Введите номер магазина, с которым вы работаете: </h4>
+        <input type="number" name="shopNumber" class="form-control"/>
+        <br />
+        <input type="button" value="Выбрать" 
+            onclick="location.href='@Url.Action("ManagerPageShow", "Home")'" />
+    </div>
+
+    @if (warehouses.Count == 0)
+    {
+    <div>
+        <h4>
+            Нет доступных складов для просмотра
+        </h4>
+    </div>
+    }
+
+    @{var i = 0;}
+    @if(warehouses.Count > 0)
+    {
+        @Html.DisplayName($"Доступных складов : { warehouses.Count}")
+        <br />
+        @foreach(var house in warehouses)
+        {
+            <div>
+                <h4>
+                    @Html.DisplayName($"Склад # {i++} по адресу {house.Address} :")
+                </h4>
+                <br>
+            <table>
+                <tr>
+                    <th>Номер набора</th>
+                    <th>Название товара</th>
+                    <th>Количество товаров</th>
+                    <th>Действие</th>
+                </tr>
+                @if(house.ProductQuantities!.Count == 0)
+                {
+                    <tr>
+                        На складе отсутствуют наборы товаров
+                    </tr>
+                }
+                @{var number = 0;}
+                @foreach(var group in house.ProductQuantities)
+                {
+                    <tr>
+                        <th>@Html.DisplayName($"{++number}")</th>
+                        <th>@Html.DisplayFor(x => group.Product!.Name)</th>
+                        <th>@Html.DisplayFor(x => group.Quantity)</th>
+                        <th>
+                            @if(number % 2 == 0)
+                            {
+                                <input type="button" value="Заказать" 
+                                    onclick="location.href='@Url.Action("PullShip", "Shop")'" />
+                            }
+                            @if(number % 2 == 1)
+                            {
+                                <input type="button" value="Отозвать" 
+                                    onclick="location.href='@Url.Action("PushShip", "Shop")'" />
+                            }
+                        </th>
+                    </tr>
+                }
+            </table>
+            </div>
+            }            
+        }
+        </div>
+
+        <div>
+             <input type="button" value="Назад на главную" 
+                   onclick="location.href='@Url.Action("Index", "Home")'" />
+        </div>
+
+</body>
