@@ -1,10 +1,36 @@
 ﻿@using Models
-@model IList<Product>
+@model Tuple<IList<Product>, User>
 @{
     ViewData["Title"] = "Catalog Page";
 }
+
+        @{
+            var list = Model.Item1;
+            var user = Model.Item2;
+        }
+
 <body class="back">
     <div class="text-center">
+        <div>
+        @if (user == null)
+        {
+            <h4>Вы новый пользователь</h4>
+        }
+        @if (user!.Role!.RoleType == RoleType.AuthUser)
+        {
+            <h4>Вы выполнили вход под своей обычной учётной записью</h4>
+        }
+        @if (user.Role.RoleType == RoleType.Admin)
+        {
+            <h4>Вы выполнили вход под учётной записью администратора</h4>
+        }
+        @if (user.Role.RoleType == RoleType.Manager)
+        {
+            <h4>Вы выполнили вход под учётной записью менеджера</h4>
+        }
+        </div>
+        <br />
+
     <h1>Электронный магазин компьютерной техники: </h1>
         <div class="text-lg-start">
             <table align="right">
@@ -22,11 +48,21 @@
                                         onclick="location.href='@Url.Action("Index", "Home")'" />
                             </h4>
                         </th>
+                        <th align="right">
+                            <h4>
+                                @if (user.Role!.RoleType == RoleType.AuthUser)
+                                {
+                                    <input type="button" value="Выйти из аккаунта" 
+                                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                                }
+                            </h4>
+                        </th>
                     </tr>
                 </thead>
             </table>
         </div>
-    <h2>Каталог устройств:</h2>
+
+        <h2>Каталог устройств:</h2>
     <table class="table">
         <thead>
             <tr>
@@ -39,7 +75,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(var item in Model)
+            @foreach(var item in list)
             {
                 <tr>
                     <td>@Html.DisplayFor(x => item.DeviceType!.Name)</td>
@@ -60,19 +96,21 @@
     </table>
 </div>
 
-@if (User.Identity!.IsAuthenticated)
-{
+    @if (user.Role.RoleType == RoleType.Admin)
+    {
     <div class="text-lg-start">
-        <h5>@Html.ActionLink("Добавить новое устройство", "Create")</h5>
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-                <a class="nav-link text-dark display-6" asp-area="" 
-                    asp-controller="Account" 
-                    asp-action="Logout">Logout</a>
-            </li>
-       </ul>
+    <input type="button" value="Страница пользователей с заказами" 
+        onclick="location.href='@Url.Action("AdminPageShow", "Home")'" />      
     </div>    
-}
+    }
+
+    @if (user.Role.RoleType == RoleType.Manager)
+    {
+    <div class="text-lg-start">
+    <input type="button" value="Страница заказа доставок со складов" 
+        onclick="location.href='@Url.Action("ManagerPageShow", "Home")'" />      
+    </div>    
+    }
 
 </body>
 
