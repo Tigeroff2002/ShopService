@@ -1,4 +1,107 @@
-﻿@page
-@model ShopService.Views.Admin.UserOrdersPageModel
+﻿@using Models
+@model IList<User>
 @{
+    ViewData["Title"] = "Users Order Page";
 }
+<body class="back">
+<div class="text-center">
+@{var users = Model;}
+
+    @if (users.Count == 0)
+    {
+    <div>
+        <h4>
+        Пользователей в базе нет
+        </h4>
+    </div>
+    }
+        
+    @if(users.Count > 0)
+    {
+        @Html.DisplayName($"Пользователей в системе : {users.Count}")
+        <br />
+        @foreach(var user in users)
+        {
+            <div>
+            <table>
+                <tr>
+                    <th>Номер заказа</th>
+                    <th>Содержимое заказа</th>
+                    <th>Стоимость заказа</th>
+                    <th>Дата создания заказа</th>
+                    <th>Готовность заказа</th>
+                    <th>Дата истечения срока хранения заказа</th>
+                    <th>Заказ получен?</th>
+                    <th>Действие</th>
+                </tr>
+                @if(user.Orders.Count == 0)
+                {
+                    <tr>
+                        У пользователя заказов нет
+                    </tr>
+                }
+                @{var number = 0;}
+                @foreach(var order in user.Orders)
+                {
+                    <tr>
+                        <th>@Html.DisplayName($"{++number}")</th>
+                        <th>@Html.DisplayFor(x => order.OrderDescription)</th>
+                        <th>@Html.DisplayFor(x => order.ResultCost)</th>
+                        <th>@Html.DisplayFor(x => order.OrderDate)</th>
+                        <th>
+                            @if(order.isReadyForGetting)
+                            {
+                                @Html.DisplayName("Готов к выдаче")
+                            }
+                            @if(!order.isReadyForGetting && order.isReadyForPayment)
+                            {
+                                @Html.DisplayName("Готов к оплате")
+                            }
+                            @if(!order.isReadyForGetting && !order.isReadyForPayment && order.isReadyForConfirmation)
+                            {
+                                @Html.DisplayName("Готов к подтверждению")
+                            }
+                            @if(!order.isReadyForGetting && !order.isReadyForPayment && !order.isReadyForConfirmation)
+                            {
+                                @Html.DisplayName("Заказ отменился")
+                            }
+                        </th>
+                        <th>@Html.DisplayFor(x => order.ShippedDate)</th>
+                            @if(order.isGot)
+                            {
+                                <th>@Html.DisplayName("Заказ получен") </th>
+                                <th>            
+                                    <input type="button" value="Удалить заказ" 
+                                        onclick="location.href='@Url.Action("DeleteOrder", "Order")'" />
+                                </th>
+                            }
+                            @if(!order.isGot && order.ShippedDate < DateTime.Now)
+                            {
+                                <th>@Html.DisplayName("Заказ истек") </th>
+                                <th>            
+                                    <input type="button" value="Отменить заказ" 
+                                        onclick="location.href='@Url.Action("CancelOrder", "Order")'" />
+                                </th>
+                            }
+                            @if(!order.isGot && order.ShippedDate >= DateTime.Now)
+                            {
+                                <th>@Html.DisplayName("Заказ ожидает действия пользователя") </th>
+                                <th>            
+                                    <input type="button" value="Отменить заказ" 
+                                        onclick="location.href='@Url.Action("CallOrder", "Order")'" />
+                                </th>
+                            }
+                    </tr>
+                }
+            </table>
+            </div>
+            }            
+        }
+        </div>
+
+        <div>
+             <input type="button" value="Назад на главную" 
+                   onclick="location.href='@Url.Action("Index", "Home")'" />
+        </div>
+
+</body>

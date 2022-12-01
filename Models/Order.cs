@@ -7,13 +7,18 @@ namespace Models
         [Key]
         public int Id { get; set; }
         public virtual User? Client { get; set; }
+        public virtual IList<SummUpProduct> SummUpProducts { get; set; }
         public float? ResultCost { get; set; }
         public virtual Shipping? Shipping { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime ShippedDate { get; set; }
         public bool isReadyForConfirmation { get; set; } = false;
         public bool isReadyForPayment { get; set; } = false;
-        public bool isReadyForShipping { get; set; } = false;
+        public bool isReadyForGetting { get; set; } = false;
+
+        public bool isGot { get; set; } = false;
+
+        public string? OrderDescription { get; set; }
 
         public Order()
         {
@@ -32,9 +37,11 @@ namespace Models
             Shipping = new Shipping(shippingType);
             isReadyForConfirmation = default;
             isReadyForPayment = default;
-            isReadyForShipping = default;
+            isReadyForGetting = default;
 
             CreateOrderWithCurrentBasket();
+
+            OrderDescription = CreateDescription();
         }
 
         public bool Equals(Order? order)
@@ -71,7 +78,17 @@ namespace Models
         public void PayConfirmedOrder()
         {
             // Actions for Paying Order
-            isReadyForShipping = true;
+            isReadyForGetting = true;
+        }
+
+        public string CreateDescription()
+        {
+            var s = "";
+            foreach(var group in SummUpProducts)
+            {
+                s += $" Тип устройства : {group.Product!.DeviceType!.Name}, Производитель: {group.Product!.Producer!.Name}, Название: {group.Product.Name}, Количество {group.Quantity} {Environment.NewLine}";
+            }
+            return s;
         }
     }
 }
