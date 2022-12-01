@@ -30,7 +30,49 @@ namespace ShopService.Controllers
                 return RedirectToAction("Index");
             }
              */
-            return View("OrderHome", new Order());
+            return View("OrderHome",
+                new Order 
+                {
+                    OrderDate = DateTime.Now,
+                    ShippedDate = DateTime.Now - TimeSpan.FromDays(1),
+                    SummUpProducts = new List<SummUpProduct>
+                    {
+                        new SummUpProduct 
+                        { 
+                            Id = 1,
+                            Product = new Product 
+                            { 
+                                Name = "Iphone 14",
+                                DeviceType = new DeviceType 
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "Apple"
+                                },
+                            },
+                            Quantity = 2
+                        },
+                        new SummUpProduct
+                        {
+                            Id = 2,
+                            Product = new Product
+                            {
+                                Name = "Iphone 12 Mini",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "Apple"
+                                }
+                            },
+                            Quantity = 1
+                        }
+                    }
+                });
         }
 
         [HttpPut("changeOrder/{id:int}")]
@@ -49,11 +91,12 @@ namespace ShopService.Controllers
             return Ok(order);
         }
 
-        [HttpDelete("cancelOrder/{id:int}")]
-        public async Task<ActionResult> CancelOrder(int id)
+        [HttpGet("cancelOrder")]
+        public async Task<ActionResult> CancelOrder()
         {
             ArgumentNullException.ThrowIfNull(_context);
 
+            /*
             var order = await _context!.Orders.FindAsync(id);
             if (order == null)
                 return NotFound();
@@ -63,19 +106,24 @@ namespace ShopService.Controllers
             await _context!.SaveChangesAsync();
 
             return NoContent();
+             */
+            return RedirectToAction("GetBasket", "Basket");
         }
 
-        [HttpPut("confirmOrder/{id:int}")]
-        public IActionResult Confirm(Order order)
+        [HttpGet("confirmOrder")]
+        public IActionResult ConfirmOrder()
         {
             ArgumentNullException.ThrowIfNull(_context);
 
+            /*
             if (ModelState.IsValid)
             {
                 _context!.Entry(order).State = EntityState.Modified;
                 _context.SaveChanges();
             }
             return NoContent();
+             */
+            return View("OrderConfirm");
         }
 
 

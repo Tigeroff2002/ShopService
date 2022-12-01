@@ -1,5 +1,5 @@
 ﻿@using Models
-@model IList<Warehouse>
+@model List<Warehouse>
 @{
     ViewData["Title"] = "Management Shipping from Warehouses Page";
 }
@@ -12,7 +12,7 @@
         <input type="number" name="shopNumber" class="form-control"/>
         <br />
         <input type="button" value="Выбрать" 
-            onclick="location.href='@Url.Action("ManagerPage", "Home")'" />
+            onclick="location.href='@Url.Action("ManagerPageShow", "Home")'" />
     </div>
 
     @if (warehouses.Count == 0)
@@ -28,6 +28,7 @@
     @if(warehouses.Count > 0)
     {
         @Html.DisplayName($"Доступных складов : { warehouses.Count}")
+        <br />
         <br />
         @foreach(var house in warehouses)
         {
@@ -71,6 +72,8 @@
                     </tr>
                 }
             </table>
+            <br />
+            <br />
             </div>
             }            
         }

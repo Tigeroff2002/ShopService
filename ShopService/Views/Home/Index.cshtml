@@ -1,5 +1,5 @@
 ﻿@using Models
-@model Tuple<IList<Product>, User>
+@model (IList<Product>, User)
 @{
     ViewData["Title"] = "Catalog Page";
 }
@@ -12,7 +12,7 @@
 <body class="back">
     <div class="text-center">
         <div>
-        @if (user == null)
+        @if (user!.Role!.RoleType == RoleType.NonAuthUser)
         {
             <h4>Вы новый пользователь</h4>
         }
@@ -39,7 +39,7 @@
                         <th align="right">
                             <h4>
                                  <input type="button" value="Открыть корзину" 
-                                         onclick="location.href='@Url.Action("CleanBasket", "Basket")'" />
+                                         onclick="location.href='@Url.Action("GetBasket", "Basket")'" />
                             </h4>
                         </th>
                         <th align="right">
@@ -50,7 +50,7 @@
                         </th>
                         <th align="right">
                             <h4>
-                                @if (user.Role!.RoleType == RoleType.AuthUser)
+                                @if (user.Role!.RoleType != RoleType.AuthUser)
                                 {
                                     <input type="button" value="Выйти из аккаунта" 
                                         onclick="location.href='@Url.Action("Index", "Home")'" />
@@ -99,7 +99,7 @@
     @if (user.Role.RoleType == RoleType.Admin)
     {
     <div class="text-lg-start">
-    <input type="button" value="Страница пользователей с заказами" 
+    <input type="button" value="Страница пользователей с заказами" size="100"
         onclick="location.href='@Url.Action("AdminPageShow", "Home")'" />      
     </div>    
     }
@@ -107,7 +107,7 @@
     @if (user.Role.RoleType == RoleType.Manager)
     {
     <div class="text-lg-start">
-    <input type="button" value="Страница заказа доставок со складов" 
+    <input type="button" value="Страница заказа доставок со складов" size="100"
         onclick="location.href='@Url.Action("ManagerPageShow", "Home")'" />      
     </div>    
     }

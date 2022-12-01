@@ -4,6 +4,7 @@ namespace Models
 {
     public enum RoleType : byte
     {
+        NonAuthUser = 0,
         AuthUser = 1,
         Manager = 2,
         Admin = 3
@@ -22,6 +23,9 @@ namespace Models
             RoleType = roleType;
             switch (roleType)
             {
+                case RoleType.NonAuthUser:
+                    RoleCaption = "New user";
+                    break;
                 case RoleType.Admin:
                     RoleCaption = "Administrator";
                     break;

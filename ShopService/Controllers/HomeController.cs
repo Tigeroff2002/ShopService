@@ -45,7 +45,13 @@ namespace ShopService.Controllers
             {
                 Devices = new List<Product>();
             }
-            return View(Devices);
+            return View(
+                (
+                Devices,
+                new User 
+                {
+                    Role = new Role (RoleType.Admin)}
+                ));
         }
 
         [HttpGet("Details/{id:int}")]
@@ -57,6 +63,309 @@ namespace ShopService.Controllers
             if (device is null)
                 return NotFound("Устройство не найдено!");
             return View("Details", device);
+        }
+
+        [HttpGet("adminPage")]
+        public IActionResult AdminPageShow()
+        {
+            var users = new List<User>
+            {
+                new User
+                {
+                    Id = 1,
+                    Orders = new List<Order>
+                    {
+                        new Order
+                        {
+                            Id = 1,
+                            OrderDate = DateTime.Now,
+                            ShippedDate = DateTime.Now - TimeSpan.FromDays(1),
+                            SummUpProducts = new List<SummUpProduct>
+                            {
+                                new SummUpProduct
+                                {
+                                    Id = 1,
+                                    Product = new Product
+                                    {
+                                        Name = "Iphone 14",
+                                        DeviceType = new DeviceType
+                                        {
+                                            Name = "Смартфон"
+                                        },
+                                        Producer = new Producer
+                                        {
+                                            Name = "Apple"
+                                        },
+                                    },
+                                    Quantity = 2
+                                },
+                                new SummUpProduct
+                                {
+                                    Id = 2,
+                                    Product = new Product
+                                    {
+                                        Name = "Iphone 12 Mini",
+                                        DeviceType = new DeviceType
+                                        {
+                                            Name = "Смартфон"
+                                        },
+                                        Producer = new Producer
+                                        {
+                                            Name = "Apple"
+                                        }
+                                    },
+                                    Quantity = 1
+                                }
+                            }
+                        }
+                    }
+                },
+                new User
+                {
+                    Id = 2,
+                    Orders = new List<Order>
+                    {
+                        new Order
+                        {
+                            Id = 1,
+                            OrderDate = DateTime.Now,
+                            ShippedDate = DateTime.Now - TimeSpan.FromDays(1),
+                            SummUpProducts = new List<SummUpProduct>
+                            {
+                                new SummUpProduct
+                                {
+                                    Id = 1,
+                                    Product = new Product
+                                    {
+                                        Name = "Iphone 14",
+                                        DeviceType = new DeviceType
+                                        {
+                                            Name = "Смартфон"
+                                        },
+                                        Producer = new Producer
+                                        {
+                                            Name = "Apple"
+                                        },
+                                    },
+                                    Quantity = 2
+                                },
+                                new SummUpProduct
+                                {
+                                    Id = 2,
+                                    Product = new Product
+                                    {
+                                        Name = "Iphone 12 Mini",
+                                        DeviceType = new DeviceType
+                                        {
+                                            Name = "Смартфон"
+                                        },
+                                        Producer = new Producer
+                                        {
+                                            Name = "Apple"
+                                        }
+                                    },
+                                    Quantity = 1
+                                }
+                            },
+                        },
+                        new Order
+                        {
+                            Id = 2,
+                            OrderDate = DateTime.Now,
+                            ShippedDate = DateTime.Now - TimeSpan.FromDays(1),
+                            SummUpProducts = new List<SummUpProduct>
+                            {
+                                new SummUpProduct
+                                {
+                                    Id = 2,
+                                    Product = new Product
+                                    {
+                                        Name = "Iphone 13",
+                                        DeviceType = new DeviceType
+                                        {
+                                            Name = "Смартфон"
+                                        },
+                                        Producer = new Producer
+                                        {
+                                            Name = "Apple"
+                                        },
+                                    },
+                                    Quantity = 2
+                                },
+                                new SummUpProduct
+                                {
+                                    Id = 2,
+                                    Product = new Product
+                                    {
+                                        Name = "Iphone 11 Mini",
+                                        DeviceType = new DeviceType
+                                        {
+                                            Name = "Смартфон"
+                                        },
+                                        Producer = new Producer
+                                        {
+                                            Name = "Apple"
+                                        }
+                                    },
+                                    Quantity = 2
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            users.First(x => x.Id == 1).Orders.First(x => x.Id == 1).ResultCost = 100_000;
+            users.First(x => x.Id == 1).Orders.First(x => x.Id == 1).OrderDescription =
+                users.First(x => x.Id == 1).Orders.First(x => x.Id == 1).CreateDescription();
+
+            users.First(x => x.Id == 2).Orders.First(x => x.Id == 1).ResultCost = 50_000;
+            users.First(x => x.Id == 2).Orders.First(x => x.Id == 1).OrderDescription =
+                users.First(x => x.Id == 2).Orders.First(x => x.Id == 1).CreateDescription();
+
+            users.First(x => x.Id == 2).Orders.First(x => x.Id == 2).ResultCost = 50_000;
+            users.First(x => x.Id == 2).Orders.First(x => x.Id == 2).OrderDescription =
+                users.First(x => x.Id == 2).Orders.First(x => x.Id == 2).CreateDescription();
+
+            return View("AdminPage", users);
+        }
+
+        [HttpGet("managerPage")]
+        public IActionResult ManagerPageShow()
+        {
+            var houses = new List<Warehouse>
+            {
+                new Warehouse
+                {
+                    Id = 1,
+                    Name = "Склад 1",
+                    Address = "Корпус 1 ВЛГУ",
+                    ProductQuantities = new List<SummUpProduct>
+                    {
+                        new SummUpProduct
+                        {
+                            Id = 1,
+                            Product = new Product
+                            {
+                                Name = "Iphone 14",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "Apple"
+                                },
+                            },
+                            Quantity = 2
+                        },
+                        new SummUpProduct
+                        {
+                            Id = 2,
+                            Product = new Product
+                            {
+                                Name = "Iphone 12 Mini",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "Apple"
+                                }
+                            },
+                            Quantity = 1
+                        }
+                    }
+                },
+                new Warehouse
+                {
+                    Id = 2,
+                    Name = "Склад 2",
+                    Address = "Корпус 2 ВЛГУ",
+                    ProductQuantities = new List<SummUpProduct>
+                    {
+                        new SummUpProduct
+                        {
+                            Id = 1,
+                            Product = new Product
+                            {
+                                Name = "Iphone 11",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "AppleRussia"
+                                },
+                            },
+                            Quantity = 2
+                        },
+                        new SummUpProduct
+                        {
+                            Id = 2,
+                            Product = new Product
+                            {
+                                Name = "Iphone 5S",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "AppleRussia"
+                                }
+                            },
+                            Quantity = 3
+                        }
+                    }
+                },
+                new Warehouse
+                {
+                    Id = 3,
+                    Name = "Склад 3",
+                    Address = "Корпус 3 ВЛГУ",
+                    ProductQuantities = new List<SummUpProduct>
+                    {
+                        new SummUpProduct
+                        {
+                            Id = 1,
+                            Product = new Product
+                            {
+                                Name = "Iphone X",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "Apple"
+                                },
+                            },
+                            Quantity = 5
+                        },
+                        new SummUpProduct
+                        {
+                            Id = 2,
+                            Product = new Product
+                            {
+                                Name = "Iphone 13",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "Apple"
+                                }
+                            },
+                            Quantity = 4
+                        }
+                    }
+                }
+            };
+            return View("ManagerPage", houses);
         }
 
         [HttpPost("{id:int}")]

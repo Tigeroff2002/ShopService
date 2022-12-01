@@ -20,8 +20,9 @@ namespace ShopService.Controllers
         }
 
         [HttpGet("getBasket")]
-        public async Task<ActionResult<Basket>> GetBasket(int clientId)
+        public async Task<ActionResult<Basket>> GetBasket()
         {
+            /*
             var user = await _context!.Clients.FindAsync(clientId);
             if (user == null)
             {
@@ -33,6 +34,49 @@ namespace ShopService.Controllers
             if (existedBasket == null)
                 return NotFound();
 
+             */
+#pragma warning disable CS8670 // Инициализатор объекта или коллекции неявно разыменовывает член, который может быть равен NULL.
+            var existedBasket = new Basket
+            {
+                SummUpProducts = new List<SummUpProduct>
+                   {
+                        new SummUpProduct
+                        {
+                            Id = 1,
+                            Product = new Product
+                            {
+                                Name = "Iphone 14",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "Apple"
+                                },
+                            },
+                            Quantity = 2
+                        },
+                        new SummUpProduct
+                        {
+                            Id = 2,
+                            Product = new Product
+                            {
+                                Name = "Iphone 12 Mini",
+                                DeviceType = new DeviceType
+                                {
+                                    Name = "Смартфон"
+                                },
+                                Producer = new Producer
+                                {
+                                    Name = "Apple"
+                                }
+                            },
+                            Quantity = 1
+                        }
+                    }
+            };
+#pragma warning restore CS8670 // Инициализатор объекта или коллекции неявно разыменовывает член, который может быть равен NULL.
             return View("BasketPage", existedBasket);
         }
 

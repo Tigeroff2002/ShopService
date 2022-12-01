@@ -18,10 +18,11 @@
                    onclick="location.href='@Url.Action("Index", "Home")'" />
         </div>
     }
-    @if (groups is not null)
+    @if (groups != null)
         {
-                    <h1>Содержимое вашей корзины: </h1>
-        <h2>Каталог устройств:</h2>
+        @if (groups!.Count > 0)
+        {
+        <h4>Содержимое вашей корзины: </h4>
         <table class="table">
             <thead>
                 <tr>
@@ -35,10 +36,9 @@
                 </tr>
             </thead>
             <tbody>
-
+                @{var i = 0;}
                     @foreach(var group in groups)
                     {
-                        var i = 0;
                         <tr>
                             <td>@Html.DisplayName($"{++i}")</td>
                             <td>@Html.DisplayFor(x => group.Product!.DeviceType!.Name)</td>
@@ -81,6 +81,12 @@
             <input type="button" value="Создать заказ" 
                   onclick="location.href='@Url.Action("CreateOrder", "Order")'" />
         </h5>
-        }
+        <h5>
+            <input type="button" value="На главную" 
+                onclick="location.href='@Url.Action("Index", "Home")'" />
+        </h5>
+        }            
+    }
+
     </div>
 </body>

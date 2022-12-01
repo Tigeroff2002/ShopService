@@ -1,5 +1,5 @@
 ﻿@using Models
-@model IList<User>
+@model List<User>
 @{
     ViewData["Title"] = "Users Order Page";
 }
@@ -19,16 +19,18 @@
     @{var i = 0;}
     @if(users.Count > 0)
     {
-        @Html.DisplayName($"Пользователей в системе : {users.Count}")
+        <h4>
+            @Html.DisplayName($"Пользователей в системе : {users.Count}")
+        </h4>
             <br />
         @foreach(var user in users)
         {
             <div>
-                <h4>
-                    @Html.DisplayName($"Пользователь # {i++} по имени {user.NickName} :")
-                </h4>
+                <h5>
+                    @Html.DisplayName($"Пользователь # {++i} по имени {user.NickName} :")
+                </h5>
                 <br>
-            <table>
+            <table class="border" >
                 <tr>
                     <th>Номер заказа</th>
                     <th>Содержимое заказа</th>
@@ -100,6 +102,8 @@
                 }
             </table>
             </div>
+            <br />
+            <br />
             }            
         }
         </div>

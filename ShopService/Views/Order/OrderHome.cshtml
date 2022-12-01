@@ -5,19 +5,61 @@
 }
 <body class="back">
     <div class="text-center">
-        <h5>Содержимое вашей корзины: </h5>
-        <h5>Каталог устройств:</h5>
+    @{var groups = Model.SummUpProducts!;}
+    @if (groups != null)
+        {
+        <h4>Содержимое вашего заказа: </h4>
         <table class="table">
             <thead>
-
+                <tr>
+                    <th>Номер группы</th>
+                    <th>Тип устройства</th>
+                    <th>Название</th>
+                    <th>Производитель</th>
+                    <th>Цена устройства</th>
+                    <th>Кол-во товаров</th>
+                    <th>Общая стоимость группы</th>
+                </tr>
             </thead>
             <tbody>
-              
+
+                    @foreach(var group in groups)
+                    {
+                        var i = 0;
+                        <tr>
+                            <td>@Html.DisplayName($"{++i}")</td>
+                            <td>@Html.DisplayFor(x => group.Product!.DeviceType!.Name)</td>
+                            <td>@Html.DisplayFor(x => group.Product!.Name)</td>
+                            <td>@Html.DisplayFor(x => group.Product!.Producer!.Name)</td>
+                            <td>@Html.DisplayFor(x => group.Product!.Cost)</td>
+                            <td>@Html.DisplayFor(x => group.Quantity)</td>
+                            <td>@Html.DisplayFor(x => group.TotalPrice)</td>
+                        </tr>
+                    }
+                    <tr>
+                        <th>Итого:</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>@Html.DisplayFor(x => Model.ResultCost)</th>
+                    </tr>
             </tbody>
         </table>
-        <h4>
+        }
+        <br />
+        <table>
+            <tr>
+                <th>
+            <input type="button" value="Подтвердить заказ" 
+                  onclick="location.href='@Url.Action("ConfirmOrder", "Order")'" />
+                </th>
+                <th>
             <input type="button" value="Отменить заказ" 
-                  onclick="location.href='@Url.Action("CleanBasket", "Basket")'" />
-        </h4>
+                  onclick="location.href='@Url.Action("CancelOrder", "Order")'" />
+                </th>
+            </tr>
+        </table>
     </div>
 </body>
