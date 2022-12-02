@@ -4,7 +4,7 @@ using FluentAssertions;
 
 using Moq;
 
-using AuthdService.Models;
+using ShopService.Views.Account;
 
 namespace AuthdService.AuthModels.Tests
 {
@@ -19,11 +19,12 @@ namespace AuthdService.AuthModels.Tests
             var password = "password";
             var confirmPassword = "password";
             var contactNumber = "";
-            var isRoleChoosed = false;
             var roleType = 1;
 
             // Act
-            var exception = Record.Exception(() => new RegisterModel(email, "", isRoleChoosed, roleType, password, confirmPassword, contactNumber));
+            var exception = Record.Exception(() =>
+                new RegisterModel(
+                    email, "", roleType, password, confirmPassword, contactNumber));
 
             // Assert
             exception.Should().BeNull();
@@ -37,11 +38,11 @@ namespace AuthdService.AuthModels.Tests
             var password = "password";
             var confirmPassword = "password";
             var contactNumber = "";
-            var isRoleChoosed = false;
             var roleType = 1;
 
             // Act
-            var exception = Record.Exception(() => new RegisterModel("", "", isRoleChoosed, roleType, password, confirmPassword, contactNumber));
+            var exception = Record.Exception(() =>
+                new RegisterModel("", "", roleType, password, confirmPassword, contactNumber));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>(nameof(String));
@@ -56,11 +57,11 @@ namespace AuthdService.AuthModels.Tests
             var password = "password1";
             var confirmPassword = "password2";
             var contactNumber = "";
-            var isRoleChoosed = false;
             var roleType = 1;
 
             // Act
-            var exception = Record.Exception(() => new RegisterModel(email, "", isRoleChoosed, roleType, password, confirmPassword, contactNumber));
+            var exception = Record.Exception(
+                () => new RegisterModel(email, "", roleType, password, confirmPassword, contactNumber));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>();

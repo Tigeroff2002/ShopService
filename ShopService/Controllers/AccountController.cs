@@ -1,4 +1,4 @@
-﻿using AuthdService.Models;
+﻿using ShopService.Views.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +46,7 @@ namespace AuthdService.Controllers
         [HttpGet("login")]
         public async Task<ActionResult> Login()
         {
-            AuthdService.Views.Account.LoginModel objLoginModel = new();
+            var objLoginModel = new LoginModel();
             //return View("Login", objLoginModel);
             return View("Login", objLoginModel);
         }
@@ -65,7 +65,11 @@ namespace AuthdService.Controllers
                 throw new ArgumentException(nameof(password));
             }
 
-            Views.Account.LoginModel objLoginModel = new Views.Account.LoginModel { NickName = nickName, Password = password };
+            var objLoginModel = new LoginModel
+            { 
+                NickName = nickName, 
+                Password = password 
+            };
 
             if (ModelState.IsValid)
             {
@@ -78,7 +82,7 @@ namespace AuthdService.Controllers
                 if (user == null)
                 {
                     ViewBag.Message = "Such user was not registered in system yet";
-                    return View("Register", new Views.Account.RegisterModel());
+                    return View("Register", new RegisterModel());
                 }
                 else
                 {
@@ -98,11 +102,11 @@ namespace AuthdService.Controllers
 
                     _logger!.LogInformation("User was successfuly authorized!");
 
-                    return View("Index1");
+                    return RedirectToAction("Index", "Home", (new List<Product>(), user));
                 }
             }
 
-            return View("Index1");
+            return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0)));
         }
 
         [HttpGet("logout")]
@@ -112,13 +116,13 @@ namespace AuthdService.Controllers
 
             _logger!.LogInformation("User was successfuly unauthorized!");
 
-            return View("Login", new Views.Account.LoginModel());
+            return View("Login", new LoginModel());
         }
 
         [HttpGet("register")]
         public async Task<ActionResult> Register()
         {
-            Views.Account.RegisterModel objRegisterModel = new();
+            var objRegisterModel = new RegisterModel();
             return View("Register", objRegisterModel);
         }
 
@@ -131,7 +135,7 @@ namespace AuthdService.Controllers
             string password,
             string confirmPassword)
         {
-            Views.Account.RegisterModel objRegisterModel = new(
+            var objRegisterModel = new RegisterModel(
                 email,
                 nickName,
                 roleType,
@@ -161,7 +165,7 @@ namespace AuthdService.Controllers
                     {
                         ViewBag.Message = "Such user have already registered in system";
                         _logger!.LogInformation("User with these data was found in system!");
-                        return View("Login", new Views.Account.LoginModel());
+                        return View("Login", new LoginModel());
                     }
 
                     ArgumentNullException.ThrowIfNull(user!.EmailAdress);
@@ -184,16 +188,16 @@ namespace AuthdService.Controllers
 
                     _logger!.LogInformation("User was successfuly registered in system!");
 
-                    return View("Index1");
+                    return RedirectToAction("Index", "Home", (new List<Product>(), user));
                 }
                 else
                 {
                     ViewBag.Message = "Invalid Credential";
-                    return View("Register", new Views.Account.RegisterModel());
+                    return View("Register", new RegisterModel());
                 }
             }
 
-            return View("Index1");
+            return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0)));
         }
 
         private int CheckCurrentUserExistenseId(User? user)

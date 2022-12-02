@@ -46,6 +46,7 @@ namespace ShopService.Controllers
                 Devices = new List<Product>();
             }
             return View(
+                "Index",
                 (
                 Devices,
                 new User 

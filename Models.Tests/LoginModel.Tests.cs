@@ -4,7 +4,7 @@ using FluentAssertions;
 
 using Moq;
 
-using AuthdService.Models;
+using ShopService.Views.Account;
 
 namespace AuthdService.AuthModels.Tests
 {

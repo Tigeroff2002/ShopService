@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Models;
+using System.ComponentModel.DataAnnotations;
+using System.Net.Mail;
 
 namespace ShopService.Views.Account
 {
@@ -35,7 +38,6 @@ namespace ShopService.Views.Account
         public RegisterModel(
             string email,
             string nickName,
-            bool _isRoleChoosed,
             int roleType,
             string password,
             string confirmPassword,
@@ -53,7 +55,7 @@ namespace ShopService.Views.Account
                 throw new ArgumentException(nameof(confirmPassword));
             ConfirmPassword = confirmPassword;
 
-            isRoleChoosed = _isRoleChoosed;
+            isRoleChoosed = true;
 
             if (!isRoleChoosed)
                 Role = RoleType.AuthUser;
