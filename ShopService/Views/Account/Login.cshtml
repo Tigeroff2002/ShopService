@@ -1,0 +1,35 @@
+﻿@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+@model ShopService.Views.Account.LoginModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";   
+    ViewData["Title"] = "Login Page";
+}
+<h2>Страница авторизации</h2>    
+<hr />    
+<div class="row">
+    <div class="cold-md-4">
+        <form action="@Url.Action("LoginPost", "Account")" method="get" asp-antiforgery="true">
+            <h4>Вход в существующий аккаунт:</h4>
+            <div class="form-group">
+                <label asp-for="NickName"></label>
+                <input type="text" name="nickName" value="@Model.NickName" class="form-control"/>
+                <span asp-for="NickName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input type="text" name="password" value="@Model.Password" class="form-control"/>
+                <span asp-for="Password" class="text-danger"></span>
+
+            </div>
+            <div class="form-group">
+                <label asp-for="RememberLogin"></label>
+                <input type="checkbox" name="rememberLogin" value="@Model.RememberLogin" checked="checked"/>
+                <span asp-for="ConfirmPassword" class="text-danger"></span>
+
+            </div>
+            <div>
+                <input type="submit" value="Submit" />
+            </div>
+        </form>
+    </div>
+</div>    

@@ -77,7 +77,14 @@ namespace ShopService.Controllers
                     }
             };
 #pragma warning restore CS8670 // Инициализатор объекта или коллекции неявно разыменовывает член, который может быть равен NULL.
-            return View("BasketPage", existedBasket);
+
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
+
+            return View("BasketPage", (existedBasket, user));
         }
 
         [HttpGet("cleanBasket")]
@@ -85,7 +92,20 @@ namespace ShopService.Controllers
         {
             //_context!.Clients.First(x => x.Id == clientId).Basket!.SummUpProducts!.Clear();
             //await _context!.SaveChangesAsync();
-            return View("BasketPage", new Basket());
+
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
+
+            var basket = new Basket
+            {
+                BasketStatusId = 1,
+                Client = user
+            };
+
+            return View("BasketPage", (basket, user));
         }
         
         private int FindQuantityProductsBasket(int id)
@@ -100,12 +120,24 @@ namespace ShopService.Controllers
         {
             var group = await TryAddProductToBasket(id, count);
 
-            if (group == null)
+            var user = new User
             {
-                return View("BasketPage", new Basket());
-            }
+                Id = 1,
+                Role = new Role(0)
+            };
 
             var basket = new Basket
+            {
+                BasketStatusId = 1,
+                Client = user
+            };
+
+            if (group == null)
+            {
+                return View("BasketPage", (basket, user));
+            }
+
+            basket = new Basket
             {
                 BasketStatusId = 1,
                 SummUpProducts = new HashSet<SummUpProduct>(),
@@ -114,7 +146,7 @@ namespace ShopService.Controllers
 
             basket.SummUpProducts.Add(group);
 
-            return View("BasketPage", basket);
+            return View("BasketPage", (basket, user));
         }
 
         private async Task<SummUpProduct> TryAddProductToBasket(int id, int count)

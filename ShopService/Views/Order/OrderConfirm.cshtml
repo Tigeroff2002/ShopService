@@ -1,6 +1,10 @@
-﻿@page
-@model ShopService.Views.Order.OrderConfirmModel
+﻿@using Models
+@model (ShopService.Views.Order.OrderConfirmModel, User)
 
+@{
+    var item1 = Model.Item1;
+    var item2 = Model.Item2;
+}
 <body>
     <div>
         <h3>Страница подтверждения заказа</h3>
