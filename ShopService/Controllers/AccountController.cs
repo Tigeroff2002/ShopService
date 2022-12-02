@@ -22,27 +22,6 @@ namespace AuthdService.Controllers
             //SeedSomeUserData();
         }
 
-        [HttpPost("data/add")]
-        public void SeedSomeUserData()
-        {
-            if (_context!.Clients.Count() < 4)
-            {
-                _context!.Clients.Add(new User(4, 1)
-                {
-                    Id = 4,
-                    NickName = "TigeroffNew",
-                    Password = "tigeroff2002",
-                    ContactNumber = "+79042555027",
-                    EmailAdress = "parahinkv2002@gmail.com",
-                    TotalPurchase = 0f,
-                    Discount = 0f,
-                    Role = new Role(RoleType.AuthUser)
-                });
-            }
-
-            _logger!.LogInformation("Fourth user was added to DB");
-        }
-
         [HttpGet("login")]
         public async Task<ActionResult> Login()
         {
@@ -198,6 +177,27 @@ namespace AuthdService.Controllers
             }
 
             return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0)));
+        }
+
+        [HttpPost("data/add")]
+        public void SeedSomeUserData()
+        {
+            if (_context!.Clients.Count() < 4)
+            {
+                _context!.Clients.Add(new User(4, 1)
+                {
+                    Id = 4,
+                    NickName = "TigeroffNew",
+                    Password = "tigeroff2002",
+                    ContactNumber = "+79042555027",
+                    EmailAdress = "parahinkv2002@gmail.com",
+                    TotalPurchase = 0f,
+                    Discount = 0f,
+                    Role = new Role(RoleType.AuthUser)
+                });
+            }
+
+            _logger!.LogInformation("Fourth user was added to DB");
         }
 
         private int CheckCurrentUserExistenseId(User? user)

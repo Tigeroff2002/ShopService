@@ -31,28 +31,32 @@ namespace ShopService.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index((List<Product> devices, User user) model)
         {
             try
             {
-                Devices = _context.Products.ToList();
+                model.devices = _context.Products.ToList();
             }
             catch (Microsoft.Data.SqlClient.SqlException)
             {
-                Devices = new List<Product>();
+                model.devices = new List<Product>();
             }
             catch (InvalidOperationException)
             {
-                Devices = new List<Product>();
+                model.devices = new List<Product>();
+            }
+            if (model.user == null)
+            {
+                model.user = new User 
+                {
+                    Id = 1,
+                    Role = new Role(0) 
+                };
             }
             return View(
                 "Index",
-                (
-                Devices,
-                new User 
-                {
-                    Role = new Role (RoleType.Admin)}
-                ));
+                (Devices,
+                model.user));
         }
 
         [HttpGet("Details/{id:int}")]

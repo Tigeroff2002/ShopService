@@ -1,5 +1,5 @@
 ﻿@using Models
-@model IList<Product>
+@model (List<Product>, Models.User)
 @{
     ViewData["Title"] = "Catalog Page";
 }
@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(var item in Model)
+            @foreach(var item in Model.Item1)
             {
                 <tr>
                     <td>@Html.DisplayFor(x => item.DeviceType!.Name)</td>
@@ -40,18 +40,5 @@
         </tbody>
     </table>
 </div>
-@if (User.Identity!.IsAuthenticated)
-{
-    <div class="text-lg-start">
-        <h5>@Html.ActionLink("Добавить новое устройство", "Create")</h5>
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-                <a class="nav-link text-dark display-6" asp-area="" 
-                    asp-controller="Account" 
-                    asp-action="Logout">Logout</a>
-            </li>
-       </ul>
-    </div>    
-}
 
 </body>

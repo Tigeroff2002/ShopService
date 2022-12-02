@@ -1,7 +1,11 @@
 ﻿@using Models
-@model Product
+@model (Product, User)
 @{
     ViewData["Title"] = "Details Page";
+}
+
+@{
+    var item = Model.Item1;
 }
 
 <div class="text-center">
@@ -14,23 +18,23 @@
                 <th>Название</th>
                 <th>Производитель</th>
                 <th>Цена устройства</th>
-                @if (Model.Size is not null)
+                @if (item.Size is not null)
                 {
                     <th>Размер (дюйм.)</th>
                 }
-                @if (Model.ScreenResolution is not null)
+                @if (item.ScreenResolution is not null)
                 {
                     <th>Разрешение экрана</th>
                 }
-                @if (Model.CamMp is not null)
+                @if (item.CamMp is not null)
                 {
                     <th>Камера (мп)</th>                
                 }
-                @if (Model.AccumCapacity is not null)
+                @if (item.AccumCapacity is not null)
                 {
                     <th>Емкость аккумулятора</th>            
                 }
-                @if (Model.RAM is not null)
+                @if (item.RAM is not null)
                 {
                     <th>Объем оперативной памяти</th>            
                 }
@@ -38,29 +42,29 @@
         </thead>
         <tbody>
                 <tr>
-                    <td>@Html.DisplayFor(x => Model.DeviceType!.Name)</td>
-                    <td>@Html.DisplayFor(x => Model.Name)</td>
-                    <td>@Html.DisplayFor(x => Model.Producer!.Name)</td>
-                    <td>@Html.DisplayFor(x => Model.Cost)</td>
-                    @if (Model.Size is not null)
+                    <td>@Html.DisplayFor(x => item.DeviceType!.Name)</td>
+                    <td>@Html.DisplayFor(x => item.Name)</td>
+                    <td>@Html.DisplayFor(x => item.Producer!.Name)</td>
+                    <td>@Html.DisplayFor(x => item.Cost)</td>
+                    @if (item.Size is not null)
                     {
-                        <td>@Html.DisplayFor(x => Model.Size)</td>
+                        <td>@Html.DisplayFor(x => item.Size)</td>
                     }
-                    @if (Model.ScreenResolution is not null)
+                    @if (item.ScreenResolution is not null)
                     {
-                        <td>@Html.DisplayFor(x => Model.ScreenResolution)</td>
+                        <td>@Html.DisplayFor(x => item.ScreenResolution)</td>
                     }
-                    @if (Model.CamMp is not null)
+                    @if (item.CamMp is not null)
                     {
-                        <td>@Html.DisplayFor(x => Model.CamMp)</td>
+                        <td>@Html.DisplayFor(x => item.CamMp)</td>
                     }
-                    @if (Model.AccumCapacity is not null)
+                    @if (item.AccumCapacity is not null)
                     {
-                        <td>@Html.DisplayFor(x => Model.AccumCapacity)</td>
+                        <td>@Html.DisplayFor(x => item.AccumCapacity)</td>
                     }
-                    @if (Model.RAM is not null)
+                    @if (item.RAM is not null)
                     {
-                        <td>@Html.DisplayFor(x => Model.RAM)</td>
+                        <td>@Html.DisplayFor(x => item.RAM)</td>
                     }
                 </tr>    
         </tbody>
@@ -71,7 +75,7 @@
             <th>
                 <h4>
                     <input type="button" value="Добавить в корзину" 
-                        onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = Model.Id})'" />   
+                        onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = item.Id})'" />   
                 </h4>
             </th>
             <th>

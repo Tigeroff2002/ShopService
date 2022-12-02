@@ -1,11 +1,11 @@
 ﻿@using Models
-@model Basket
+@model (Basket, User)
 @{
     ViewData["Title"] = "Catalog Page";
 }
 <body class="back">
     <div class="text-center">
-    @{var item = Model; }
+    @{var item = Model.Item1; }
     @{var groups = item.SummUpProducts!;}
     @if (groups == null)
     {

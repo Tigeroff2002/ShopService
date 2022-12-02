@@ -1,11 +1,11 @@
 ﻿@using Models
-@model List<User>
+@model (List<User>, Models.User)
 @{
     ViewData["Title"] = "Users Order Page";
 }
 <body class="back">
 <div class="text-center">
-@{var users = Model;}
+@{var users = Model.Item1;}
 
     @if (users.Count == 0)
     {

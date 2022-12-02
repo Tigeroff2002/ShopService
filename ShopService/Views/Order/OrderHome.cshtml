@@ -1,11 +1,11 @@
 ﻿@using Models
-@model Order
+@model (Order, User)
 @{
     ViewData["Title"] = "Catalog Page";
 }
 <body class="back">
     <div class="text-center">
-    @{var groups = Model.SummUpProducts!;}
+    @{var groups = Model.Item1.SummUpProducts!;}
     @if (groups != null)
         {
         <h4>Содержимое вашего заказа: </h4>
@@ -43,7 +43,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th>@Html.DisplayFor(x => Model.ResultCost)</th>
+                        <th>@Html.DisplayFor(x => Model.Item1.ResultCost)</th>
                     </tr>
             </tbody>
         </table>

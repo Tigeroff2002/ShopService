@@ -1,11 +1,11 @@
 ﻿@using Models
-@model List<Warehouse>
+@model (List<Warehouse>, User)
 @{
     ViewData["Title"] = "Management Shipping from Warehouses Page";
 }
 <body class="back">
 <div class="text-center">
-@{var warehouses = Model;}
+@{var warehouses = Model.Item1;}
 
     <div>
         <h4>Введите номер магазина, с которым вы работаете: </h4>
