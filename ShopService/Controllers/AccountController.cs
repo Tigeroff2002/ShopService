@@ -124,7 +124,7 @@ namespace AuthdService.Controllers
 
             if (ModelState.IsValid)
             {
-                User? user = new User(_context!.Clients.Count(), 1)
+                User? user = new User()
                 {
                     Id = _context!.Clients.Count(),
                     NickName = objRegisterModel.NickName,
@@ -138,9 +138,9 @@ namespace AuthdService.Controllers
 
                 if (user != null)
                 {
-                    if (CheckCurrentUserExistenseId(user) == -1)
-                        _context!.Clients.Add(user);
-                    else
+                    var existense = await CheckCurrentUserExistense(user);
+
+                    if (false)
                     {
                         ViewBag.Message = "Such user have already registered in system";
                         _logger!.LogInformation("User with these data was found in system!");
@@ -200,11 +200,16 @@ namespace AuthdService.Controllers
             _logger!.LogInformation("Fourth user was added to DB");
         }
 
-        private int CheckCurrentUserExistenseId(User? user)
+        private async Task<bool> CheckCurrentUserExistense(User? user)
         {
-            if (_context!.Clients!.Any(x => x.Equals(user)))
-                return _context!.Clients!.FirstOrDefault(x => x.Equals(user))!.Id;
-            return -1;
+            var b = _context!.Clients!.FirstOrDefault(x => x.Equals(user)) == null;
+            if (b)
+            {
+                _context!.Clients.Add(user!);
+                await _context.SaveChangesAsync();
+                return false;
+            }
+            return true;
         }
 
         private ILogger<AccountController>? _logger;

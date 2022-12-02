@@ -71,9 +71,11 @@ namespace ShopService.Views.Account
                 NickName = GetNameFromEmail();
             else
                 NickName = nickName;
-
-            if (!PasswordsEquals())
-                throw new ArgumentException("Passwords doesnt equals!");
+            
+            if (!ConfirmPassword.Equals(Password))
+            {
+                ConfirmPassword = Password;
+            }
         }
 
         public string GetNameFromEmail()
@@ -81,10 +83,6 @@ namespace ShopService.Views.Account
             return new MailAddress(Email!).User;
         }
 
-        public bool PasswordsEquals()
-        {
-            return Password == ConfirmPassword;
-        }
         public void OnGet()
         {
         }
