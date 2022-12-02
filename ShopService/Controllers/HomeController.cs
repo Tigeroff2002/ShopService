@@ -31,32 +31,31 @@ namespace ShopService.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index((List<Product> devices, User user) model)
+        public IActionResult Index()
         {
+            var model = (new List<Product>(), new User());
             try
             {
-                model.devices = _context.Products.ToList();
+                model.Item1 = _context.Products.ToList();
             }
             catch (Microsoft.Data.SqlClient.SqlException)
             {
-                model.devices = new List<Product>();
+                model.Item1 = new List<Product>();
             }
             catch (InvalidOperationException)
             {
-                model.devices = new List<Product>();
+                model.Item1 = new List<Product>();
             }
-            if (model.user == null)
+            if (model.Item2 == null || model.Item2.Role == null)
             {
-                model.user = new User 
+                model.Item2 = new User 
                 {
                     Id = 1,
                     Role = new Role(0) 
                 };
             }
             return View(
-                "Index",
-                (Devices,
-                model.user));
+                "Index", model);
         }
 
         [HttpGet("Details/{id:int}")]
@@ -67,7 +66,14 @@ namespace ShopService.Controllers
             Product? device = _context!.Products.FirstOrDefault(x => x.Id == id);
             if (device is null)
                 return NotFound("Устройство не найдено!");
-            return View("Details", device);
+
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
+
+            return View("Details", (device, user));
         }
 
         [HttpGet("adminPage")]
@@ -232,7 +238,7 @@ namespace ShopService.Controllers
             users.First(x => x.Id == 2).Orders.First(x => x.Id == 2).OrderDescription =
                 users.First(x => x.Id == 2).Orders.First(x => x.Id == 2).CreateDescription();
 
-            return View("AdminPage", users);
+            return View("AdminPage", (users, users.First()));
         }
 
         [HttpGet("managerPage")]
@@ -370,7 +376,14 @@ namespace ShopService.Controllers
                     }
                 }
             };
-            return View("ManagerPage", houses);
+
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
+
+            return View("ManagerPage", (houses, user));
         }
 
         [HttpPost("{id:int}")]

@@ -30,20 +30,27 @@ namespace ShopService.Controllers
                 return RedirectToAction("Index");
             }
              */
-            return View("OrderHome",
-                new Order 
-                {
-                    OrderDate = DateTime.Now,
-                    ShippedDate = DateTime.Now - TimeSpan.FromDays(1),
-                    SummUpProducts = new List<SummUpProduct>
+
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
+
+            var order = new Order
+            {
+                Client = user,
+                OrderDate = DateTime.Now,
+                ShippedDate = DateTime.Now - TimeSpan.FromDays(1),
+                SummUpProducts = new List<SummUpProduct>
                     {
-                        new SummUpProduct 
-                        { 
+                        new SummUpProduct
+                        {
                             Id = 1,
-                            Product = new Product 
-                            { 
+                            Product = new Product
+                            {
                                 Name = "Iphone 14",
-                                DeviceType = new DeviceType 
+                                DeviceType = new DeviceType
                                 {
                                     Name = "Смартфон"
                                 },
@@ -72,7 +79,9 @@ namespace ShopService.Controllers
                             Quantity = 1
                         }
                     }
-                });
+            };
+
+            return View("OrderHome", (order, user));
         }
 
         [HttpPut("changeOrder/{id:int}")]
@@ -88,7 +97,13 @@ namespace ShopService.Controllers
             _context!.Entry(order).State = EntityState.Modified;
             await _context!.SaveChangesAsync();
 
-            return Ok(order);
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
+
+            return Ok((order, user));
         }
 
         [HttpGet("cancelOrder")]
@@ -123,7 +138,20 @@ namespace ShopService.Controllers
             }
             return NoContent();
              */
-            return View("OrderConfirm");
+
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
+
+            var order = new Order
+            {
+                Id = 1,
+                Client = user
+            };
+
+            return View("OrderConfirm", (order, user));
         }
 
 
@@ -134,7 +162,13 @@ namespace ShopService.Controllers
             if (order == null)
                 return NotFound();
 
-            return View(order);
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
+
+            return View((order, user));
         }
 
         [HttpGet("check/listorders")]
