@@ -15,7 +15,7 @@ namespace Data.Repositories.Abstractions
 
         void Delete(User user, CancellationToken token);
 
-        void Find(User user, CancellationToken token);
+        Task<bool> Find(User user, CancellationToken token);
 
         Task<IList<User>> GetAllUsers(CancellationToken token);
 

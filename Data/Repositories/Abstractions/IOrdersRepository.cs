@@ -9,7 +9,7 @@ namespace Data.Repositories.Abstractions
 {
     public interface IOrdersRepository
     {
-        Task Add(User user, Order order, CancellationToken token);
+        void AddOrder(User user, Order order, CancellationToken token);
 
         void ConfirmOrder(User user, Order order, CancellationToken token);
 
@@ -23,9 +23,9 @@ namespace Data.Repositories.Abstractions
 
         Task<IList<Order>> GetAllOrders(CancellationToken token);
 
-        Task<IList<Order>> GetAllUserOrders(User user, CancellationToken token);
+        IList<Order> GetAllUserOrders(User user, CancellationToken token);
 
-        Task<IList<Order>> GetAllShopOrders(Shop shop, CancellationToken token);
+        IList<Order> GetAllShopOrders(Shop shop, CancellationToken token);
 
         Task SaveChangesAsync(CancellationToken token);
     }

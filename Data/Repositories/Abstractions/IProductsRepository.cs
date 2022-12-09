@@ -8,6 +8,8 @@ public interface IProductsRepository
 
     void Update(Product product, CancellationToken token);
 
+    Task<bool> Find(Product product, CancellationToken token);
+
     void Delete(Product product, CancellationToken token);
 
     Task<IList<Product>> GetAllProducts(CancellationToken token);

@@ -9,7 +9,7 @@ namespace Data.Repositories.Abstractions
 {
     public interface IBasketsRepository
     {
-        Task AddProduct(User user, Product product, CancellationToken token);
+        void AddProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token);
 
         void UpdateQuantity(User user, SummUpProduct summUpProduct, CancellationToken token);
 
@@ -19,7 +19,9 @@ namespace Data.Repositories.Abstractions
 
         Task<IList<Basket>> GetAllBaskets(CancellationToken token);
 
-        Task<IList<SummUpProduct>> GetAllProducts(User user, CancellationToken token);
+        Basket GetUserBasket(User user, CancellationToken token);
+
+        IList<SummUpProduct> GetAllProductGroupsFromBasket(User user, CancellationToken token);
 
         Task SaveChangesAsync(CancellationToken token);
     }

@@ -41,7 +41,8 @@ namespace Models
         {
             return (Client!.Id, BasketStatusId).GetHashCode();
         }
-        public bool Equals(Basket? basket)
+
+        public bool EqualsA(Basket? basket)
         {
             if (basket == null)
                 return false;
@@ -51,6 +52,15 @@ namespace Models
                 return false;
             return true;
         }
+
+        public bool Equals(Basket? basket)
+        {
+            if (basket == null)
+                return false;
+
+            return basket.BasketStatusId == BasketStatusId && basket.Client == Client;
+        }
+
         public void CalculateTotalPrice()
         {
             TotalCost = 0;
@@ -68,6 +78,7 @@ namespace Models
             TotalCost = 0;
             BasketStatusId = 1;
         }
+
         public void AddProductInBasket(Product? product)
         {
             if (product == null)
@@ -83,6 +94,7 @@ namespace Models
                 SummUpProducts!.First(x => x.Product!.Id == id).Quantity++;
             TotalCost += product!.Cost;
         }
+
 
         public void RemoveProductInBasket(Product? product)
         {
