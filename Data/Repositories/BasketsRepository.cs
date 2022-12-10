@@ -45,6 +45,12 @@ namespace Data.Repositories
 
             token.ThrowIfCancellationRequested();
 
+            var basket = _context.Clients!
+                .FirstOrDefault(u => u.Equals(user))!
+                .Basket!;
+
+            ArgumentNullException.ThrowIfNull(basket);
+
             _context.Baskets!
                 .FirstOrDefault(basket => basket == user.Basket)!
                 .SummUpProducts!
@@ -55,9 +61,11 @@ namespace Data.Repositories
                 .Basket!
                 .SummUpProducts!
                 .Clear();
+
+            _context.Entry(basket).State = EntityState.Modified;
         }
 
-        public void DeleteProduct(User user, SummUpProduct summUpProduct, CancellationToken token)
+        public void DeleteProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token)
         {
             ArgumentNullException.ThrowIfNull(user);
 
@@ -75,6 +83,8 @@ namespace Data.Repositories
                 .Basket!
                 .SummUpProducts!
                 .Remove(summUpProduct);
+
+            _context.Entry(summUpProduct).State = EntityState.Deleted;
         }
 
         public async Task<IList<Basket>> GetAllBaskets(CancellationToken token)
@@ -113,7 +123,7 @@ namespace Data.Repositories
             _ = await _context.SaveChangesAsync(token);
         }
 
-        public void UpdateQuantity(User user, SummUpProduct summUpProduct, CancellationToken token)
+        public void UpdateQuantity(User user, SummUpProduct summUpProduct, int changing, CancellationToken token)
         {
             ArgumentNullException.ThrowIfNull(user);
 
@@ -121,7 +131,45 @@ namespace Data.Repositories
 
             token.ThrowIfCancellationRequested();
 
-            _context
+            var basket = _context.Clients
+                .FirstOrDefault(u => u.Equals(user))!
+                .Basket!;
+
+            var currentQuantity = _context.Clients
+                .FirstOrDefault(u => u.Equals(user))!
+                .Basket!
+                .SummUpProducts!
+                .FirstOrDefault(g => g.Equals(summUpProduct))!
+                .Quantity;
+
+            if (currentQuantity + changing > 0)
+            {
+                _context.Clients
+                .FirstOrDefault(u => u.Equals(user))!
+                .Basket!
+                .SummUpProducts!
+                .FirstOrDefault(g => g.Equals(summUpProduct))!
+                .Quantity += changing;
+            }
+            else
+            {
+                DeleteProductGroup(user, summUpProduct, token);
+            }
+
+            _context.Entry(basket).State = EntityState.Modified;
+
+            _context.Entry(summUpProduct).State = EntityState.Modified;
+        }
+
+        public async Task<bool> Find(Basket basket, CancellationToken token)
+        {
+            ArgumentNullException.ThrowIfNull(basket);
+
+            token.ThrowIfCancellationRequested();
+
+            var findedBasket = await _context.Baskets.FindAsync(basket);
+
+            return findedBasket == null ? false : true;
         }
 
         private readonly ILogger<BasketsRepository> _logger;

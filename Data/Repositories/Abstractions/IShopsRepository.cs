@@ -1,24 +1,21 @@
 ﻿using Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Data.Repositories.Abstractions
+
+namespace Data.Repositories.Abstractions;
+
+public interface IShopsRepository
 {
-    public interface IShopsRepository
-    {
-        Task Add(Product product, CancellationToken token);
+    void Add(Shop shop, SummUpProduct summUpProduct, CancellationToken token);
 
-        void Update(SummUpProduct summUpProduct, CancellationToken token);
+    void Update(Shop shop, SummUpProduct summUpProduct, CancellationToken token);
 
-        void Delete(SummUpProduct summUpProduct, CancellationToken token);
+    void Delete(Shop shop, SummUpProduct summUpProduct, CancellationToken token);
 
-        void ClearShop(CancellationToken token);
+    void ClearShop(Shop shop, CancellationToken token);
 
-        Task<IList<SummUpProduct>> GetAllProducts(CancellationToken token);
+    Task<IList<Shop>> GetAllShops(CancellationToken token);
 
-        Task SaveChangesAsync(CancellationToken token);
-    }
+    int GetSummaryProductsOneTypeExistense(Shop shop, Product product, CancellationToken token);
+
+    Task SaveChangesAsync(CancellationToken token);
 }

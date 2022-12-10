@@ -11,11 +11,13 @@ namespace Data.Repositories.Abstractions
     {
         void AddProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token);
 
-        void UpdateQuantity(User user, SummUpProduct summUpProduct, CancellationToken token);
+        void UpdateQuantity(User user, SummUpProduct summUpProduct, int changing, CancellationToken token);
 
-        void DeleteProduct(User user, SummUpProduct summUpProduct, CancellationToken token);
+        void DeleteProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token);
 
         void ClearBasket(User user, CancellationToken token);
+
+        Task<bool> Find(Basket basket, CancellationToken token);
 
         Task<IList<Basket>> GetAllBaskets(CancellationToken token);
 

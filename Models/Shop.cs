@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace Models
 {
-    public class Shop
+    public class Shop : IEquatable<Shop>
     {
         [Key]
         public int Id { get; set; }
@@ -51,6 +52,29 @@ namespace Models
                 return 0;
 
             return ProductQuantities!.First(x => x.Id == _goodId).Quantity;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null)
+                return false;
+
+            if (obj is Shop shop)
+                return Equals(shop);
+            else
+                return false;
+        }
+        public bool Equals(Shop? shop)
+        {
+            if (shop == null)
+                return false;
+
+            return Id == shop.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return (Id).GetHashCode();
         }
     }
 }

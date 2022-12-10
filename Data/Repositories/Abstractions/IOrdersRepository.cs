@@ -11,6 +11,8 @@ namespace Data.Repositories.Abstractions
     {
         void AddOrder(User user, Order order, CancellationToken token);
 
+        void UpdateOrder(Order order, CancellationToken token);
+
         void ConfirmOrder(User user, Order order, CancellationToken token);
 
         void PayOrder(User user, Order order, CancellationToken token);
@@ -19,7 +21,7 @@ namespace Data.Repositories.Abstractions
 
         void CancelOrder(User user, Order order, CancellationToken token);
 
-        void Find(User user, Order order, CancellationToken token);
+        Task<bool> Find(Order order, CancellationToken token);
 
         Task<IList<Order>> GetAllOrders(CancellationToken token);
 
