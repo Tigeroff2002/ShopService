@@ -5,22 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Repositories.Abstractions
+namespace Data.Repositories.Abstractions;
+
+public interface IClientsRepository
 {
-    public interface IClientsRepository
-    {
-        Task Add(User user, CancellationToken token);
+    Task Add(User user, CancellationToken token);
 
-        void Update(User user, CancellationToken token);
+    void Update(User user, CancellationToken token);
 
-        void Delete(User user, CancellationToken token);
+    void Delete(User user, CancellationToken token);
 
-        Task<bool> Find(User user, CancellationToken token);
+    Task<bool> Find(User user, CancellationToken token);
 
-        Task<IList<User>> GetAllUsers(CancellationToken token);
+    Task<IList<User>> GetAllUsers(CancellationToken token);
 
-        Task<IList<User>> GetAllUsersByRole(RoleType type, CancellationToken token);
+    Task<IList<User>> GetAllUsersByRole(RoleType type, CancellationToken token);
 
-        Task SaveChangesAsync(CancellationToken token);
-    }
+    Task SaveChangesAsync(CancellationToken token);
 }

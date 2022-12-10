@@ -1,80 +1,97 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
-namespace Models
+namespace Models;
+
+public class Shop 
+    : IEquatable<Shop>
 {
-    public class Shop : IEquatable<Shop>
+    [Key]
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public string? Address { get; set; }
+    public string? WorkingTime { get; set; }
+    public virtual ICollection<Shipping>? Shippings { get; set; }
+    public virtual ICollection<SummUpProduct>? ProductQuantities { get; set; }
+
+    public Shop(string name, string address, string workingTime)
     {
-        [Key]
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Address { get; set; }
-        public string? WorkingTime { get; set; }
-        public virtual ICollection<Shipping>? Shippings { get; set; }
-        public virtual ICollection<SummUpProduct>? ProductQuantities { get; set; }
-
-        public Shop(string name, string address, string workingTime)
+        if (string.IsNullOrWhiteSpace(name))
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException(nameof(name));
+            throw new ArgumentException(nameof(name));
+        }
+        Name = name;
 
-            Name = name;
+        if (string.IsNullOrWhiteSpace(address))
+        {
+            throw new ArgumentException(nameof(address));
+        }
+        Address = address;
 
-            if (string.IsNullOrWhiteSpace(address))
-                throw new ArgumentException(nameof(address));
+        if (string.IsNullOrWhiteSpace(workingTime))
+        {
+            throw new ArgumentException(nameof(workingTime));
+        }
+        WorkingTime = workingTime;
 
-            Address = address;
+        Shippings = new List<Shipping>();
+        ProductQuantities = new List<SummUpProduct>();
+    }
 
-            if (string.IsNullOrWhiteSpace(workingTime))
-                throw new ArgumentException(nameof(workingTime));
+    public bool CheckExistenseProductOnShop(int _goodId)
+    {
+        ArgumentNullException.ThrowIfNull(ProductQuantities);
 
-            WorkingTime = workingTime;
-
-            Shippings = new List<Shipping>();
-            ProductQuantities = new List<SummUpProduct>();
+        var quantity = ProductQuantities!.First(x => x.Id == _goodId).Quantity;
+        if (quantity > 0)
+        {
+            return true;
         }
 
-        public bool CheckExistenseProductOnShop(int _goodId)
-        {
-            ArgumentNullException.ThrowIfNull(ProductQuantities);
+        return false;
+    }
 
-            var quantity = ProductQuantities!.First(x => x.Id == _goodId).Quantity;
-            if (quantity > 0)
-                return true;
+    public int GetQuantityOfProduct(int _goodId)
+    {
+        ArgumentNullException.ThrowIfNull(ProductQuantities);
+
+        if (!ProductQuantities!.Any(x => x.Id == _goodId))
+        {
+            return 0;
+        }
+
+        return ProductQuantities!.First(x => x.Id == _goodId).Quantity;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }    
+
+        if (obj is Shop shop)
+        {
+            return Equals(shop);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool Equals(Shop? shop)
+    {
+        if (shop == null)
+        {
             return false;
         }
 
-        public int GetQuantityOfProduct(int _goodId)
-        {
-            ArgumentNullException.ThrowIfNull(ProductQuantities);
+        return Id == shop.Id;
+    }
 
-            if (!ProductQuantities!.Any(x => x.Id == _goodId))
-                return 0;
-
-            return ProductQuantities!.First(x => x.Id == _goodId).Quantity;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj == null)
-                return false;
-
-            if (obj is Shop shop)
-                return Equals(shop);
-            else
-                return false;
-        }
-        public bool Equals(Shop? shop)
-        {
-            if (shop == null)
-                return false;
-
-            return Id == shop.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return (Id).GetHashCode();
-        }
+    public override int GetHashCode()
+    {
+        return (Id).GetHashCode();
     }
 }

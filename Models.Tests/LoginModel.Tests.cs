@@ -6,21 +6,18 @@ using Moq;
 
 using ShopService.Views.Account;
 
-namespace AuthdService.AuthModels.Tests
+namespace AuthdService.AuthModels.Tests;
+
+public class LoginModelTests
 {
-    public class LoginModelTests
+    [Fact(DisplayName = $"{nameof(LoginModel)} can be created")]
+    [Trait("Category", "Unit")]
+    public void CanBeCreated()
     {
-        [Fact(DisplayName = $"{nameof(LoginModel)} can be created")]
-        [Trait("Category", "Unit")]
-        public void CanBeCreated()
-        {
-            // Arrange
+        // Act
+        var exception = Record.Exception(() => new LoginModel());
 
-            // Act
-            var exception = Record.Exception(() => new LoginModel());
-
-            // Assert
-            exception.Should().BeNull();
-        }
+        // Assert
+        exception.Should().BeNull();
     }
 }
