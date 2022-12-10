@@ -44,11 +44,19 @@ namespace Models
             OrderDescription = CreateDescription();
         }
 
-        public bool Equals(Order? order)
+        public bool Equals1(Order? order)
         {
             if (order == null)
                 return false;
             return GetHashCode() == order.GetHashCode() && Client!.Basket!.Equals(order!.Client!.Basket);
+        }
+
+        public bool Equals(Order? order)
+        {
+            if (order == null)
+                return false;
+
+            return order.Id == Id;
         }
 
         public override bool Equals(object? obj)

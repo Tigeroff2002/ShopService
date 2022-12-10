@@ -43,7 +43,8 @@ namespace Models
         {
             if (user == null)
                 return false;
-            return user!.EmailAdress!.Equals(EmailAdress) && user!.ContactNumber!.Equals(ContactNumber);
+
+            return user!.EmailAdress!.Equals(EmailAdress);
         }
 
         public override int GetHashCode()

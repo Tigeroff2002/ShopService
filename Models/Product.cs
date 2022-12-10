@@ -56,9 +56,8 @@ namespace Models
         {
             if (product == null)
                 return false;
-            if (Id != product.Id)
-                return false;
-            return true;
+            
+            return product.Id == Id;
         }
     }
 }
