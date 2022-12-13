@@ -14,9 +14,11 @@ public class Order
     public DateTime ShippedDate { get; set; }
     public bool isReadyForConfirmation { get; set; } = false;
     public bool isReadyForPayment { get; set; } = false;
-    public bool isReadyForGetting { get; set; } = false;
+    public bool isPayd { get; set; } = false;
 
     public bool isGot { get; set; } = false;
+
+    public bool isDeleted { get; set; } = false;
 
     public string? OrderDescription { get; set; }
 
@@ -39,7 +41,7 @@ public class Order
         Shipping = new Shipping(shippingType);
         isReadyForConfirmation = default;
         isReadyForPayment = default;
-        isReadyForGetting = default;
+        isPayd = default;
 
         CreateOrderWithCurrentBasket();
 
@@ -97,7 +99,7 @@ public class Order
     public void PayConfirmedOrder()
     {
         // Actions for Paying Order
-        isReadyForGetting = true;
+        isPayd = true;
     }
 
     public string CreateDescription()

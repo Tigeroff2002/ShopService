@@ -9,6 +9,8 @@ namespace Data.Repositories.Abstractions;
 
 public interface IOrdersRepository
 {
+    Task AddOrderAsync(Order order, CancellationToken cancellationToken);
+
     void AddOrder(User user, Order order, CancellationToken token);
 
     void UpdateOrder(Order order, CancellationToken token);
@@ -19,9 +21,12 @@ public interface IOrdersRepository
 
     void TakeOrder(User user, Order order, CancellationToken token);
 
-    void CancelOrder(User user, Order order, CancellationToken token);
+    void CancelUserOrder(User user, Order order, CancellationToken token);
 
-    Task<bool> Find(Order order, CancellationToken token);
+    void CancelOrder(Order order, CancellationToken token);
+
+    Task<bool> FindAsync(Order order, CancellationToken token);
+
 
     Task<IList<Order>> GetAllOrders(CancellationToken token);
 

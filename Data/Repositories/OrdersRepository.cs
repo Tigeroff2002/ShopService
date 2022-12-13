@@ -20,6 +20,14 @@ public sealed class OrdersRepository
         _logger.LogInformation("OrdersRepository has created jsut now");
     }
 
+    public async Task AddOrderAsync(Order order, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+
+        token.ThrowIfCancellationRequested();
+
+        await _context.AddAsync(order, token).ConfigureAwait(false);
+    }
     public void AddOrder(User user, Order order, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -34,7 +42,7 @@ public sealed class OrdersRepository
             .Add(order);
     }
 
-    public void CancelOrder(User user, Order order, CancellationToken token)
+    public void CancelUserOrder(User user, Order order, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(user);
 
@@ -42,12 +50,23 @@ public sealed class OrdersRepository
 
         token.ThrowIfCancellationRequested();
 
+        _context.Entry(order).State = EntityState.Deleted;
+
+        _context.Orders.Remove(order);
+
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
             .Orders!
             .Remove(order);
+    }
 
-        _context.Entry(order).State = EntityState.Deleted;
+    public void CancelOrder(Order order, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+
+        token.ThrowIfCancellationRequested();
+
+        _context.Orders.Remove(order);
     }
 
     public void ConfirmOrder(User user, Order order, CancellationToken token)
@@ -67,7 +86,7 @@ public sealed class OrdersRepository
         _context.Entry(order).State = EntityState.Modified;
     }
 
-    public async Task<bool> Find(Order order, CancellationToken token)
+    public async Task<bool> FindAsync(Order order, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(order);
 

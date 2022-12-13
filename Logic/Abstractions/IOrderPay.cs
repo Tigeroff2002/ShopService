@@ -4,5 +4,5 @@ namespace Logic.Abstractions;
 
 public interface IOrderPay
 {
-    public Task<Order> PayAsync(Order order, CancellationToken token);
+    public Task<bool> PayAsync(Order order, CancellationToken token);
 }
