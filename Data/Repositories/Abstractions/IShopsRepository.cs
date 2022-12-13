@@ -1,6 +1,5 @@
 ﻿using Models;
 
-
 namespace Data.Repositories.Abstractions;
 
 public interface IShopsRepository

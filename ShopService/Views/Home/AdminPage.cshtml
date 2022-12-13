@@ -56,19 +56,19 @@
                         <th>@Html.DisplayFor(x => order.ResultCost)</th>
                         <th>@Html.DisplayFor(x => order.OrderDate)</th>
                         <th>
-                            @if(order.isReadyForGetting)
+                            @if(order.isPayd)
                             {
                                 @Html.DisplayName("Готов к выдаче")
                             }
-                            @if(!order.isReadyForGetting && order.isReadyForPayment)
+                            @if(!order.isPayd && order.isReadyForPayment)
                             {
                                 @Html.DisplayName("Готов к оплате")
                             }
-                            @if(!order.isReadyForGetting && !order.isReadyForPayment && order.isReadyForConfirmation)
+                            @if(!order.isPayd && !order.isReadyForPayment && order.isReadyForConfirmation)
                             {
                                 @Html.DisplayName("Готов к подтверждению")
                             }
-                            @if(!order.isReadyForGetting && !order.isReadyForPayment && !order.isReadyForConfirmation)
+                            @if(!order.isPayd && !order.isReadyForPayment && !order.isReadyForConfirmation)
                             {
                                 @Html.DisplayName("Заказ отменился")
                             }
