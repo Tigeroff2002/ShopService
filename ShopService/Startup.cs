@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
+using ShopService.Registrations;
+
 namespace ShopService;
 
 /// <summary>
@@ -33,27 +35,22 @@ public class Startup
     /// </summary>
     public void ConfigureServices(IServiceCollection services)
     {
-        _ = services.AddControllersWithViews();
+        _ = services
+            .AddControllersWithViews()
+            .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-        _ = services.AddRazorPages();
+        _ = services
+            .AddStorage()
+            .AddOrderLogic();
 
-        _ = services.AddControllersWithViews().AddNewtonsoftJson(options =>
-            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
-        _ = services.AddDbContext<RetailStoreDataContext>(opt =>
-                opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;Integrated Security=True"))
-            .AddSingleton<IBasketsRepository, BasketsRepository>()
-            .AddSingleton<IClientsRepository, ClientsRepository>()
-            .AddSingleton<IOrdersRepository, OrdersRepository>()
-            .AddSingleton<IProductsRepository, ProductsRepository>()
-            .AddSingleton<IShopsRepository, ShopsRepository>()
-            .AddSingleton<ISummUpProductsRepository, SummUpProductsRepository>();
-
-        _ = services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        _ = services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(x => x.LoginPath = "/login");
 
         _ = services
-            .AddLogging();
+            .AddLogging()
+            .AddRazorPages();
     }
 
     /// <summary>

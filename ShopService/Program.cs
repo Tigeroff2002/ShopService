@@ -1,8 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using Data.Contexts;
 using Microsoft.AspNetCore.Mvc;
+
+using Data.Contexts;
+
+using Logic.Abstractions;
+using Logic;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
+
 using Data.Repositories.Abstractions;
 using Data.Repositories;
 
@@ -20,10 +26,13 @@ builder.Services.AddDbContext<RetailStoreDataContext>(opt =>
     opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;Integrated Security=True"))
     .AddSingleton<IBasketsRepository, BasketsRepository>()
     .AddSingleton<IClientsRepository, ClientsRepository>()
-    .AddSingleton<IOrdersRepository, OrdersRepository>()
     .AddSingleton<IProductsRepository, ProductsRepository>()
     .AddSingleton<IShopsRepository, ShopsRepository>()
-    .AddSingleton<ISummUpProductsRepository, SummUpProductsRepository>();
+    .AddSingleton<ISummUpProductsRepository, SummUpProductsRepository>()
+    .AddSingleton<IOrdersRepository, OrdersRepository>()
+    .AddSingleton<IOrderManager, OrderManager>()
+    .AddSingleton<IOrderConfirmer, OrderConfirmer>()
+    .AddSingleton<IOrderPay, OrderPay>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(x => x.LoginPath = "/login");
