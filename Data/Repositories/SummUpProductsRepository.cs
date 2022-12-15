@@ -4,6 +4,7 @@ using Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Data.Contexts.Abstractions;
 
 namespace Data.Repositories;
 
@@ -12,7 +13,7 @@ public sealed class SummUpProductsRepository
 {
     public SummUpProductsRepository(
         ILogger<SummUpProductsRepository> logger,
-        RetailStoreDataContext context)
+        IRepositoryContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -26,7 +27,7 @@ public sealed class SummUpProductsRepository
 
         token.ThrowIfCancellationRequested();
 
-        _ = await _context.AddAsync(summUpProduct, token);  
+        _ = await _context.SummUpProducts.AddAsync(summUpProduct, token);  
     }
 
     public void Delete(SummUpProduct summUpProduct, CancellationToken token)
@@ -35,7 +36,7 @@ public sealed class SummUpProductsRepository
 
         token.ThrowIfCancellationRequested();
 
-        _ = _context.Remove(summUpProduct);
+        _ = _context.SummUpProducts.Remove(summUpProduct);
     }
 
     public async Task<bool> Find(SummUpProduct summUpProduct, CancellationToken token)
@@ -97,13 +98,11 @@ public sealed class SummUpProductsRepository
             .ToList();
     }
 
-    public async Task SaveChangesAsync(CancellationToken token)
+    public void SaveChanges()
     {
         _logger.LogInformation("ClientsRepository called saving data to DB");
 
-        token.ThrowIfCancellationRequested();
-
-        _ = await _context.SaveChangesAsync(token);
+        _context.SaveChanges();
     }
 
     public void Update(SummUpProduct summUpProduct, CancellationToken token)
@@ -112,9 +111,9 @@ public sealed class SummUpProductsRepository
 
         token.ThrowIfCancellationRequested();
 
-        _context.Entry(summUpProduct).State = EntityState.Modified;
+        //_context.Entry(summUpProduct).State = EntityState.Modified;
     }
 
     private readonly ILogger<SummUpProductsRepository> _logger;
-    private readonly RetailStoreDataContext _context;
+    private readonly IRepositoryContext _context;
 }

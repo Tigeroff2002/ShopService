@@ -1,4 +1,6 @@
-﻿using Logic.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+
+using Logic.Abstractions;
 using Models;
 using System.Security.Cryptography;
 
@@ -7,6 +9,13 @@ namespace Logic;
 public sealed class OrderPay
     : IOrderPay
 {
+    public OrderPay(ILogger<OrderPay> logger)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+        _logger.LogInformation("OrderPay was created just now");
+    }
+
     public async Task<bool> PayAsync(Order order, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(order);
@@ -23,4 +32,6 @@ public sealed class OrderPay
 
         return false;
     }
+
+    private readonly ILogger<OrderPay> _logger;
 }

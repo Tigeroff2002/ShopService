@@ -14,6 +14,6 @@ public interface IProductsRepository
 
     Task<IList<Product>> GetAllProducts(CancellationToken token);
 
-    Task SaveChangesAsync(CancellationToken token);
+    void SaveChanges();
 
 }

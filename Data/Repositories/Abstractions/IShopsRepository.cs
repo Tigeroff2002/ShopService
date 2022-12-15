@@ -16,5 +16,5 @@ public interface IShopsRepository
 
     int GetSummaryProductsOneTypeExistense(Shop shop, Product product, CancellationToken token);
 
-    Task SaveChangesAsync(CancellationToken token);
+    void SaveChanges();
 }

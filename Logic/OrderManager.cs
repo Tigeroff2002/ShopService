@@ -39,7 +39,7 @@ public sealed class OrderManager
 
         _logger.LogInformation("OrderManager is confirming order...");
 
-        var orderToConfirm = await _confirmer.ConfirmOrder(order, cancellationToken)
+        var orderToConfirm = await _confirmer.ConfirmOrderAsync(order, cancellationToken)
             .ConfigureAwait(false);
 
         if (orderToConfirm.isPayd == true)
@@ -58,8 +58,7 @@ public sealed class OrderManager
         {
             _logger.LogInformation("OrderManager is automatically cancellating order...");
 
-            await CancelOrderAsync(orderToConfirm, cancellationToken)
-                .ConfigureAwait(false);
+            CancelOrder(orderToConfirm, cancellationToken);
 
             orderToConfirm.isDeleted = true;
         }
@@ -71,8 +70,7 @@ public sealed class OrderManager
 
             _repository.UpdateOrder(orderToConfirm, cancellationToken);
 
-            await _repository.SaveChangesAsync(cancellationToken)
-                .ConfigureAwait(false);
+            _repository.SaveChanges();
         }
 
         return orderToConfirm;
@@ -144,7 +142,7 @@ public sealed class OrderManager
         return false;
     }
 
-    public async Task CancelOrderAsync(Order order, CancellationToken cancellationToken)
+    public void CancelOrder(Order order, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(order);
 
@@ -154,8 +152,7 @@ public sealed class OrderManager
 
         _logger.LogInformation("OrderManager cancelled and deleted the old order from db");
 
-        await _repository.SaveChangesAsync(cancellationToken)
-            .ConfigureAwait(false);
+        _repository.SaveChanges();
     }
 
     private readonly ILogger<OrderManager> _logger;

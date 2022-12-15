@@ -3,6 +3,7 @@ using Data.Contexts;
 using Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Data.Contexts.Abstractions;
 
 namespace Data.Repositories;
 
@@ -11,7 +12,7 @@ public sealed class ProductsRepository
 {
     public ProductsRepository(
         ILogger<ProductsRepository> logger,
-        RetailStoreDataContext context)
+        IRepositoryContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -43,13 +44,11 @@ public sealed class ProductsRepository
         return await _context.Products.ToListAsync(token);
     }
 
-    public async Task SaveChangesAsync(CancellationToken token)
+    public void SaveChanges()
     {
         _logger.LogInformation("ProductsRepository called saving data to DB");
 
-        token.ThrowIfCancellationRequested();
-
-        _ = await _context.SaveChangesAsync(token);
+        _context.SaveChanges();
     }
 
     public void Update(Product product, CancellationToken token)
@@ -58,7 +57,7 @@ public sealed class ProductsRepository
 
         token.ThrowIfCancellationRequested();
 
-        _context.Entry(product).State = EntityState.Modified;
+        //_context.Entry(product).State = EntityState.Modified;
     }
 
     public async Task<bool> Find(Product product, CancellationToken token)
@@ -73,5 +72,5 @@ public sealed class ProductsRepository
     }
 
     private readonly ILogger<ProductsRepository> _logger;
-    private readonly RetailStoreDataContext _context;
+    private readonly IRepositoryContext _context;
 }

@@ -10,5 +10,5 @@ public interface IOrderManager
 
     public Task<bool> GiveOrder(Order order, CancellationToken cancellationToken);
 
-    public Task CancelOrderAsync(Order order, CancellationToken cancellationToken);
+    public void CancelOrder(Order order, CancellationToken cancellationToken);
 }
