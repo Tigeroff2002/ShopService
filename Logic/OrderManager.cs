@@ -39,7 +39,7 @@ public sealed class OrderManager
 
         _logger.LogInformation("OrderManager is confirming order...");
 
-        var orderToConfirm = await _confirmer.ConfirmOrder(order, cancellationToken)
+        var orderToConfirm = await _confirmer.ConfirmOrderAsync(order, cancellationToken)
             .ConfigureAwait(false);
 
         if (orderToConfirm.isPayd == true)

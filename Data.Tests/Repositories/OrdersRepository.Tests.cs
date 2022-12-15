@@ -10,4 +10,6 @@ namespace Data.Tests.Repositories;
 
 public sealed class OrdersRepositoryTests
 {
+    [Fact(DisplayName = "OrderRepository can be created")]
+    []
 }
