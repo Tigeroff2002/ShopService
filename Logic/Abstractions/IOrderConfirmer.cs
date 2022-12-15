@@ -8,5 +8,5 @@ public interface IOrderConfirmer
 
     public Task<bool> ConfirmPayAsync(Order order, CancellationToken token);
 
-    public Task<Order> ConfirmOrder(Order order, CancellationToken token);
+    public Task<Order> ConfirmOrderAsync(Order order, CancellationToken token);
 }

@@ -25,5 +25,5 @@ public interface IBasketsRepository
 
     IList<SummUpProduct> GetAllProductGroupsFromBasket(User user, CancellationToken token);
 
-    Task SaveChangesAsync(CancellationToken token);
+    void SaveChanges();
 }

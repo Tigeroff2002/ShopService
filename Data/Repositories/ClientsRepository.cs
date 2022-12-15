@@ -4,6 +4,7 @@ using Models;
 using Data.Contexts;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Data.Contexts.Abstractions;
 
 namespace Data.Repositories;
 
@@ -12,7 +13,7 @@ public sealed class ClientsRepository
 {
     public ClientsRepository(
         ILogger<ClientsRepository> logger,
-        RetailStoreDataContext context)
+        IRepositoryContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -64,13 +65,11 @@ public sealed class ClientsRepository
             .ToListAsync(token);
     }
 
-    public async Task SaveChangesAsync(CancellationToken token)
+    public void SaveChanges()
     {
         _logger.LogInformation("ClientsRepository called saving data to DB");
 
-        token.ThrowIfCancellationRequested();
-
-        _ = await _context.SaveChangesAsync(token);
+        _context.SaveChanges();
     }
 
     public void Update(User user, CancellationToken token)
@@ -79,9 +78,9 @@ public sealed class ClientsRepository
 
         token.ThrowIfCancellationRequested();
 
-        _context.Entry(user).State = EntityState.Modified;
+        //_context.Entry(user).State = EntityState.Modified;
     }
 
     private readonly ILogger<ClientsRepository> _logger;
-    private readonly RetailStoreDataContext _context;
+    private readonly IRepositoryContext _context;
 }

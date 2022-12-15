@@ -18,7 +18,7 @@ public sealed class OrderConfirmer
         _logger.LogInformation("OrderConfimer has created");
     }
 
-    public async Task<Order> ConfirmOrder(Order order, CancellationToken token)
+    public async Task<Order> ConfirmOrderAsync(Order order, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(order);
 

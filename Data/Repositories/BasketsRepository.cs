@@ -3,6 +3,7 @@ using Data.Contexts;
 using Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Data.Contexts.Abstractions;
 
 namespace Data.Repositories;
 
@@ -11,7 +12,7 @@ public sealed class BasketsRepository
 {
     public BasketsRepository(
         ILogger<BasketsRepository> logger, 
-        RetailStoreDataContext context)
+        IRepositoryContext context)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -62,7 +63,7 @@ public sealed class BasketsRepository
             .SummUpProducts!
             .Clear();
 
-        _context.Entry(basket).State = EntityState.Modified;
+        //_context.Entry(basket).State = EntityState.Modified;
     }
 
     public void DeleteProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token)
@@ -84,7 +85,7 @@ public sealed class BasketsRepository
             .SummUpProducts!
             .Remove(summUpProduct);
 
-        _context.Entry(summUpProduct).State = EntityState.Deleted;
+        //_context.Entry(summUpProduct).State = EntityState.Deleted;
     }
 
     public async Task<IList<Basket>> GetAllBaskets(CancellationToken token)
@@ -114,13 +115,11 @@ public sealed class BasketsRepository
         return _context.Clients.FirstOrDefault(u => u.Equals(user))!.Basket!;
     }
 
-    public async Task SaveChangesAsync(CancellationToken token)
+    public void SaveChanges()
     {
         _logger.LogInformation("BasketsRepository called saving data to DB");
 
-        token.ThrowIfCancellationRequested();
-
-        _ = await _context.SaveChangesAsync(token);
+        _context.SaveChanges();
     }
 
     public void UpdateQuantity(User user, SummUpProduct summUpProduct, int changing, CancellationToken token)
@@ -156,9 +155,9 @@ public sealed class BasketsRepository
             DeleteProductGroup(user, summUpProduct, token);
         }
 
-        _context.Entry(basket).State = EntityState.Modified;
+        //_context.Entry(basket).State = EntityState.Modified;
 
-        _context.Entry(summUpProduct).State = EntityState.Modified;
+        //_context.Entry(summUpProduct).State = EntityState.Modified;
     }
 
     public async Task<bool> Find(Basket basket, CancellationToken token)
@@ -173,5 +172,5 @@ public sealed class BasketsRepository
     }
 
     private readonly ILogger<BasketsRepository> _logger;
-    private readonly RetailStoreDataContext _context;
+    private readonly IRepositoryContext _context;
 }

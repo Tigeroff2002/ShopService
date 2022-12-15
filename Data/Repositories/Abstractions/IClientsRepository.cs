@@ -21,5 +21,5 @@ public interface IClientsRepository
 
     Task<IList<User>> GetAllUsersByRole(RoleType type, CancellationToken token);
 
-    Task SaveChangesAsync(CancellationToken token);
+    void SaveChanges();
 }
