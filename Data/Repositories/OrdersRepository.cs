@@ -4,6 +4,7 @@ using Models;
 using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Data.Contexts.Abstractions;
 
 namespace Data.Repositories;
 
@@ -12,7 +13,7 @@ public sealed class OrdersRepository
 {
     public OrdersRepository(
         ILogger<OrdersRepository> logger,
-        RetailStoreDataContext context)
+        IRepositoryContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -26,7 +27,7 @@ public sealed class OrdersRepository
 
         token.ThrowIfCancellationRequested();
 
-        await _context.AddAsync(order, token).ConfigureAwait(false);
+        await _context.Orders.AddAsync(order, token).ConfigureAwait(false);
     }
     public void AddOrder(User user, Order order, CancellationToken token)
     {
@@ -50,7 +51,7 @@ public sealed class OrdersRepository
 
         token.ThrowIfCancellationRequested();
 
-        _context.Entry(order).State = EntityState.Deleted;
+        //_context.Entry(order).State = EntityState.Deleted;
 
         _context.Orders.Remove(order);
 
@@ -83,7 +84,7 @@ public sealed class OrdersRepository
             .FirstOrDefault(o => o.Equals(order))!
             .ConfirmCreatedOrder();
 
-        _context.Entry(order).State = EntityState.Modified;
+        //_context.Entry(order).State = EntityState.Modified;
     }
 
     public async Task<bool> FindAsync(Order order, CancellationToken token)
@@ -129,7 +130,7 @@ public sealed class OrdersRepository
             .FirstOrDefault(o => o.Equals(order))!
             .PayConfirmedOrder();
 
-        _context.Entry(order).State = EntityState.Modified;
+        //_context.Entry(order).State = EntityState.Modified;
     }
 
     public void TakeOrder(User user, Order order, CancellationToken token)
@@ -146,7 +147,7 @@ public sealed class OrdersRepository
             .FirstOrDefault(o => o.Equals(order))!
             .isGot = true;
 
-        _context.Entry(order).State = EntityState.Modified;
+        //_context.Entry(order).State = EntityState.Modified;
     }
 
     public void UpdateOrder(Order order, CancellationToken token)
@@ -156,18 +157,16 @@ public sealed class OrdersRepository
 
         token.ThrowIfCancellationRequested();
 
-        _context.Entry(order).State = EntityState.Modified;
+        //_context.Entry(order).State = EntityState.Modified;
     }
 
-    public async Task SaveChangesAsync(CancellationToken token)
+    public void SaveChanges()
     {
-        token.ThrowIfCancellationRequested();
-
         _logger.LogInformation("OrdersRepository called a saving data to DB");
 
-        _ = await _context.SaveChangesAsync(token);
+        _context.SaveChanges();
     }
 
     private readonly ILogger<OrdersRepository> _logger;
-    private readonly RetailStoreDataContext _context;
+    private readonly IRepositoryContext _context;
 }

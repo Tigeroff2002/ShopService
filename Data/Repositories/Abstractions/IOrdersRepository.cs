@@ -27,12 +27,11 @@ public interface IOrdersRepository
 
     Task<bool> FindAsync(Order order, CancellationToken token);
 
-
     Task<IList<Order>> GetAllOrders(CancellationToken token);
 
     IList<Order> GetAllUserOrders(User user, CancellationToken token);
 
     IList<Order> GetAllShopOrders(Shop shop, CancellationToken token);
 
-    Task SaveChangesAsync(CancellationToken token);
+    void SaveChanges();
 }

@@ -25,5 +25,5 @@ public interface ISummUpProductsRepository
 
     IList<SummUpProduct> GetAllProductsGroupsFromWarehouse(Warehouse warehouse, CancellationToken token);
 
-    Task SaveChangesAsync(CancellationToken token);
+    void SaveChanges();
 }

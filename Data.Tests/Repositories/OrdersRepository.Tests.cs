@@ -8,6 +8,7 @@ using Data.Repositories;
 using Microsoft.Extensions.Logging;
 using Data.Repositories.Abstractions;
 using Data.Contexts;
+using Data.Contexts.Abstractions;
 
 namespace Data.Tests.Repositories;
 
@@ -19,7 +20,7 @@ public sealed class OrdersRepositoryTests
     {
         // Arrange
         var logger = Mock.Of<ILogger<OrdersRepository>>();
-        var context = Mock.Of<RetailStoreDataContext>();
+        var context = Mock.Of<IRepositoryContext>();
 
         // Act
         var exception = Record.Exception(() => new OrdersRepository(logger, context));
@@ -34,7 +35,7 @@ public sealed class OrdersRepositoryTests
     public void CanNotBeCreatedBecauseLoggerIsNull()
     {
         // Arrange
-        var context = Mock.Of<RetailStoreDataContext>();
+        var context = Mock.Of<IRepositoryContext>();
 
         // Act
         var exception = Record.Exception(() => new OrdersRepository(null!, context));

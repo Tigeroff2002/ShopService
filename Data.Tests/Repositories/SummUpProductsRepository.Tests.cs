@@ -7,6 +7,7 @@ using Moq;
 using Data.Repositories;
 using Data.Contexts;
 using Microsoft.Extensions.Logging;
+using Data.Contexts.Abstractions;
 
 namespace Data.Tests.Repositories;
 
@@ -18,7 +19,7 @@ public sealed class SummUpProductsRepositoryTests
     {
         // Arrange
         var logger = Mock.Of<ILogger<SummUpProductsRepository>>();
-        var context = Mock.Of<RetailStoreDataContext>();
+        var context = Mock.Of<IRepositoryContext>();
 
         // Act
         var exception = Record.Exception(() => new SummUpProductsRepository(logger, context));
@@ -33,7 +34,7 @@ public sealed class SummUpProductsRepositoryTests
     public void CanNotBeCreatedBecauseLoggerIsNull()
     {
         // Arrange
-        var context = Mock.Of<RetailStoreDataContext>();
+        var context = Mock.Of<IRepositoryContext>();
 
         // Act
         var exception = Record.Exception(() => new SummUpProductsRepository(null!, context));

@@ -7,12 +7,12 @@ using Models;
 
 namespace Data.Repositories;
 
-public sealed class ShopsRepository
-    : IShopsRepository
+public sealed class WarehousesRepository
+    : IWarehousesRepository
 {
-    public ShopsRepository(
-        ILogger<ShopsRepository> logger,
-        IRepositoryContext context)
+    public WarehousesRepository(
+       ILogger<WarehousesRepository> logger,
+       IRepositoryContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -20,76 +20,76 @@ public sealed class ShopsRepository
         _logger.LogInformation("ShopsRepository has created just now");
     }
 
-    public void Add(Shop shop, SummUpProduct summUpProduct, CancellationToken token)
+    public void Add(Warehouse warehouse, SummUpProduct summUpProduct, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(shop);
+        ArgumentNullException.ThrowIfNull(warehouse);
 
         ArgumentNullException.ThrowIfNull(summUpProduct);
 
         token.ThrowIfCancellationRequested();
 
         _context.Shops
-            .FirstOrDefault(s => s.Equals(shop))!
+            .FirstOrDefault(s => s.Equals(warehouse))!
             .ProductQuantities!
             .Add(summUpProduct);
 
-        //_context.Entry(shop).State = EntityState.Modified;
+        //_context.Entry(warehouse).State = EntityState.Modified;
     }
 
-    public void ClearShop(Shop shop, CancellationToken token)
+    public void ClearWarehouse(Warehouse warehouse, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(shop);
+        ArgumentNullException.ThrowIfNull(warehouse);
 
         token.ThrowIfCancellationRequested();
 
         _context.Shops
-            .FirstOrDefault(s => s.Equals(shop))!
+            .FirstOrDefault(s => s.Equals(warehouse))!
             .ProductQuantities!
             .Clear();
 
-        //_context.Entry(shop).State = EntityState.Modified;
+        //_context.Entry(warehouse).State = EntityState.Modified;
     }
 
-    public void Delete(Shop shop, SummUpProduct summUpProduct, CancellationToken token)
+    public void Delete(Warehouse warehouse, SummUpProduct summUpProduct, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(shop);
+        ArgumentNullException.ThrowIfNull(warehouse);
 
         ArgumentNullException.ThrowIfNull(summUpProduct);
 
         token.ThrowIfCancellationRequested();
 
         _context.Shops
-            .FirstOrDefault(s => s.Equals(shop))!
+            .FirstOrDefault(s => s.Equals(warehouse))!
             .ProductQuantities!
             .Remove(summUpProduct);
 
-        //_context.Entry(shop).State = EntityState.Modified;
+        //_context.Entry(warehouse).State = EntityState.Modified;
     }
 
-    public async Task<IList<Shop>> GetAllShops(CancellationToken token)
+    public async Task<IList<Shop>> GetAllWarehouses(CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
 
         return await _context.Shops.ToListAsync();
     }
 
-    public int GetSummaryProductsOneTypeExistense(Shop shop, Product product, CancellationToken token)
+    public int GetSummaryProductsOneTypeExistense(Warehouse warehouse, Product product, CancellationToken token)
     {
         throw new NotImplementedException();
     }
 
     public void SaveChanges()
-    {
+    { 
         _logger.LogInformation("OrdersRepository called a saving data to DB");
 
-         _context.SaveChanges();
+        _context.SaveChanges();
     }
 
-    public void Update(Shop shop, SummUpProduct summUpProduct, CancellationToken token)
+    public void Update(Warehouse warehouse, SummUpProduct summUpProduct, CancellationToken token)
     {
         throw new NotImplementedException();
     }
 
-    private readonly ILogger<ShopsRepository> _logger;
+    private readonly ILogger<WarehousesRepository> _logger;
     private readonly IRepositoryContext _context;
 }

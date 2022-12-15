@@ -12,25 +12,25 @@ using Data.Contexts.Abstractions;
 
 namespace Data.Tests.Repositories;
 
-public sealed class BasketsRepositoryTests
+public sealed class WarehousesRepositoryTests
 {
-    [Fact(DisplayName = $"{nameof(BasketsRepository)} can be created")]
+    [Fact(DisplayName = $"{nameof(WarehousesRepository)} can be created")]
     [Trait("Category", "Unit")]
     public void CanBeCreated()
     {
         // Arrange
-        var logger = Mock.Of<ILogger<BasketsRepository>>();
+        var logger = Mock.Of<ILogger<WarehousesRepository>>();
         var context = Mock.Of<IRepositoryContext>();
 
         // Act
-        var exception = Record.Exception(() => new BasketsRepository(logger, context));
+        var exception = Record.Exception(() => new WarehousesRepository(logger, context));
 
         // Assert
         exception.Should().BeNull();
     }
 
 
-    [Fact(DisplayName = $"{nameof(BasketsRepository)} can not be created because logger is null")]
+    [Fact(DisplayName = $"{nameof(WarehousesRepository)} can not be created because logger is null")]
     [Trait("Category", "Unit")]
     public void CanNotBeCreatedBecauseLoggerIsNull()
     {
@@ -38,21 +38,21 @@ public sealed class BasketsRepositoryTests
         var context = Mock.Of<IRepositoryContext>();
 
         // Act
-        var exception = Record.Exception(() => new BasketsRepository(null!, context));
+        var exception = Record.Exception(() => new WarehousesRepository(null!, context));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
     }
 
-    [Fact(DisplayName = $"{nameof(BasketsRepository)} can not be created because context is null")]
+    [Fact(DisplayName = $"{nameof(WarehousesRepository)} can not be created because context is null")]
     [Trait("Category", "Unit")]
     public void CanNotBeCreatedBecauseContextIsNull()
-{
-// Arrange
-        var logger = Mock.Of<ILogger<BasketsRepository>>();
+    {
+        // Arrange
+        var logger = Mock.Of<ILogger<WarehousesRepository>>();
 
         // Act
-        var exception = Record.Exception(() => new BasketsRepository(logger, null!));
+        var exception = Record.Exception(() => new WarehousesRepository(logger, null!));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
