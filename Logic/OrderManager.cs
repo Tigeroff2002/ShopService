@@ -21,6 +21,18 @@ public sealed class OrderManager
         _logger.LogInformation("OrderManager is created");
     }
 
+
+    public async Task ProcessOrdersAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            await Task.Delay(1_000, cancellationToken)
+                .ConfigureAwait(false);
+
+            _logger.LogInformation("Processor is starting now after 1s delay");
+        }
+    }
+
     public async Task<Order> ProcessAsync(Order order, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(order);
