@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Data.Contexts;
+using Data.Repositories.Abstractions;
 
 namespace ShopService.Controllers;
 
@@ -11,74 +12,44 @@ public class BasketController : Controller
 {
     public BasketController(
         ILogger<BasketController> logger,
-        RetailStoreDataContext context)
+        IProductsRepository productsRepository,
+        ISummUpProductsRepository summUpProductsRepository,
+        IBasketsRepository basketsRepository, 
+        IClientsRepository clientsRepository)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _productsRepository = productsRepository ?? throw new ArgumentNullException(nameof(productsRepository));
+        _summUpProductsRepository = summUpProductsRepository ?? throw new ArgumentNullException(nameof(summUpProductsRepository));
+        _basketsRepository = basketsRepository ?? throw new ArgumentNullException(nameof(basketsRepository));
+        _clientsRepository = clientsRepository ?? throw new ArgumentNullException(nameof(clientsRepository)); 
 
         _logger.LogInformation("Basket Controller was started just now");
     }
 
     [HttpGet("getBasket")]
-    public IActionResult GetBasket()
+    public async Task<IActionResult> GetBasket()
     {
-        /*
-        var user = await _context!.Clients.FindAsync(clientId);
+        var user = await _clientsRepository.FindAsync("", CancellationToken.None)
+            .ConfigureAwait(false);
+
         if (user == null)
         {
             user = new User(1, 1);
-            var basket = user.Basket = new Basket(1, user);
+
+            var basket = SeedExistedBasket();
+
+            user.Basket = basket;
+
             return View(basket);
         }
+
         var existedBasket = user!.Basket!;
+
         if (existedBasket == null)
             return NotFound();
 
-         */
-#pragma warning disable CS8670 // Инициализатор объекта или коллекции неявно разыменовывает член, который может быть равен NULL.
-        var existedBasket = new Basket
-        {
-            SummUpProducts = new List<SummUpProduct>
-               {
-                    new SummUpProduct
-                    {
-                        Id = 1,
-                        Product = new Product
-                        {
-                            Name = "Iphone 14",
-                            DeviceType = new DeviceType
-                            {
-                                Name = "Смартфон"
-                            },
-                            Producer = new Producer
-                            {
-                                Name = "Apple"
-                            },
-                        },
-                        Quantity = 2
-                    },
-                    new SummUpProduct
-                    {
-                        Id = 2,
-                        Product = new Product
-                        {
-                            Name = "Iphone 12 Mini",
-                            DeviceType = new DeviceType
-                            {
-                                Name = "Смартфон"
-                            },
-                            Producer = new Producer
-                            {
-                                Name = "Apple"
-                            }
-                        },
-                        Quantity = 1
-                    }
-                }
-        };
-#pragma warning restore CS8670 // Инициализатор объекта или коллекции неявно разыменовывает член, который может быть равен NULL.
 
-        var user = new User
+        var newUser = new User
         {
             Id = 1,
             Role = new Role(0)
@@ -88,16 +59,17 @@ public class BasketController : Controller
     }
 
     [HttpGet("cleanBasket")]
-    public IActionResult CleanBasket()
+    public async Task<IActionResult> CleanBasket()
     {
-        //_context!.Clients.First(x => x.Id == clientId).Basket!.SummUpProducts!.Clear();
-        //await _context!.SaveChangesAsync();
-
         var user = new User
         {
             Id = 1,
             Role = new Role(0)
         };
+
+        _basketsRepository.ClearBasket(user, CancellationToken.None);
+
+        _basketsRepository.SaveChanges();
 
         var basket = new Basket
         {
@@ -160,7 +132,8 @@ public class BasketController : Controller
 
     private async Task<SummUpProduct> TryAddProductToBasket(int id, int count)
     {
-        var product = await _context!.Products.FindAsync(id);
+        var product = await _productsRepository.FindProduct(id, CancellationToken.None)
+            .ConfigureAwait(false);
 
         if (product == null)
         {
@@ -181,7 +154,8 @@ public class BasketController : Controller
     [HttpPost("removeProduct/{id}")]
     public async Task<ActionResult<Basket>> RemoveProductFromBasket(int id)
     {
-        var product = await _context!.Products.FindAsync(id);
+        var product = await _productsRepository.FindProduct(id, CancellationToken.None)
+            .ConfigureAwait(false);
 
         if (product == null)
         {
@@ -227,29 +201,19 @@ public class BasketController : Controller
 
         _context!.Entry(product).State = EntityState.Modified;
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!ClientExists(_clientId))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
+        _basketsRepository.SaveChanges();
 
-        return CreatedAtAction("GetProductItem", new { id = product!.Id }, product);
+        return CreatedAtAction("GetProductItem", 
+            new 
+            { 
+                id = product!.Id 
+            },
+            product);
     }
 
-    private bool ClientExists(int id)
+    private async Task<bool> ClientExists(int id)
     {
-        return _context!.Clients!
-            .Any(x => x.Id == id);
+        return await _clientsRepository.FindAsync("id", CancellationToken.None) != null;
     }
 
     private bool SummUpProductExists(int id)
@@ -261,7 +225,57 @@ public class BasketController : Controller
             .Any(x => x.Product!.Id == id);
     }
 
+    private Basket SeedExistedBasket()
+    {
+#pragma warning disable CS8670 // Инициализатор объекта или коллекции неявно разыменовывает член, который может быть равен NULL.
+        var existedBasket = new Basket
+        {
+            SummUpProducts = new List<SummUpProduct>
+               {
+                    new SummUpProduct
+                    {
+                        Id = 1,
+                        Product = new Product
+                        {
+                            Name = "Iphone 14",
+                            DeviceType = new DeviceType
+                            {
+                                Name = "Смартфон"
+                            },
+                            Producer = new Producer
+                            {
+                                Name = "Apple"
+                            },
+                        },
+                        Quantity = 2
+                    },
+                    new SummUpProduct
+                    {
+                        Id = 2,
+                        Product = new Product
+                        {
+                            Name = "Iphone 12 Mini",
+                            DeviceType = new DeviceType
+                            {
+                                Name = "Смартфон"
+                            },
+                            Producer = new Producer
+                            {
+                                Name = "Apple"
+                            }
+                        },
+                        Quantity = 1
+                    }
+                }
+        };
+#pragma warning restore CS8670 // Инициализатор объекта или коллекции неявно разыменовывает член, который может быть равен NULL.
+
+        return existedBasket;
+    }
+
     private readonly ILogger<BasketController> _logger;
-    private readonly RetailStoreDataContext? _context;
-    private readonly int _clientId;
+    private readonly IProductsRepository _productsRepository;
+    private readonly ISummUpProductsRepository _summUpProductsRepository;
+    private readonly IBasketsRepository _basketsRepository;
+    private readonly IClientsRepository _clientsRepository;
 }
