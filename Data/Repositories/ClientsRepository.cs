@@ -20,7 +20,7 @@ public sealed class ClientsRepository
 
         _logger.LogInformation("ClientsRepository was created just now");
     }
-    public async Task Add(User user, CancellationToken token)
+    public async Task AddAsync(User user, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(user);
 
@@ -38,15 +38,23 @@ public sealed class ClientsRepository
         _ = _context.Clients.Remove(user);
     }
 
-    public async Task<bool> Find(User user, CancellationToken token)
+    public async Task<User> FindAsync(string email, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(user);
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException(nameof(email));
+        }
 
         token.ThrowIfCancellationRequested();
 
-        var findedUser = await _context.Clients.FindAsync(user, token);
+        // but maybe this dont works cause email is not pk
+        var findedUser = await _context.Clients
+            .FindAsync(
+                new object?[] { email },
+                    token)
+            .ConfigureAwait(false);
 
-        return findedUser == null ? false : true;
+        return findedUser!;
     }
 
     public async Task<IList<User>> GetAllUsers(CancellationToken token)
@@ -81,6 +89,10 @@ public sealed class ClientsRepository
         //_context.Entry(user).State = EntityState.Modified;
     }
 
+    public int UserCount 
+        => _context.Clients.Count();
+
     private readonly ILogger<ClientsRepository> _logger;
     private readonly IRepositoryContext _context;
+
 }

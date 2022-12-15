@@ -9,17 +9,19 @@ namespace Data.Repositories.Abstractions;
 
 public interface IClientsRepository
 {
-    Task Add(User user, CancellationToken token);
+    Task AddAsync(User user, CancellationToken token);
 
     void Update(User user, CancellationToken token);
 
     void Delete(User user, CancellationToken token);
 
-    Task<bool> Find(User user, CancellationToken token);
+    Task<User> FindAsync(string email, CancellationToken token);
 
     Task<IList<User>> GetAllUsers(CancellationToken token);
 
     Task<IList<User>> GetAllUsersByRole(RoleType type, CancellationToken token);
+
+    int UserCount { get; }
 
     void SaveChanges();
 }
