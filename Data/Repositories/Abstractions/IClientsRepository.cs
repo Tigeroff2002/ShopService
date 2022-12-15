@@ -17,6 +17,10 @@ public interface IClientsRepository
 
     Task<User> FindAsync(string email, CancellationToken token);
 
+    Task<User> FindAsync(int userId, CancellationToken token);
+
+    Task<Basket> TakeBasket(int userId, CancellationToken token);
+
     Task<IList<User>> GetAllUsers(CancellationToken token);
 
     Task<IList<User>> GetAllUsersByRole(RoleType type, CancellationToken token);

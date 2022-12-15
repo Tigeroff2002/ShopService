@@ -1,4 +1,6 @@
-﻿using Data.Contexts;
+﻿using AspNetCore;
+using Data.Contexts;
+using Data.Repositories.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -9,34 +11,149 @@ namespace ShopService.Controllers;
 [Route("api/order")]
 public class OrderController : Controller
 {
-    public OrderController(ILogger<BasketController> logger, RetailStoreDataContext? context)
+    public OrderController(
+        ILogger<OrderController> logger,
+        IClientsRepository clientsRepository,
+        IOrdersRepository ordersRepository)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
+        _clientsRepository = clientsRepository ?? throw new ArgumentNullException(nameof(clientsRepository));
 
         _logger.LogInformation("Order Controller was started just now");
     }
 
     [HttpGet("createOrder")]
-    public IActionResult CreateOrder()
+    public async Task<IActionResult> CreateOrder()
     {
-        ArgumentNullException.ThrowIfNull(_context);
-
-        /*
-           if (ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            _context.Orders.Add(order);
-            _context.SaveChanges();
-            return RedirectToAction("Index");
-        }
-         */
+            var user = new User
+            {
+                Id = 1,
+                Role = new Role(0)
+            };
 
-        var user = new User
+            var order = SeedTestOrder(user);
+
+            await _ordersRepository.AddOrderAsync(order, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            _ordersRepository.SaveChanges();
+
+            return View("OrderHome", (order, user));
+        }
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    [HttpPut("changeOrder/{id:int}")]
+    public IActionResult ChangeOrder(int id)
+    {
+        var order = _ordersRepository.Find(id, CancellationToken.None);
+
+        if (order == null)
+        {
+            return NotFound();
+        }
+
+        _ordersRepository.SaveChanges();
+
+        var testUser = new User
         {
             Id = 1,
             Role = new Role(0)
         };
 
+        return Ok((order, testUser));
+    }
+
+    [HttpPost("cancelOrder/{id:int}")]
+    public IActionResult CancelOrder(int id)
+    {
+        var order = _ordersRepository.Find(id, CancellationToken.None);
+
+        if (order == null)
+        {
+            return NotFound();
+        }
+
+        _ordersRepository.CancelOrder(order, CancellationToken.None);
+
+        _ordersRepository.SaveChanges();
+
+        return RedirectToAction("GetBasket", "Basket");
+    }
+
+    [HttpGet("confirmOrder/{id:int}")]
+    public IActionResult ConfirmOrder(int id)
+    {
+        if (ModelState.IsValid)
+        {
+            var order = _ordersRepository.Find(id, CancellationToken.None);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            if (order.Client == null)
+            {
+                return BadRequest();
+            }
+
+            var user = order.Client;
+
+            _ordersRepository.ConfirmOrder(user, order, CancellationToken.None);
+
+             return View("OrderConfirm", (order, user));
+        }
+
+        return RedirectToAction("Index", "Home");
+    }
+
+
+    [HttpGet("getOrder/{id:int}")]
+    public IActionResult GetOrder(int id)
+    {
+        var order = _ordersRepository.Find(id, CancellationToken.None);
+
+        if (order == null)
+        {
+            return NotFound();
+        }
+
+        if (order.Client == null)
+        {
+            return BadRequest();
+        }
+
+        var user = order.Client;
+
+        return View((order, user));
+    }
+
+    [HttpGet("ordersList/{userId:int}")]
+    public async Task<ActionResult<IEnumerable<Order>>> GetUserOrdersAsync(int userId)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return _ordersRepository.GetAllUserOrders(user, CancellationToken.None);
+        }
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    private Order SeedTestOrder(User user)
+    {
         var order = new Order
         {
             Client = user,
@@ -81,114 +198,10 @@ public class OrderController : Controller
                 }
         };
 
-        return View("OrderHome", (order, user));
+        return order;
     }
 
-    [HttpPut("changeOrder/{id:int}")]
-    public async Task<IActionResult> ChangeOrder(int id, Order? order)
-    {
-        ArgumentNullException.ThrowIfNull(_context);
-
-        if (id != order!.Id)
-        {
-            return BadRequest();
-        }
-
-        _context!.Entry(order).State = EntityState.Modified;
-
-        await _context!.SaveChangesAsync();
-
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
-
-        return Ok((order, user));
-    }
-
-    [HttpGet("cancelOrder")]
-    public IActionResult CancelOrder()
-    {
-        ArgumentNullException.ThrowIfNull(_context);
-
-        /*
-        var order = await _context!.Orders.FindAsync(id);
-        if (order == null)
-            return NotFound();
-
-        _context!.Orders.Remove(order);
-
-        await _context!.SaveChangesAsync();
-
-        return NoContent();
-         */
-
-        return RedirectToAction("GetBasket", "Basket");
-    }
-
-    [HttpGet("confirmOrder")]
-    public IActionResult ConfirmOrder()
-    {
-        ArgumentNullException.ThrowIfNull(_context);
-
-        /*
-        if (ModelState.IsValid)
-        {
-            _context!.Entry(order).State = EntityState.Modified;
-            _context.SaveChanges();
-        }
-        return NoContent();
-         */
-
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
-
-        var order = new Order
-        {
-            Id = 1,
-            Client = user
-        };
-
-        return View("OrderConfirm", (order, user));
-    }
-
-
-    [HttpGet("getOrder/{id:int}")]
-    public async Task<ActionResult<Order>> GetOrder(int id)
-    {
-        var order = await _context!.Orders.FindAsync(id);
-
-        if (order == null)
-        {
-            return NotFound();
-        }
-
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
-
-        return View((order, user));
-    }
-
-    [HttpGet("check/listorders")]
-    public async Task<ActionResult<IEnumerable<Order>>> GetUserOrdersAsync()
-    {
-        ArgumentNullException.ThrowIfNull(_context);
-
-        if (ModelState.IsValid)
-        {
-            return await _context!.Orders!.ToListAsync();
-        }
-
-        return NoContent();
-    }
-
-    private readonly ILogger<BasketController> _logger;
-    private readonly RetailStoreDataContext? _context;
+    private readonly ILogger<OrderController> _logger;
+    private readonly IOrdersRepository _ordersRepository;
+    private readonly IClientsRepository _clientsRepository;
 }

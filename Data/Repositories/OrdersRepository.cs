@@ -29,6 +29,7 @@ public sealed class OrdersRepository
 
         await _context.Orders.AddAsync(order, token).ConfigureAwait(false);
     }
+
     public void AddOrder(User user, Order order, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -87,33 +88,37 @@ public sealed class OrdersRepository
         //_context.Entry(order).State = EntityState.Modified;
     }
 
-    public async Task<bool> FindAsync(Order order, CancellationToken token)
+    public Order Find(int id, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(order);
-
         token.ThrowIfCancellationRequested();
 
-        var findedOrder = await _context.Orders.FindAsync(order);
+        var findedOrder = _context.Orders.FirstOrDefault(o => o.Id == id);
 
-        return findedOrder == null ? false : true;
+        return findedOrder!;
 
     }
 
-    public async Task<IList<Order>> GetAllOrders(CancellationToken token)
+    public async Task<List<Order>> GetAllOrders(CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
 
         return await _context.Orders.ToListAsync();
     }
 
-    public IList<Order> GetAllShopOrders(Shop shop, CancellationToken token)
+    public List<Order> GetAllShopOrders(Shop shop, CancellationToken token)
     {
         throw new NotImplementedException();
     }
 
-    public IList<Order> GetAllUserOrders(User user, CancellationToken token)
+    public List<Order> GetAllUserOrders(User user, CancellationToken token)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(user);
+
+        token.ThrowIfCancellationRequested();
+
+        return _context.Clients
+            .FirstOrDefault(u => u.Equals(user))!
+            .Orders.ToList();
     }
 
     public void PayOrder(User user, Order order, CancellationToken token)
@@ -165,6 +170,16 @@ public sealed class OrdersRepository
         _logger.LogInformation("OrdersRepository called a saving data to DB");
 
         _context.SaveChanges();
+    }
+
+    public async Task<Order> FindOrderAsync(Order order, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+
+        token.ThrowIfCancellationRequested();
+
+        return await _context.Orders.FindAsync(order, token)
+            .ConfigureAwait(false);
     }
 
     private readonly ILogger<OrdersRepository> _logger;

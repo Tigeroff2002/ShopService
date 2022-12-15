@@ -26,10 +26,10 @@ public class BasketController : Controller
         _logger.LogInformation("Basket Controller was started just now");
     }
 
-    [HttpGet("getBasket")]
-    public async Task<IActionResult> GetBasket()
+    [HttpGet("getBasket/{userId:int}")]
+    public async Task<IActionResult> GetBasket(int userId)
     {
-        var user = await _clientsRepository.FindAsync("", CancellationToken.None)
+        var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
             .ConfigureAwait(false);
 
         if (user == null)
@@ -58,30 +58,34 @@ public class BasketController : Controller
         return View("BasketPage", (existedBasket, user));
     }
 
-    [HttpGet("cleanBasket")]
-    public async Task<IActionResult> CleanBasket()
+    [HttpGet("cleanBasket/{userId:int}")]
+    public async Task<IActionResult> CleanBasket(int userId)
     {
-        var user = new User
+        var testUser = new User
         {
-            Id = 1,
+            Id = userId,
             Role = new Role(0)
         };
 
-        _basketsRepository.ClearBasket(user, CancellationToken.None);
+        var userBasket = await _clientsRepository.TakeBasket(userId, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        _basketsRepository.ClearBasket(testUser, CancellationToken.None);
 
         _basketsRepository.SaveChanges();
 
         var basket = new Basket
         {
             BasketStatusId = 1,
-            Client = user
+            Client = testUser
         };
 
-        return View("BasketPage", (basket, user));
+        return View("BasketPage", (basket, testUser));
     }
     
     private int FindQuantityProductsBasket(int id)
     {
+        /*
         if (_context!.Clients!
             .First(x => x.Id == _clientId)
             .Basket!.SummUpProducts!
@@ -93,6 +97,7 @@ public class BasketController : Controller
                 .First(x => x.Product!.Id == id)
                 .Quantity;
         }
+        */
 
         return 0;
     }
@@ -163,6 +168,7 @@ public class BasketController : Controller
         }
 
         int count = FindQuantityProductsBasket(id);
+
         var summUpProductId = 1;
 
         if (count < 2)
@@ -174,6 +180,7 @@ public class BasketController : Controller
             else 
                 if (count == 1)
             {
+                /*
                 _context!.Clients
                     .First(x => x.Id == _clientId)
                     .Basket!
@@ -183,10 +190,12 @@ public class BasketController : Controller
                             summUpProductId,
                             product, 
                             1));
+                */
             }
         }
         else
         {
+            /*
             _context!.Clients
                 .Where(x => x.Id == _clientId)
                 .ToList()
@@ -197,9 +206,10 @@ public class BasketController : Controller
                             .Quantity = --count;
                         return x; 
                     });
+            */
         }
 
-        _context!.Entry(product).State = EntityState.Modified;
+        //_context!.Entry(product).State = EntityState.Modified;
 
         _basketsRepository.SaveChanges();
 
@@ -211,18 +221,23 @@ public class BasketController : Controller
             product);
     }
 
-    private async Task<bool> ClientExists(int id)
+    private async Task<bool> ClientExists(int userId)
     {
-        return await _clientsRepository.FindAsync("id", CancellationToken.None) != null;
+        return await _clientsRepository.FindAsync(userId, CancellationToken.None) 
+            != null;
     }
 
     private bool SummUpProductExists(int id)
     {
+        /*
         return _context!.Clients!
             .First(x => x.Id == 1)
             .Basket!
             .SummUpProducts!
             .Any(x => x.Product!.Id == id);
+        */
+
+        return true;
     }
 
     private Basket SeedExistedBasket()

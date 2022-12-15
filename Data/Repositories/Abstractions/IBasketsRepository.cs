@@ -17,8 +17,6 @@ public interface IBasketsRepository
 
     void ClearBasket(User user, CancellationToken token);
 
-    Task<bool> Find(Basket basket, CancellationToken token);
-
     Task<IList<Basket>> GetAllBaskets(CancellationToken token);
 
     Basket GetUserBasket(User user, CancellationToken token);

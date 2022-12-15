@@ -38,6 +38,19 @@ public sealed class ClientsRepository
         _ = _context.Clients.Remove(user);
     }
 
+    public async Task<User> FindAsync(int userId, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        var findedUser = await _context.Clients
+            .FindAsync(
+                new object?[] { userId },
+                    token)
+            .ConfigureAwait(false);
+
+        return findedUser!;
+    }
+
     public async Task<User> FindAsync(string email, CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(email))
@@ -55,6 +68,26 @@ public sealed class ClientsRepository
             .ConfigureAwait(false);
 
         return findedUser!;
+    }
+
+    public async Task<Basket> TakeBasket(int userId, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        var findedUser = await _context.Clients
+            .FindAsync(
+                new object?[] { userId },
+                    token)
+            .ConfigureAwait(false);
+
+        ArgumentNullException.ThrowIfNull(findedUser);
+
+        var takenBasket = await _context.Baskets.FirstOrDefaultAsync(b => 
+            b.Client!.Equals(findedUser), 
+                CancellationToken.None)
+            .ConfigureAwait(false);
+
+        return takenBasket!;
     }
 
     public async Task<IList<User>> GetAllUsers(CancellationToken token)

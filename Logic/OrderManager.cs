@@ -94,8 +94,8 @@ public sealed class OrderManager
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var orderAlreadyExists = await _repository.FindAsync(order, cancellationToken)
-            .ConfigureAwait(false); 
+        var orderAlreadyExists = await _repository.FindOrderAsync(order, cancellationToken)
+            .ConfigureAwait(false) != null;
 
         if (!orderAlreadyExists)
         {
