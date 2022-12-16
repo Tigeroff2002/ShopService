@@ -1,0 +1,117 @@
+﻿@using Models
+@model (List<Product>, User)
+@{
+    ViewData["Title"] = "Catalog Page";
+}
+
+        @{
+            var list = Model.Item1;
+            var user = Model.Item2;
+        }
+
+<body class="back">
+    <div class="text-center">
+        <div>
+        @if (user!.Role!.RoleType == RoleType.NonAuthUser)
+        {
+            <h4>Вы новый пользователь</h4>
+        }
+        @if (user!.Role!.RoleType == RoleType.AuthUser)
+        {
+            <h4>Вы выполнили вход под своей обычной учётной записью</h4>
+        }
+        @if (user.Role.RoleType == RoleType.Admin)
+        {
+            <h4>Вы выполнили вход под учётной записью администратора</h4>
+        }
+        @if (user.Role.RoleType == RoleType.Manager)
+        {
+            <h4>Вы выполнили вход под учётной записью менеджера</h4>
+        }
+        </div>
+        <br />
+
+    <h1>Электронный магазин компьютерной техники: </h1>
+        <div class="text-lg-start">
+            <br />
+                <h3>Страница фильрации: </h3>
+            <table align="right">
+                <thead>
+                    <tr>
+                        <th align="right">
+                            <h4>
+                                 <input type="button" value="Открыть корзину" 
+                                         onclick="location.href='@Url.Action("GetBasket", "Basket")'" />
+                            </h4>
+                        </th>
+                        <th align="right">
+                            <h4>
+                                <input type="button" value="Войти/Зарегистрироваться" 
+                                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                            </h4>
+                        </th>
+                        <th align="right">
+                            <h4>
+                                @if (user.Role!.RoleType != RoleType.AuthUser)
+                                {
+                                    <input type="button" value="Выйти из аккаунта" 
+                                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                                }
+                            </h4>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <h2>Каталог устройств:</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Тип устройства</th>
+                <th>Название</th>
+                <th>Производитель</th>
+                <th>Цена устройства</th>
+                <th>Информация о товаре</th>
+                <th>В корзину</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in list)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(x => item.DeviceType!.Name)</td>
+                    <td>@Html.DisplayFor(x => item.Name)</td>
+                    <td>@Html.DisplayFor(x => item.Producer!.Name)</td>
+                    <td>@Html.DisplayFor(x => item.Cost)</td>
+                    <td class="link">                   
+                    <input type="button" value="Подробнее" 
+                        onclick="location.href='@Url.Action("Details", "Home", new {id = item.Id})'" />          
+                   </td>
+                    <td class="link">
+                    <input type="button" value="Добавить в корзину" 
+                        onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = item.Id, count = 1})'" />   
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+    @if (user.Role.RoleType == RoleType.Admin)
+    {
+    <div class="text-lg-start">
+    <input type="button" value="Страница пользователей с заказами" size="100"
+        onclick="location.href='@Url.Action("AdminPageShow", "Home")'" />      
+    </div>    
+    }
+
+    @if (user.Role.RoleType == RoleType.Manager)
+    {
+    <div class="text-lg-start">
+    <input type="button" value="Страница заказа доставок со складов" size="100"
+        onclick="location.href='@Url.Action("ManagerPageShow", "Home")'" />      
+    </div>    
+    }
+
+</body>

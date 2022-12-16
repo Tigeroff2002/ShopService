@@ -34,7 +34,20 @@ public class HomeController : Controller
         var devices = await _productsRepository.GetProductsByDeviceType(deviceTypeId, CancellationToken.None)
             .ConfigureAwait(false);
 
-        return View("FilterBy", devices);
+        var user = new User
+        {
+            Id = 1,
+            Role = new Role(0)
+        };
+
+        var model = (
+            new List<Product>(),
+            new User());
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
     }
 
     [HttpGet("producer/{producerId:int}")]
@@ -43,7 +56,20 @@ public class HomeController : Controller
         var devices = await _productsRepository.GetProductsByProducer(producerId, CancellationToken.None)
             .ConfigureAwait(false);
 
-        return View("FilterBy", devices);
+        var user = new User
+        {
+            Id = 1,
+            Role = new Role(0)
+        };
+
+        var model = (
+            new List<Product>(),
+            new User());
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
     }
 
     [HttpGet("existed")]
@@ -52,7 +78,20 @@ public class HomeController : Controller
         var devices = await _productsRepository.GetProductsOnExistense(CancellationToken.None)
             .ConfigureAwait(false);
 
-        return View("FilterBy", devices);
+        var user = new User
+        {
+            Id = 1,
+            Role = new Role(0)
+        };
+
+        var model = (
+            new List<Product>(),
+            new User());
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
     }
 
     [HttpGet("rating/{rating:int}")]
@@ -61,7 +100,20 @@ public class HomeController : Controller
         var devices = await _productsRepository.GetProductsWithMarkAbove(rating, CancellationToken.None)
             .ConfigureAwait(false);
 
-        return View("FilterBy", devices);
+        var user = new User
+        {
+            Id = 1,
+            Role = new Role(0)
+        };
+
+        var model = (
+            new List<Product>(),
+            new User());
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
     }
 
     [HttpGet("cost/{cost:int}")]
@@ -70,7 +122,20 @@ public class HomeController : Controller
         var devices = await _productsRepository.GetProductsByDeviceType(cost, CancellationToken.None)
             .ConfigureAwait(false);
 
-        return View("FilterBy", devices);
+        var user = new User
+        {
+            Id = 1,
+            Role = new Role(0)
+        };
+
+        var model = (
+            new List<Product>(),
+            new User());
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
     }
 
     [HttpGet]
