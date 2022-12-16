@@ -1,6 +1,8 @@
 ﻿using Data.Contexts;
+using Data.Contexts.Abstractions;
 using Data.Repositories;
 using Data.Repositories.Abstractions;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ShopService.Registrations;
@@ -11,6 +13,7 @@ public static class Storage
         => services
             .AddDbContext<RetailStoreDataContext>(opt =>
                 opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;Integrated Security=True"))
+            .AddSingleton<IRepositoryContext, RepositoryContext>()
             .AddSingleton<IBasketsRepository, BasketsRepository>()
             .AddSingleton<IClientsRepository, ClientsRepository>()
             .AddSingleton<IProductsRepository, ProductsRepository>()
