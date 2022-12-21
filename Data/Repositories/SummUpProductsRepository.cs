@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Data.Contexts.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Data.Repositories;
 
@@ -13,10 +14,13 @@ public sealed class SummUpProductsRepository
 {
     public SummUpProductsRepository(
         ILogger<SummUpProductsRepository> logger,
-        IRepositoryContext context)
+        IServiceProvider provider)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+
+        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
 
         _logger.LogInformation("ProductsRepository was created just now");
     }
@@ -115,5 +119,6 @@ public sealed class SummUpProductsRepository
     }
 
     private readonly ILogger<SummUpProductsRepository> _logger;
+    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 }

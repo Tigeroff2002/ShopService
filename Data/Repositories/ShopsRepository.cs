@@ -2,6 +2,7 @@
 using Data.Contexts.Abstractions;
 using Data.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Models;
 
@@ -12,10 +13,13 @@ public sealed class ShopsRepository
 {
     public ShopsRepository(
         ILogger<ShopsRepository> logger,
-        IRepositoryContext context)
+        IServiceProvider provider)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+
+        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
 
         _logger.LogInformation("ShopsRepository has created just now");
     }
@@ -91,5 +95,6 @@ public sealed class ShopsRepository
     }
 
     private readonly ILogger<ShopsRepository> _logger;
+    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 }

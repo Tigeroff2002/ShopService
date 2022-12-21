@@ -1,5 +1,4 @@
-﻿using AspNetCore;
-using Data.Contexts;
+﻿using Data.Contexts;
 using Data.Repositories.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

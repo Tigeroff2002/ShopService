@@ -4,6 +4,7 @@ using Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Data.Contexts.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Data.Repositories;
 
@@ -12,10 +13,13 @@ public sealed class BasketsRepository
 {
     public BasketsRepository(
         ILogger<BasketsRepository> logger, 
-        IRepositoryContext context)
+        IServiceProvider provider)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+
+        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
 
         _logger.LogInformation("BasketsRepository has created just now");
     }
@@ -172,5 +176,6 @@ public sealed class BasketsRepository
     }
 
     private readonly ILogger<BasketsRepository> _logger;
+    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 }

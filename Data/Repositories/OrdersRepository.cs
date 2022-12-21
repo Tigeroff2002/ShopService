@@ -5,6 +5,7 @@ using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Data.Contexts.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Data.Repositories;
 
@@ -13,10 +14,14 @@ public sealed class OrdersRepository
 {
     public OrdersRepository(
         ILogger<OrdersRepository> logger,
-        IRepositoryContext context)
+        IServiceProvider provider)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+
+        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
 
         _logger.LogInformation("OrdersRepository has created jsut now");
     }
@@ -183,5 +188,6 @@ public sealed class OrdersRepository
     }
 
     private readonly ILogger<OrdersRepository> _logger;
+    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 }
