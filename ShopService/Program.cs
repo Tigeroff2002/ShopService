@@ -11,6 +11,7 @@ using Serilog;
 
 using Data.Repositories.Abstractions;
 using Data.Repositories;
+using Data.Contexts.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,11 +25,13 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddDbContext<RetailStoreDataContext>(opt =>
     opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;Integrated Security=True"))
+    .AddScoped<IRepositoryContext, RepositoryContext>()
     .AddSingleton<IBasketsRepository, BasketsRepository>()
     .AddSingleton<IClientsRepository, ClientsRepository>()
     .AddSingleton<IProductsRepository, ProductsRepository>()
     .AddSingleton<IShopsRepository, ShopsRepository>()
     .AddSingleton<ISummUpProductsRepository, SummUpProductsRepository>()
+    .AddSingleton<IWarehousesRepository, WarehousesRepository>()
     .AddSingleton<IOrdersRepository, OrdersRepository>()
     .AddSingleton<IOrderManager, OrderManager>()
     .AddSingleton<IOrderConfirmer, OrderConfirmer>()
