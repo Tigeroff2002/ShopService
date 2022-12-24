@@ -4,6 +4,7 @@ using Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    partial class RetailStoreDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221224124959_Configuring")]
+    partial class Configuring
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,12 +30,6 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Models.Basket", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("BasketStatusId")
                         .HasColumnType("int");
 
@@ -45,7 +42,7 @@ namespace Data.Migrations
                     b.Property<float?>("TotalCost")
                         .HasColumnType("real");
 
-                    b.HasKey("Id");
+                    b.HasKey("BasketStatusId", "ClientId");
 
                     b.HasIndex("ClientId")
                         .IsUnique();
@@ -353,7 +350,10 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BasketId")
+                    b.Property<int?>("BasketClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BasketStatusId")
                         .HasColumnType("int");
 
                     b.Property<int?>("OrderId")
@@ -376,8 +376,6 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BasketId");
-
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
@@ -385,6 +383,8 @@ namespace Data.Migrations
                     b.HasIndex("ShopId");
 
                     b.HasIndex("WarehouseId");
+
+                    b.HasIndex("BasketStatusId", "BasketClientId");
 
                     b.ToTable("SummUpProducts");
                 });
@@ -543,10 +543,6 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Models.SummUpProduct", b =>
                 {
-                    b.HasOne("Models.Basket", null)
-                        .WithMany("SummUpProducts")
-                        .HasForeignKey("BasketId");
-
                     b.HasOne("Models.Order", null)
                         .WithMany("SummUpProducts")
                         .HasForeignKey("OrderId");
@@ -564,6 +560,10 @@ namespace Data.Migrations
                     b.HasOne("Models.Warehouse", null)
                         .WithMany("ProductQuantities")
                         .HasForeignKey("WarehouseId");
+
+                    b.HasOne("Models.Basket", null)
+                        .WithMany("SummUpProducts")
+                        .HasForeignKey("BasketStatusId", "BasketClientId");
 
                     b.Navigation("Product");
                 });

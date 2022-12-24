@@ -22,8 +22,8 @@ public class OrderController : Controller
         _logger.LogInformation("Order Controller was started just now");
     }
 
-    [HttpGet("createOrder")]
-    public async Task<IActionResult> CreateOrder()
+    [HttpGet("createOrder/{userId:int}")]
+    public async Task<IActionResult> CreateOrder(int userId)
     {
         if (ModelState.IsValid)
         {

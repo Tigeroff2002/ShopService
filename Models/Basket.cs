@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 
 namespace Models;
 
-[PrimaryKey(nameof(BasketStatusId), nameof(ClientId))]
 public class Basket
 {
+    [Key]
+    public int Id { get; set; }
     public int BasketStatusId { get; set; }
     public int ClientId { get; set; }
     public virtual User? Client { get; set; }
@@ -17,18 +19,20 @@ public class Basket
 
     }
 
-    public Basket(int statusId, User? client)
+    public Basket(int id, User? client)
     {
-        if (statusId <= 0)
+        if (id <= 0)
         {
-            throw new ArgumentException(nameof(statusId));
+            throw new ArgumentException(nameof(id));
         }
 
         Client = client ?? throw new ArgumentNullException(nameof(client));
 
         TotalCost = 0;
+        BasketStatusId = 1;
         SummUpProducts = new List<SummUpProduct>();
     }
+
     public override bool Equals(object? obj)
     {
         if (obj == null)
@@ -42,6 +46,7 @@ public class Basket
             return false;
         }
     }
+
     public override int GetHashCode()
     {
         return (Client!.Id, BasketStatusId).GetHashCode();
@@ -113,7 +118,6 @@ public class Basket
         TotalCost += product!.Cost;
     }
 
-
     public void RemoveProductInBasket(Product? product)
     {
         ArgumentNullException.ThrowIfNull(product);
@@ -135,6 +139,7 @@ public class Basket
 
         TotalCost -= product!.Cost;
     }
+
     private int FindQuantityProductsInBasket(int id)
     {
         if (SummUpProducts!.Any(x => x.Product!.Id == id))

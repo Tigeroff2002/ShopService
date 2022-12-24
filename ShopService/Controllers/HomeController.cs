@@ -178,7 +178,7 @@ public class HomeController : Controller
     }
 
     [HttpGet("Details/{id:int}")]
-    public async Task<IActionResult> Details(int? id)
+    public async Task<IActionResult> Details(int userId, int? id)
     {
         if (id == null)
         {
@@ -195,11 +195,13 @@ public class HomeController : Controller
             return NotFound("Устройство не найдено!");
         }
 
-        var user = new User
+        var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (user == null)
         {
-            Id = 1,
-            Role = new Role(0)
-        };
+            return View("Details", new User(-1, 0));
+        }
 
         return View("Details", (device, user));
     }

@@ -7,7 +7,7 @@
     <div class="text-center">
     @{var item = Model.Item1; }
     @{var groups = item.SummUpProducts!;}
-    @if (groups == null)
+    @if (groups == null || groups.Count == 0)
     {
         <div>
             <h4>
@@ -15,7 +15,7 @@
             </h4>
             <br>
             <input type="button" value="Назад на главную" 
-                   onclick="location.href='@Url.Action("Index", "Home")'" />
+                   onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.Id})'" />
         </div>
     }
     @if (groups != null)
@@ -53,11 +53,23 @@
                                 </td>
                             <td class="link">
                              <input type="button" value="+" 
-                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = group.Product!.Id, count = 2})'" />   
+                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
+                                    new 
+                                    {
+                                        userId = Model.Item2.Id,
+                                        id = group.Product!.Id,
+                                        count = item.SummUpProducts!.FirstOrDefault(x => x.Product == group.Product)!.Quantity + 1
+                                    })'" />   
                             </td>
                             <td class="link">
                             <input type="button" value="-" 
-                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {id = group.Product!.Id, count = 0})'" />   
+                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
+                                    new 
+                                    {
+                                        userId = Model.Item2.Id,
+                                        id = group.Product!.Id,
+                                        count = item.SummUpProducts!.FirstOrDefault(x => x.Product == group.Product)!.Quantity - 1
+                                    })'" />   
                             </td>
                         </tr>
                     }
@@ -74,16 +86,16 @@
         </table>
         <h5>
             <input type="button" value="Очистить корзину" 
-                  onclick="location.href='@Url.Action("CleanBasket", "Basket")'" />
+                  onclick="location.href='@Url.Action("CleanBasket", "Basket", new {id = Model.Item2.Id})'" />
             </h5>
         <br />
         <h5>
             <input type="button" value="Создать заказ" 
-                  onclick="location.href='@Url.Action("CreateOrder", "Order")'" />
+                  onclick="location.href='@Url.Action("CreateOrder", "Order", new {id = Model.Item2.Id})'" />
         </h5>
         <h5>
             <input type="button" value="На главную" 
-                onclick="location.href='@Url.Action("Index", "Home")'" />
+                onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.Id})'" />
         </h5>
         }            
     }
