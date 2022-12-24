@@ -1,9 +1,13 @@
 ﻿using ShopService.Views.Account;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+
 using Models;
-using Data.Contexts;
+
+using Data.Repositories.Abstractions;
+
 using System.Security.Claims;
 
 namespace AuthdService.Controllers;
@@ -14,10 +18,10 @@ public class AccountController : Controller
 {
     public AccountController(
         ILogger<AccountController> logger,
-        RetailStoreDataContext context)
+        IClientsRepository repository)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
 
         _logger.LogInformation("Account Controller was started just now");
     }
@@ -52,11 +56,10 @@ public class AccountController : Controller
 
         if (ModelState.IsValid)
         {
-            var user = _context!.Clients!
-                .Where(
-                    x => x.NickName == objLoginModel.NickName &&
-                    x.Password == objLoginModel.Password)
-                .FirstOrDefault();
+            var token = CancellationToken.None;
+
+            var user = await _repository.FindNickNameAsync(objLoginModel.NickName, token)
+                .ConfigureAwait(false);
 
             if (user == null)
             {
@@ -81,21 +84,30 @@ public class AccountController : Controller
 
                 _logger!.LogInformation("User was successfuly authorized!");
 
-                return RedirectToAction("Index", "Home", (new List<Product>(), user));
+                return RedirectToAction("AuthIndex", "Home", new {id = user.Id});
             }
         }
 
-        return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0)));
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpGet("logout")]
-    public async Task<IActionResult> LogOut()
+    public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         _logger!.LogInformation("User was successfuly unauthorized!");
 
-        return View("Login", new LoginModel());
+        return RedirectToAction(
+            "Index", 
+            "Home",
+            (new List<Product>(),
+            new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            },
+            new Product()));
     }
 
     [HttpGet("register")]
@@ -127,7 +139,7 @@ public class AccountController : Controller
         {
             var user = new User()
             {
-                Id = _context!.Clients.Count(),
+                Id = _repository.UserCount,
                 NickName = objRegisterModel.NickName,
                 Password = objRegisterModel?.Password,
                 ContactNumber = objRegisterModel?.ContactNumber,
@@ -174,7 +186,7 @@ public class AccountController : Controller
 
                 _logger!.LogInformation("User was successfuly registered in system!");
 
-                return RedirectToAction("Index", "Home", (new List<Product>(), user));
+                return RedirectToAction("AuthIndex", "Home", (new List<Product>(), user, new Product()));
             }
             else
             {
@@ -183,15 +195,15 @@ public class AccountController : Controller
             }
         }
 
-        return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0)));
+        return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0), new Product()));
     }
 
     [HttpPost("data/add")]
     private void SeedSomeUserData()
     {
-        if (_context!.Clients.Count() < 4)
+        if (_repository.UserCount < 4)
         {
-            _context!.Clients.Add(new User(4, 1)
+            _repository.AddAsync(new User(4, 1)
             {
                 Id = 4,
                 NickName = "TigeroffNew",
@@ -201,7 +213,7 @@ public class AccountController : Controller
                 TotalPurchase = 0f,
                 Discount = 0f,
                 Role = new Role(RoleType.AuthUser)
-            });
+            }, CancellationToken.None);
         }
 
         _logger!.LogInformation("Fourth user was added to DB");
@@ -209,18 +221,24 @@ public class AccountController : Controller
 
     private async Task<bool> CheckCurrentUserExistense(User? user)
     {
-        var b = _context!.Clients!
-            .FirstOrDefault(x => x.Equals(user)) == null;
+        ArgumentNullException.ThrowIfNull(user);
+
+        ArgumentNullException.ThrowIfNull(user.EmailAdress);
+
+        var b = await _repository.FindAsync(user.EmailAdress, CancellationToken.None) == null;
+
         if (b)
         {
-            _context!.Clients.Add(user!);
-            await _context.SaveChangesAsync();
+            await _repository.AddAsync(user!, CancellationToken.None);
+
+            _repository.SaveChanges();
+
             return false;
         }
 
         return true;
     }
 
-    private readonly ILogger<AccountController>? _logger;
-    private readonly RetailStoreDataContext? _context;
+    private readonly ILogger<AccountController> _logger;
+    private readonly IClientsRepository _repository;
 }

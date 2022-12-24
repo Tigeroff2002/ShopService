@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.Repositories.Abstractions;
+using Microsoft.AspNetCore.Mvc;
+using Models;
 using ShopService.Models;
 using System.Diagnostics;
-using Models;
-using Microsoft.EntityFrameworkCore;
-using Data.Contexts;
 
 namespace ShopService.Controllers;
 
@@ -13,72 +12,280 @@ public class HomeController : Controller
 {
     public HomeController(
         ILogger<HomeController> logger,
-        RetailStoreDataContext context)
+        IProductsRepository productsRepository,
+        ISummUpProductsRepository summUpProductsRepository,
+        IBasketsRepository basketsRepository,
+        IClientsRepository clientsRepository)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _productsRepository = productsRepository ?? throw new ArgumentNullException(nameof(productsRepository));
+        _summUpProductsRepository = summUpProductsRepository ?? throw new ArgumentNullException(nameof(summUpProductsRepository));
+        _basketsRepository = basketsRepository ?? throw new ArgumentNullException(nameof(basketsRepository));
+        _clientsRepository = clientsRepository ?? throw new ArgumentNullException(nameof(clientsRepository));
 
         _logger.LogInformation("Home Controller was started just now");
     }
 
-    [HttpGet("devicetype/{deviceTypeId:int}")]
-    public IActionResult GetProductsByDeviceType(int deviceTypeId)
+    [HttpGet("{id:int}/devicetype/{deviceTypeId:int}")]
+    public async Task<IActionResult> GetProductsByDeviceType(int id, int deviceTypeId)
     {
-        _devices = _context.Products
-            .Where(x => x.DeviceType!.Id == deviceTypeId)
-            .ToList();
+        var model = (
+            new List<Product>(),
+            new User());
 
-        return View("GetProductsByDeviceType", _devices);
+        var devices = await _productsRepository.GetProductsByDeviceType(deviceTypeId, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
+    }
+
+    [HttpGet("{id:int}/producer/{producerId:int}")]
+    public async Task<IActionResult> GetProductsByProducer(int id, int producerId)
+    {
+        var model = (
+            new List<Product>(),
+            new User());
+
+        var devices = await _productsRepository.GetProductsByProducer(producerId, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
+    }
+
+    [HttpGet("{id:int}/existed")]
+    public async Task<IActionResult> GetProductsOnExistense(int id)
+    {
+        var model = (
+            new List<Product>(),
+            new User());
+
+        var devices = await _productsRepository.GetProductsOnExistense(CancellationToken.None)
+            .ConfigureAwait(false);
+
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
+    }
+
+    [HttpGet("{id:int}/rating/{rating:int}")]
+    public async Task<IActionResult> GetProductsByMark(int id, int rating)
+    {
+        var model = (
+            new List<Product>(),
+            new User());
+
+        var devices = await _productsRepository.GetProductsWithMarkAbove(rating, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
+    }
+
+    [HttpGet("{id:int}/cost/{cost:int}")]
+    public async Task<IActionResult> GetProductsByCost(int id, int cost)
+    {
+        var model = (
+            new List<Product>(),
+            new User());
+
+        var devices = await _productsRepository.GetProductsByDeviceType(cost, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
+
+        model.Item1 = devices;
+        model.Item2 = user;
+
+        return View("FilterBy", model);
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         var model = (
-            new List<Product>(), 
-            new User());
+            new List<Product>(),
+            new User(),
+            new Product());
 
-        try
+        model.Item1 = await _productsRepository.GetAllProducts(CancellationToken.None);
+
+        if (model.Item1.Count == 0)
+            throw new ArgumentException();
+
+        model.Item2.Id = -1;
+        model.Item2.Role = new Role(RoleType.NonAuthUser);
+
+        model.Item3.DeviceType = new DeviceType();
+        model.Item3.Producer = new Producer();
+
+        return View("Index", model);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> AuthIndex(int id)
+    {
+        var model = (
+            new List<Product>(),
+            new User(),
+            new Product());
+
+        model.Item1 = await _productsRepository
+            .GetAllProducts(CancellationToken.None)
+            .ConfigureAwait(false);
+
+        model.Item2 = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (model.Item1.Count == 0 || model.Item2 == null)
         {
-            model.Item1 = _context.Products.ToList();
-        }
-        catch (Microsoft.Data.SqlClient.SqlException)
-        {
-            model.Item1 = new List<Product>();
-        }
-        catch (InvalidOperationException)
-        {
-            model.Item1 = new List<Product>();
+            throw new ArgumentException();
         }
 
-        if (model.Item2 == null 
-            || model.Item2.Role == null)
-        {
-            model.Item2 = new User 
-            {
-                Id = 1,
-                Role = new Role(0) 
-            };
-        }
+        model.Item3.DeviceType = new DeviceType();
+        model.Item3.Producer = new Producer();
 
         return View("Index", model);
     }
 
     [HttpGet("Details/{id:int}")]
-    public IActionResult Details(int? id)
+    public async Task<IActionResult> Details(int userId, int? id)
     {
         if (id == null)
         {
             return BadRequest("Некорректный ресурс!");
-        }    
+        }
 
-        var device = _context!.Products
-            .FirstOrDefault(x => x.Id == id);
+        int _id = id.Value;
 
-        if (device is null)
+        var device = await _productsRepository.FindProduct(_id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (device == null)
         {
             return NotFound("Устройство не найдено!");
         }
+
+        var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (user == null)
+        {
+            return View("Details", (device, new User { Id = -1, Role = new Role(RoleType.NonAuthUser)}));
+        }
+
+        return View("Details", (device, user));
+    }
+
+    [HttpGet("adminPage")]
+    public IActionResult AdminPageShow()
+    {
+        var users = SeedUsersOrders();
+
+        return View("AdminPage", (users, users.First()));
+    }
+
+    [HttpGet("managerPage")]
+    public IActionResult ManagerPageShow()
+    {
+        var houses = SeedWarehousesProducts();
 
         var user = new User
         {
@@ -86,11 +293,65 @@ public class HomeController : Controller
             Role = new Role(0)
         };
 
-        return View("Details", (device, user));
+        return View("ManagerPage", (houses, user));
     }
 
-    [HttpGet("adminPage")]
-    public IActionResult AdminPageShow()
+    [HttpPost("{id:int}")]
+    public async Task<IActionResult> Create([Bind(include: "DeviceTypeId, Name, ProducerId")] Product device)
+    {
+        if (ModelState.IsValid)
+        {
+            await _productsRepository.Add(device, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            _productsRepository.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        return View(device);
+    }
+
+    [HttpPut("{id:int}")]
+    public IActionResult Edit(Product device)
+    {
+        if (ModelState.IsValid)
+        {
+            _productsRepository.Update(device, CancellationToken.None);
+
+            _productsRepository.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        return View(device);
+    }
+
+    [HttpDelete("{id:int}")]
+    public IActionResult Delete(int? id)
+    {
+        if (id == null)
+        {
+            return BadRequest("Некорректный ресурс!");
+        }
+
+        _productsRepository.Delete(id.Value, CancellationToken.None);
+
+        return RedirectToAction("Index");
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(
+            new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ??
+                    HttpContext.TraceIdentifier
+            });
+    }
+
+    private List<User> SeedUsersOrders()
     {
         var users = new List<User>
         {
@@ -272,11 +533,10 @@ public class HomeController : Controller
                 .First(x => x.Id == 2)
                 .CreateDescription();
 
-        return View("AdminPage", (users, users.First()));
+        return users;
     }
 
-    [HttpGet("managerPage")]
-    public IActionResult ManagerPageShow()
+    private List<Warehouse> SeedWarehousesProducts()
     {
         var houses = new List<Warehouse>
         {
@@ -411,56 +671,12 @@ public class HomeController : Controller
             }
         };
 
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
-
-        return View("ManagerPage", (houses, user));
-    }
-
-    [HttpPost("{id:int}")]
-    public IActionResult Create([Bind(include: "DeviceTypeId, Name, ProducerId")] Product device)
-    {
-        if (ModelState.IsValid)
-        {
-            _context.Products.Add(device);
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
-
-        return View(device);
-    }
-
-    [HttpPut("{id:int}")]
-    public IActionResult Edit(Product device)
-    {
-        return View(device); 
-    }
-
-    [HttpDelete("{id:int}")]
-    public IActionResult Delete(int? Id)
-    {
-        var device = _context!.Products
-            .FirstOrDefault(x => x.Id == Id);
-
-        return View(device);
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(
-            new ErrorViewModel 
-            { 
-                RequestId = Activity.Current?.Id ??
-                    HttpContext.TraceIdentifier 
-            });
+        return houses;
     }
 
     private readonly ILogger<HomeController> _logger;
-    private readonly RetailStoreDataContext _context;
-    private IList<Product>? _devices;
+    private readonly IProductsRepository _productsRepository;
+    private readonly ISummUpProductsRepository _summUpProductsRepository;
+    private readonly IBasketsRepository _basketsRepository;
+    private readonly IClientsRepository _clientsRepository;
 }

@@ -25,13 +25,15 @@ public interface IOrdersRepository
 
     void CancelOrder(Order order, CancellationToken token);
 
-    Task<bool> FindAsync(Order order, CancellationToken token);
+    Order Find(int id, CancellationToken token);
 
-    Task<IList<Order>> GetAllOrders(CancellationToken token);
+    Task<Order> FindOrderAsync(Order order, CancellationToken token);
 
-    IList<Order> GetAllUserOrders(User user, CancellationToken token);
+    Task<List<Order>> GetAllOrders(CancellationToken token);
 
-    IList<Order> GetAllShopOrders(Shop shop, CancellationToken token);
+    List<Order> GetAllUserOrders(User user, CancellationToken token);
+
+    List<Order> GetAllShopOrders(Shop shop, CancellationToken token);
 
     void SaveChanges();
 }

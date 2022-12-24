@@ -4,6 +4,7 @@ using Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Data.Contexts.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Data.Repositories;
 
@@ -20,6 +21,15 @@ public sealed class BasketsRepository
         _logger.LogInformation("BasketsRepository has created just now");
     }
 
+    public async Task AddBasketAsync(Basket basket, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(basket);
+
+        token.ThrowIfCancellationRequested();
+
+        _ = await _context.Baskets.AddAsync(basket, token);
+    }
+
     public void AddProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -28,13 +38,29 @@ public sealed class BasketsRepository
 
         token.ThrowIfCancellationRequested();
 
+        var findedBasket = _context.Baskets!
+            .FirstOrDefault(basket => basket.ClientId == user.Id)!;
+
+        if (findedBasket == null)
+        {
+            findedBasket = new Basket(1, user);
+            findedBasket.SummUpProducts = new List<SummUpProduct>();
+
+            _context.Baskets!.Add(findedBasket);
+        }
+        
+        if (findedBasket.SummUpProducts == null)
+        {
+            findedBasket.SummUpProducts = new List<SummUpProduct>();
+        }
+
         _context.Baskets!
-            .FirstOrDefault(basket => basket == user.Basket)!
+            .FirstOrDefault(basket => basket.ClientId == user.Id)!
             .SummUpProducts!
             .Add(summUpProduct);
 
         _context.Clients!
-            .FirstOrDefault(u => u.Equals(user))!
+            .FirstOrDefault(u => u.Id == user!.Id)!
             .Basket!
             .SummUpProducts!
             .Add(summUpProduct);
@@ -169,6 +195,17 @@ public sealed class BasketsRepository
         var findedBasket = await _context.Baskets.FindAsync(basket);
 
         return findedBasket == null ? false : true;
+    }
+
+    public async Task<Basket> FindBasket(int clientId, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        var findedBasket = await _context.Baskets
+            .FirstOrDefaultAsync(x => x.ClientId == clientId)
+            .ConfigureAwait(false);
+
+        return findedBasket!;
     }
 
     private readonly ILogger<BasketsRepository> _logger;

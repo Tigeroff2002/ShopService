@@ -9,6 +9,8 @@ namespace Data.Repositories.Abstractions;
 
 public interface IBasketsRepository
 {
+    Task AddBasketAsync(Basket basket, CancellationToken token);
+
     void AddProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token);
 
     void UpdateQuantity(User user, SummUpProduct summUpProduct, int changing, CancellationToken token);
@@ -17,7 +19,7 @@ public interface IBasketsRepository
 
     void ClearBasket(User user, CancellationToken token);
 
-    Task<bool> Find(Basket basket, CancellationToken token);
+    Task<Basket> FindBasket(int clientId, CancellationToken token);
 
     Task<IList<Basket>> GetAllBaskets(CancellationToken token);
 

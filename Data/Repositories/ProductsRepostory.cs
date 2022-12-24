@@ -4,6 +4,7 @@ using Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Data.Contexts.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Data.Repositories;
 
@@ -14,8 +15,8 @@ public sealed class ProductsRepository
         ILogger<ProductsRepository> logger,
         IRepositoryContext context)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _context = context ?? throw new ArgumentNullException(nameof(context));
 
         _logger.LogInformation("ProductsRepository was created just now");
     }
@@ -28,27 +29,13 @@ public sealed class ProductsRepository
         _ = await _context.Products.AddAsync(product, token);
     }
 
-    public void Delete(Product product, CancellationToken token)
+    public void Delete(int id, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(product);
-
         token.ThrowIfCancellationRequested();
+
+        var product = _context.Products.First(x => x.Id == id);
 
         _ = _context.Products.Remove(product);
-    }
-
-    public async Task<IList<Product>> GetAllProducts(CancellationToken token)
-    {
-        token.ThrowIfCancellationRequested();
-
-        return await _context.Products.ToListAsync(token);
-    }
-
-    public void SaveChanges()
-    {
-        _logger.LogInformation("ProductsRepository called saving data to DB");
-
-        _context.SaveChanges();
     }
 
     public void Update(Product product, CancellationToken token)
@@ -69,6 +56,74 @@ public sealed class ProductsRepository
         var findedProduct = await _context.Products.FindAsync(product, token);
 
         return findedProduct == null ? false : true;
+    }
+
+    public async Task<List<Product>> GetAllProducts(CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        return await _context.Products
+            .ToListAsync(token);
+    }
+
+    public async Task<List<Product>> GetProductsByDeviceType(int deviceTypeId, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        return await _context.Products
+            .Where(p => p.DeviceType!.Id == deviceTypeId)
+            .ToListAsync(token);
+    }
+
+    public async Task<List<Product>> GetProductsByProducer(int producerId, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        return await _context.Products
+            .Where(p => p.Producer!.Id == producerId)
+            .ToListAsync(token);
+    }
+
+    public async Task<List<Product>> GetProductsOnExistense(CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        return await _context.Products
+            .Where(p => p.SummUpProducts != null)
+            .ToListAsync(token);
+    }
+
+    public async Task<List<Product>> GetProductsWithMarkAbove(int rating, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        return await _context.Products
+            .Where(p => p.RAM > rating)
+            .ToListAsync(token);
+    }
+
+    public async Task<List<Product>> GetProductsWithCostBelow(int cost, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        return await _context.Products
+            .Where(p => p.Cost < cost)
+            .ToListAsync(token);
+    }
+
+    public async Task<Product> FindProduct(int id, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        return await _context.Products.FirstOrDefaultAsync(p => p.Id == id, token)
+            .ConfigureAwait(false);
+    }
+
+    public void SaveChanges()
+    {
+        _logger.LogInformation("ProductsRepository called saving data to DB");
+
+        _context.SaveChanges();
     }
 
     private readonly ILogger<ProductsRepository> _logger;

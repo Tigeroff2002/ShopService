@@ -2,6 +2,7 @@
 using Data.Contexts.Abstractions;
 using Data.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Models;
 
@@ -14,8 +15,8 @@ public sealed class WarehousesRepository
        ILogger<WarehousesRepository> logger,
        IRepositoryContext context)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _context = context ?? throw new ArgumentNullException(nameof(context));
 
         _logger.LogInformation("ShopsRepository has created just now");
     }

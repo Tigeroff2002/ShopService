@@ -5,6 +5,7 @@ using Data.Contexts;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Data.Contexts.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Data.Repositories;
 
@@ -15,12 +16,13 @@ public sealed class ClientsRepository
         ILogger<ClientsRepository> logger,
         IRepositoryContext context)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _context = context ?? throw new ArgumentNullException(nameof(context));
 
         _logger.LogInformation("ClientsRepository was created just now");
     }
-    public async Task Add(User user, CancellationToken token)
+
+    public async Task AddAsync(User user, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(user);
 
@@ -38,15 +40,66 @@ public sealed class ClientsRepository
         _ = _context.Clients.Remove(user);
     }
 
-    public async Task<bool> Find(User user, CancellationToken token)
+    public async Task<User> FindAsync(int userId, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(user);
+        token.ThrowIfCancellationRequested();
+
+        var findedUser = await _context.Clients
+            .FindAsync(
+                new object?[] { userId },
+                    token)
+            .ConfigureAwait(false);
+
+        return findedUser!;
+    }
+
+    public async Task<User> FindNickNameAsync(string nickName, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        var findedUser = await _context.Clients.FirstOrDefaultAsync(x => x.NickName == nickName)
+            .ConfigureAwait(false);
+
+        return findedUser!;
+    }
+
+    public async Task<User> FindAsync(string email, CancellationToken token)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException(nameof(email));
+        }
 
         token.ThrowIfCancellationRequested();
 
-        var findedUser = await _context.Clients.FindAsync(user, token);
+        // but maybe this dont works cause email is not pk
+        var findedUser = await _context.Clients
+            .FindAsync(
+                new object?[] { email },
+                    token)
+            .ConfigureAwait(false);
 
-        return findedUser == null ? false : true;
+        return findedUser!;
+    }
+
+    public async Task<Basket> TakeBasket(int userId, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        var findedUser = await _context.Clients
+            .FindAsync(
+                new object?[] { userId },
+                    token)
+            .ConfigureAwait(false);
+
+        ArgumentNullException.ThrowIfNull(findedUser);
+
+        var takenBasket = await _context.Baskets.FirstOrDefaultAsync(b => 
+            b.Client!.Equals(findedUser), 
+                CancellationToken.None)
+            .ConfigureAwait(false);
+
+        return takenBasket!;
     }
 
     public async Task<IList<User>> GetAllUsers(CancellationToken token)
@@ -81,6 +134,10 @@ public sealed class ClientsRepository
         //_context.Entry(user).State = EntityState.Modified;
     }
 
+    public int UserCount 
+        => _context.Clients.Count();
+
     private readonly ILogger<ClientsRepository> _logger;
     private readonly IRepositoryContext _context;
+
 }

@@ -8,13 +8,9 @@ public class User
     {
 
     }
+
     public User(int id, int roleType)
     {
-        if (id < 1)
-        {
-            throw new ArgumentException(nameof(id));
-        }
-
         if (roleType < 1 || roleType > 3)
         {
             throw new ArgumentException(nameof(roleType));
