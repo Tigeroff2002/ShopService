@@ -74,14 +74,28 @@
         <tr>
             <th>
                 <h4>
-                    <input type="button" value="Добавить в корзину" 
-                        onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
-                            new 
-                            {
-                                userId = Model.Item2.Id,
-                                id = item!.Id,
-                                count = Model.Item2.Basket!.SummUpProducts!.FirstOrDefault(x => x.Product == item)!.Quantity + 1
-                            })'" />   
+                        @if(Model.Item2.Id == -1)
+                        {
+                            <input type="button" value="Добавить в корзину" 
+                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
+                                    new 
+                                    {
+                                        userId = Model.Item2.Id,
+                                        id = item!.Id,
+                                        count = 1
+                                    })'" />   
+                        }
+                        @if(Model.Item2.Id > 0)
+                        {
+                            <input type="button" value="Добавить в корзину" 
+                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
+                                    new 
+                                    {
+                                        userId = Model.Item2.Id,
+                                        id = item!.Id,
+                                        count = Model.Item2.Basket!.SummUpProducts!.FirstOrDefault(x => x.Product == item)!.Quantity + 1
+                                    })'" />   
+                        }
                 </h4>
             </th>
             <th>

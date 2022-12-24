@@ -38,13 +38,29 @@ public sealed class BasketsRepository
 
         token.ThrowIfCancellationRequested();
 
+        var findedBasket = _context.Baskets!
+            .FirstOrDefault(basket => basket.ClientId == user.Id)!;
+
+        if (findedBasket == null)
+        {
+            findedBasket = new Basket(1, user);
+            findedBasket.SummUpProducts = new List<SummUpProduct>();
+
+            _context.Baskets!.Add(findedBasket);
+        }
+        
+        if (findedBasket.SummUpProducts == null)
+        {
+            findedBasket.SummUpProducts = new List<SummUpProduct>();
+        }
+
         _context.Baskets!
-            .FirstOrDefault(basket => basket == user.Basket)!
+            .FirstOrDefault(basket => basket.ClientId == user.Id)!
             .SummUpProducts!
             .Add(summUpProduct);
 
         _context.Clients!
-            .FirstOrDefault(u => u.Equals(user))!
+            .FirstOrDefault(u => u.Id == user!.Id)!
             .Basket!
             .SummUpProducts!
             .Add(summUpProduct);

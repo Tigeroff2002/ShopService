@@ -1,5 +1,5 @@
 ﻿@using Models
-@model (List<Product>, User)
+@model (List<Product>, User, Product)
 @{
     ViewData["Title"] = "Catalog Page";
 }
@@ -7,6 +7,7 @@
         @{
             var list = Model.Item1;
             var user = Model.Item2;
+            var product = Model.Item3;
         }
 
 <body class="back">
@@ -47,8 +48,8 @@
                         </th>
                         <th align="right">
                             <h4>
-                                <input type="button" value="Войти/Зарегистрироваться" 
-                                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                                <input type="button" value="Авторизация" 
+                                        onclick="location.href='@Url.Action("Login", "Account")'" />
                             </h4>
                         </th>
                         <th align="right">
@@ -56,7 +57,7 @@
                                 @if (user.Role!.RoleType != RoleType.AuthUser)
                                 {
                                     <input type="button" value="Выйти из аккаунта" 
-                                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                                        onclick="location.href='@Url.Action("Logout", "Account")'" />
                                 }
                             </h4>
                         </th>
@@ -65,7 +66,58 @@
             </table>
         </div>
 
-        <h2>Каталог устройств:</h2>
+        <br/>
+
+        <h2>Фильтрация страницы: </h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>                    
+                        <input type="button" value="По типу устройства" 
+                            onclick="location.href='@Url.Action("GetProductsByDeviceType", "Home", new {id = user.Id, deviceTypeId = 1})'" />
+                    </th>
+                    <th>                    
+                        <input type="button" value="По производителю" 
+                            onclick="location.href='@Url.Action("GetProductsByProducer", "Home", new {id = user.Id, producerId = 1})'" />     
+                    </th>
+                    <th>                    
+                        <input type="button" value="По наличию" 
+                            onclick="location.href='@Url.Action("GetProductsOnExistense", "Home", new {id = user.Id})'" />
+                    </th>
+                    <th>                    
+                        <input type="button" value="По оценке (выше)" 
+                            onclick="location.href='@Url.Action("GetProductsByMark", "Home", new {id = user.Id, rating = 4})'" />     
+                    </th>
+                    <th>                    
+                        <input type="button" value="По цене (ниже)" 
+                            onclick="location.href='@Url.Action("GetProductsByCost", "Home", new {id = user.Id, cost = 20000})'" /> 
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>               
+                        <input type="number" name="deviceTypeId" value="@product.DeviceType!.Id" class="form-control"/>
+                    </td>
+                    <td>
+                        <input type="number" name="producerId" value="@product.Producer!.Id" class="form-control"/>
+                    </td>
+                    <td>
+                        <input type="text" name="existense" value="@product.Name" class="form-control"/>
+                    </td>
+                    <td>
+                        <input type="number" name="rating" value="@product.RAM" class="form-control"/>
+                    </td>
+                    <td>
+                        <input type="number" name="cost" value="@product.Cost" class="form-control"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br/>
+
+        <h2>Каталог страницы: </h2>
     <table class="table">
         <thead>
             <tr>

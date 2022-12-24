@@ -92,13 +92,22 @@ public class AccountController : Controller
     }
 
     [HttpGet("logout")]
-    public async Task<IActionResult> LogOut()
+    public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         _logger!.LogInformation("User was successfuly unauthorized!");
 
-        return View("Login", new LoginModel());
+        return RedirectToAction(
+            "Index", 
+            "Home",
+            (new List<Product>(),
+            new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            },
+            new Product()));
     }
 
     [HttpGet("register")]
@@ -177,7 +186,7 @@ public class AccountController : Controller
 
                 _logger!.LogInformation("User was successfuly registered in system!");
 
-                return RedirectToAction("Index", "Home", (new List<Product>(), user));
+                return RedirectToAction("AuthIndex", "Home", (new List<Product>(), user, new Product()));
             }
             else
             {
@@ -186,7 +195,7 @@ public class AccountController : Controller
             }
         }
 
-        return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0)));
+        return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0), new Product()));
     }
 
     [HttpPost("data/add")]

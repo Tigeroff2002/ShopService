@@ -26,21 +26,33 @@ public class HomeController : Controller
         _logger.LogInformation("Home Controller was started just now");
     }
 
-    [HttpGet("devicetype/{typeId:int}")]
-    public async Task<IActionResult> GetProductsByDeviceType(int deviceTypeId)
+    [HttpGet("{id:int}/devicetype/{deviceTypeId:int}")]
+    public async Task<IActionResult> GetProductsByDeviceType(int id, int deviceTypeId)
     {
+        var model = (
+            new List<Product>(),
+            new User());
+
         var devices = await _productsRepository.GetProductsByDeviceType(deviceTypeId, CancellationToken.None)
             .ConfigureAwait(false);
 
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
 
-        var model = (
-            new List<Product>(),
-            new User());
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
 
         model.Item1 = devices;
         model.Item2 = user;
@@ -48,21 +60,33 @@ public class HomeController : Controller
         return View("FilterBy", model);
     }
 
-    [HttpGet("producer/{producerId:int}")]
-    public async Task<IActionResult> GetProductsByProducer(int producerId)
+    [HttpGet("{id:int}/producer/{producerId:int}")]
+    public async Task<IActionResult> GetProductsByProducer(int id, int producerId)
     {
+        var model = (
+            new List<Product>(),
+            new User());
+
         var devices = await _productsRepository.GetProductsByProducer(producerId, CancellationToken.None)
             .ConfigureAwait(false);
 
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
 
-        var model = (
-            new List<Product>(),
-            new User());
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
 
         model.Item1 = devices;
         model.Item2 = user;
@@ -70,21 +94,33 @@ public class HomeController : Controller
         return View("FilterBy", model);
     }
 
-    [HttpGet("existed")]
-    public async Task<IActionResult> GetProductsOnExistense()
+    [HttpGet("{id:int}/existed")]
+    public async Task<IActionResult> GetProductsOnExistense(int id)
     {
+        var model = (
+            new List<Product>(),
+            new User());
+
         var devices = await _productsRepository.GetProductsOnExistense(CancellationToken.None)
             .ConfigureAwait(false);
 
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
 
-        var model = (
-            new List<Product>(),
-            new User());
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
 
         model.Item1 = devices;
         model.Item2 = user;
@@ -92,21 +128,33 @@ public class HomeController : Controller
         return View("FilterBy", model);
     }
 
-    [HttpGet("rating/{rating:int}")]
-    public async Task<IActionResult> GetProductsByMark(int rating)
+    [HttpGet("{id:int}/rating/{rating:int}")]
+    public async Task<IActionResult> GetProductsByMark(int id, int rating)
     {
+        var model = (
+            new List<Product>(),
+            new User());
+
         var devices = await _productsRepository.GetProductsWithMarkAbove(rating, CancellationToken.None)
             .ConfigureAwait(false);
 
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
 
-        var model = (
-            new List<Product>(),
-            new User());
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
 
         model.Item1 = devices;
         model.Item2 = user;
@@ -114,21 +162,33 @@ public class HomeController : Controller
         return View("FilterBy", model);
     }
 
-    [HttpGet("cost/{cost:int}")]
-    public async Task<IActionResult> GetProductsByCost(int cost)
+    [HttpGet("{id:int}/cost/{cost:int}")]
+    public async Task<IActionResult> GetProductsByCost(int id, int cost)
     {
-        var devices = await _productsRepository.GetProductsByDeviceType(cost, CancellationToken.None)
-            .ConfigureAwait(false);
-
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
-
         var model = (
             new List<Product>(),
             new User());
+
+        var devices = await _productsRepository.GetProductsByDeviceType(cost, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        var user = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = -1,
+                Role = new Role(RoleType.NonAuthUser)
+            };
+        }
 
         model.Item1 = devices;
         model.Item2 = user;
@@ -141,7 +201,8 @@ public class HomeController : Controller
     {
         var model = (
             new List<Product>(),
-            new User());
+            new User(),
+            new Product());
 
         model.Item1 = await _productsRepository.GetAllProducts(CancellationToken.None);
 
@@ -151,6 +212,9 @@ public class HomeController : Controller
         model.Item2.Id = -1;
         model.Item2.Role = new Role(RoleType.NonAuthUser);
 
+        model.Item3.DeviceType = new DeviceType();
+        model.Item3.Producer = new Producer();
+
         return View("Index", model);
     }
 
@@ -159,7 +223,8 @@ public class HomeController : Controller
     {
         var model = (
             new List<Product>(),
-            new User());
+            new User(),
+            new Product());
 
         model.Item1 = await _productsRepository
             .GetAllProducts(CancellationToken.None)
@@ -173,7 +238,10 @@ public class HomeController : Controller
         {
             throw new ArgumentException();
         }
-        
+
+        model.Item3.DeviceType = new DeviceType();
+        model.Item3.Producer = new Producer();
+
         return View("Index", model);
     }
 
@@ -200,7 +268,7 @@ public class HomeController : Controller
 
         if (user == null)
         {
-            return View("Details", new User(-1, 0));
+            return View("Details", (device, new User { Id = -1, Role = new Role(RoleType.NonAuthUser)}));
         }
 
         return View("Details", (device, user));
