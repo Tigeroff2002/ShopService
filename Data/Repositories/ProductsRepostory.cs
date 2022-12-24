@@ -13,13 +13,10 @@ public sealed class ProductsRepository
 {
     public ProductsRepository(
         ILogger<ProductsRepository> logger,
-        IServiceProvider provider)
+        IRepositoryContext context)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-
-        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
+        _context = context ?? throw new ArgumentNullException(nameof(context));
 
         _logger.LogInformation("ProductsRepository was created just now");
     }
@@ -101,7 +98,7 @@ public sealed class ProductsRepository
         token.ThrowIfCancellationRequested();
 
         return await _context.Products
-            .Where(p => p.Rating > rating)
+            .Where(p => p.RAM > rating)
             .ToListAsync(token);
     }
 
@@ -129,9 +126,6 @@ public sealed class ProductsRepository
         _context.SaveChanges();
     }
 
-
-
     private readonly ILogger<ProductsRepository> _logger;
-    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 }

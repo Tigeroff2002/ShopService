@@ -11,22 +11,25 @@
 
 <body class="back">
     <div class="text-center">
-        <div>
+        <div class="text-md-end">
         @if (user!.Role!.RoleType == RoleType.NonAuthUser)
         {
-            <h4>Вы новый пользователь</h4>
+            <h6>Вы новый пользователь</h6>
         }
         @if (user!.Role!.RoleType == RoleType.AuthUser)
         {
-            <h4>Вы выполнили вход под своей обычной учётной записью</h4>
+            <h6>Вы выполнили вход под своей обычной учётной записью</h6>
+            <h6>@Html.DisplayFor(x => user.NickName)</h6>
         }
         @if (user.Role.RoleType == RoleType.Admin)
         {
-            <h4>Вы выполнили вход под учётной записью администратора</h4>
+            <h6>Вы выполнили вход под учётной записью администратора</h6>
+            <h6>@Html.DisplayFor(x => user.NickName)</h6>
         }
         @if (user.Role.RoleType == RoleType.Manager)
         {
-            <h4>Вы выполнили вход под учётной записью менеджера</h4>
+            <h6>Вы выполнили вход под учётной записью менеджера</h6>
+            <h6>@Html.DisplayFor(x => user.NickName)</h6>
         }
         </div>
         <br />
@@ -39,7 +42,7 @@
                         <th align="right">
                             <h4>
                                  <input type="button" value="Открыть корзину" 
-                                         onclick="location.href='@Url.Action("GetBasket", "Basket")'" />
+                                         onclick="location.href='@Url.Action("GetBasket", "Basket", new {userId = user.Id})'" />
                             </h4>
                         </th>
                         <th align="right">

@@ -14,16 +14,14 @@ public sealed class ClientsRepository
 {
     public ClientsRepository(
         ILogger<ClientsRepository> logger,
-        IServiceProvider provider)
+        IRepositoryContext context)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-
-        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
+        _context = context ?? throw new ArgumentNullException(nameof(context));
 
         _logger.LogInformation("ClientsRepository was created just now");
     }
+
     public async Task AddAsync(User user, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -50,6 +48,16 @@ public sealed class ClientsRepository
             .FindAsync(
                 new object?[] { userId },
                     token)
+            .ConfigureAwait(false);
+
+        return findedUser!;
+    }
+
+    public async Task<User> FindNickNameAsync(string nickName, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        var findedUser = await _context.Clients.FirstOrDefaultAsync(x => x.NickName == nickName)
             .ConfigureAwait(false);
 
         return findedUser!;
@@ -130,7 +138,6 @@ public sealed class ClientsRepository
         => _context.Clients.Count();
 
     private readonly ILogger<ClientsRepository> _logger;
-    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 
 }

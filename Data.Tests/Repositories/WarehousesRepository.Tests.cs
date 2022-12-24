@@ -20,7 +20,7 @@ public sealed class WarehousesRepositoryTests
     {
         // Arrange
         var logger = Mock.Of<ILogger<WarehousesRepository>>();
-        var context = Mock.Of<IRepositoryContext>();
+        var context = Mock.Of<IRepositoryContext>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new WarehousesRepository(logger, context));
@@ -35,7 +35,7 @@ public sealed class WarehousesRepositoryTests
     public void CanNotBeCreatedBecauseLoggerIsNull()
     {
         // Arrange
-        var context = Mock.Of<IRepositoryContext>();
+        var context = Mock.Of<IRepositoryContext>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new WarehousesRepository(null!, context));

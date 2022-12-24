@@ -58,9 +58,7 @@ public class AccountController : Controller
         {
             var token = CancellationToken.None;
 
-            ArgumentNullException.ThrowIfNull(objLoginModel.Email);
-
-            var user = await _repository.FindAsync(objLoginModel.Email, token)
+            var user = await _repository.FindNickNameAsync(objLoginModel.NickName, token)
                 .ConfigureAwait(false);
 
             if (user == null)
@@ -86,11 +84,11 @@ public class AccountController : Controller
 
                 _logger!.LogInformation("User was successfuly authorized!");
 
-                return RedirectToAction("Index", "Home", (new List<Product>(), user));
+                return RedirectToAction("AuthIndex", "Home", new {id = user.Id});
             }
         }
 
-        return RedirectToAction("Index", "Home", (new List<Product>(), new User(1, 0)));
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpGet("logout")]

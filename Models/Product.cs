@@ -39,8 +39,8 @@ public class Product
     public float? CamMp { get; set; }
     public float? AccumCapacity { get; set; }
     public float? RAM { get; set; }
-    public float? Rating { get; set; } = 5f;
-    public string? ImageLink { get; set; } = "image/product1.jpg";
+    //public float? Rating { get; set; } = 5f;
+    //public string? ImageLink { get; set; } = "image/product1.jpg";
     public virtual ICollection<Order>? Orders { get; set; }
     public virtual ICollection<Basket>? Baskets { get; set; }
     public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }

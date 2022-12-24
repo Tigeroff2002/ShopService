@@ -13,11 +13,11 @@ public static class Storage
         => services
             .AddDbContext<RetailStoreDataContext>(opt =>
                 opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;Integrated Security=True"))
-            .AddSingleton<IRepositoryContext, RepositoryContext>()
-            .AddSingleton<IBasketsRepository, BasketsRepository>()
-            .AddSingleton<IClientsRepository, ClientsRepository>()
-            .AddSingleton<IProductsRepository, ProductsRepository>()
-            .AddSingleton<IShopsRepository, ShopsRepository>()
-            .AddSingleton<ISummUpProductsRepository, SummUpProductsRepository>()
-            .AddSingleton<IOrdersRepository, OrdersRepository>();
+            .AddScoped<IRepositoryContext, RepositoryContext>()
+            .AddScoped<IBasketsRepository, BasketsRepository>()
+            .AddScoped<IClientsRepository, ClientsRepository>()
+            .AddScoped<IProductsRepository, ProductsRepository>()
+            .AddScoped<IShopsRepository, ShopsRepository>()
+            .AddScoped<ISummUpProductsRepository, SummUpProductsRepository>()
+            .AddScoped<IOrdersRepository, OrdersRepository>();
 }

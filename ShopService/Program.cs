@@ -26,16 +26,16 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<RetailStoreDataContext>(opt =>
     opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;Integrated Security=True"))
     .AddScoped<IRepositoryContext, RepositoryContext>()
-    .AddSingleton<IBasketsRepository, BasketsRepository>()
-    .AddSingleton<IClientsRepository, ClientsRepository>()
-    .AddSingleton<IProductsRepository, ProductsRepository>()
-    .AddSingleton<IShopsRepository, ShopsRepository>()
-    .AddSingleton<ISummUpProductsRepository, SummUpProductsRepository>()
-    .AddSingleton<IWarehousesRepository, WarehousesRepository>()
-    .AddSingleton<IOrdersRepository, OrdersRepository>()
-    .AddSingleton<IOrderManager, OrderManager>()
-    .AddSingleton<IOrderConfirmer, OrderConfirmer>()
-    .AddSingleton<IOrderPay, OrderPay>();
+    .AddScoped<IBasketsRepository, BasketsRepository>()
+    .AddScoped<IClientsRepository, ClientsRepository>()
+    .AddScoped<IProductsRepository, ProductsRepository>()
+    .AddScoped<IShopsRepository, ShopsRepository>()
+    .AddScoped<ISummUpProductsRepository, SummUpProductsRepository>()
+    .AddScoped<IWarehousesRepository, WarehousesRepository>()
+    .AddScoped<IOrdersRepository, OrdersRepository>()
+    .AddScoped<IOrderManager, OrderManager>()
+    .AddScoped<IOrderConfirmer, OrderConfirmer>()
+    .AddScoped<IOrderPay, OrderPay>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(x => x.LoginPath = "/login");

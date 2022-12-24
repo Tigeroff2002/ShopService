@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.Repositories.Abstractions;
+using Microsoft.AspNetCore.Mvc;
+using Models;
 using ShopService.Models;
 using System.Diagnostics;
-using Models;
-using Microsoft.EntityFrameworkCore;
-using Data.Contexts;
-using Data.Repositories.Abstractions;
 
 namespace ShopService.Controllers;
 
@@ -142,32 +140,40 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         var model = (
-            new List<Product>(), 
+            new List<Product>(),
             new User());
 
-        try
-        {
-            model.Item1 = await _productsRepository.GetAllProducts(CancellationToken.None);
-        }
-        catch (Microsoft.Data.SqlClient.SqlException)
-        {
-            model.Item1 = new List<Product>();
-        }
-        catch (InvalidOperationException)
-        {
-            model.Item1 = new List<Product>();
-        }
+        model.Item1 = await _productsRepository.GetAllProducts(CancellationToken.None);
 
-        if (model.Item2 == null 
-            || model.Item2.Role == null)
-        {
-            model.Item2 = new User 
-            {
-                Id = 1,
-                Role = new Role(0) 
-            };
-        }
+        if (model.Item1.Count == 0)
+            throw new ArgumentException();
 
+        model.Item2.Id = -1;
+        model.Item2.Role = new Role(RoleType.NonAuthUser);
+
+        return View("Index", model);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> AuthIndex(int id)
+    {
+        var model = (
+            new List<Product>(),
+            new User());
+
+        model.Item1 = await _productsRepository
+            .GetAllProducts(CancellationToken.None)
+            .ConfigureAwait(false);
+
+        model.Item2 = await _clientsRepository
+            .FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (model.Item1.Count == 0 || model.Item2 == null)
+        {
+            throw new ArgumentException();
+        }
+        
         return View("Index", model);
     }
 
@@ -248,7 +254,7 @@ public class HomeController : Controller
             return RedirectToAction("Index");
         }
 
-        return View(device); 
+        return View(device);
     }
 
     [HttpDelete("{id:int}")]
@@ -268,10 +274,10 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(
-            new ErrorViewModel 
-            { 
+            new ErrorViewModel
+            {
                 RequestId = Activity.Current?.Id ??
-                    HttpContext.TraceIdentifier 
+                    HttpContext.TraceIdentifier
             });
     }
 

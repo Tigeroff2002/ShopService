@@ -13,13 +13,10 @@ public sealed class WarehousesRepository
 {
     public WarehousesRepository(
        ILogger<WarehousesRepository> logger,
-       IServiceProvider provider)
+       IRepositoryContext context)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-
-        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
+        _context = context ?? throw new ArgumentNullException(nameof(context));
 
         _logger.LogInformation("ShopsRepository has created just now");
     }
@@ -95,6 +92,5 @@ public sealed class WarehousesRepository
     }
 
     private readonly ILogger<WarehousesRepository> _logger;
-    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 }

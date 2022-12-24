@@ -20,7 +20,7 @@ public sealed class BasketsRepositoryTests
     {
         // Arrange
         var logger = Mock.Of<ILogger<BasketsRepository>>();
-        var context = Mock.Of<IRepositoryContext>();
+        var context = Mock.Of<IRepositoryContext>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new BasketsRepository(logger, context));
@@ -35,7 +35,7 @@ public sealed class BasketsRepositoryTests
     public void CanNotBeCreatedBecauseLoggerIsNull()
     {
         // Arrange
-        var context = Mock.Of<IRepositoryContext>();
+        var context = Mock.Of<IRepositoryContext>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new BasketsRepository(null!, context));
@@ -48,7 +48,7 @@ public sealed class BasketsRepositoryTests
     [Trait("Category", "Unit")]
     public void CanNotBeCreatedBecauseContextIsNull()
 {
-// Arrange
+        // Arrange
         var logger = Mock.Of<ILogger<BasketsRepository>>();
 
         // Act

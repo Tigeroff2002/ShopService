@@ -13,15 +13,21 @@ public sealed class BasketsRepository
 {
     public BasketsRepository(
         ILogger<BasketsRepository> logger, 
-        IServiceProvider provider)
+        IRepositoryContext context)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-
-        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
+        _context = context ?? throw new ArgumentNullException(nameof(context));
 
         _logger.LogInformation("BasketsRepository has created just now");
+    }
+
+    public async Task AddBasketAsync(Basket basket, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(basket);
+
+        token.ThrowIfCancellationRequested();
+
+        _ = await _context.Baskets.AddAsync(basket, token);
     }
 
     public void AddProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token)
@@ -175,7 +181,17 @@ public sealed class BasketsRepository
         return findedBasket == null ? false : true;
     }
 
+    public async Task<Basket> FindBasket(int clientId, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        var findedBasket = await _context.Baskets
+            .FirstOrDefaultAsync(x => x.ClientId == clientId)
+            .ConfigureAwait(false);
+
+        return findedBasket!;
+    }
+
     private readonly ILogger<BasketsRepository> _logger;
-    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 }

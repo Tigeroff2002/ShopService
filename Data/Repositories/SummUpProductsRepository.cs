@@ -14,13 +14,10 @@ public sealed class SummUpProductsRepository
 {
     public SummUpProductsRepository(
         ILogger<SummUpProductsRepository> logger,
-        IServiceProvider provider)
+        IRepositoryContext context)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-
-        using var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        _context = scope.ServiceProvider.GetRequiredService<IRepositoryContext>();
+        _context = context ?? throw new ArgumentNullException(nameof(context));
 
         _logger.LogInformation("ProductsRepository was created just now");
     }
@@ -119,6 +116,5 @@ public sealed class SummUpProductsRepository
     }
 
     private readonly ILogger<SummUpProductsRepository> _logger;
-    private readonly IServiceProvider _provider;
     private readonly IRepositoryContext _context;
 }

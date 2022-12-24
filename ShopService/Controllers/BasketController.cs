@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using Data.Contexts;
 using Data.Repositories.Abstractions;
+using ShopService.Views.Account;
 
 namespace ShopService.Controllers;
 
@@ -34,28 +35,22 @@ public class BasketController : Controller
 
         if (user == null)
         {
-            user = new User(1, 1);
-
-            var basket = SeedExistedBasket();
-
-            user.Basket = basket;
-
-            return View(basket);
+            return RedirectToAction("Login", "Account", new LoginModel());
         }
 
-        var existedBasket = user!.Basket!;
+        var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
+            .ConfigureAwait(false);
 
-        if (existedBasket == null)
-            return NotFound();
-
-
-        var newUser = new User
+        if (findedBasket == null)
         {
-            Id = 1,
-            Role = new Role(0)
-        };
+            findedBasket = new Basket(1, user);
+            findedBasket.SummUpProducts = new List<SummUpProduct>();
 
-        return View("BasketPage", (existedBasket, user));
+            await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
+                .ConfigureAwait(false);
+        }
+
+        return View("BasketPage", (findedBasket, user));
     }
 
     [HttpGet("cleanBasket/{userId:int}")]
