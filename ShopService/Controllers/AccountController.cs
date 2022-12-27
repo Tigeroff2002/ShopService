@@ -153,7 +153,7 @@ public class AccountController : Controller
             {
                 var existense = await CheckCurrentUserExistense(user);
 
-                if (false)
+                if (existense)
                 {
                     ViewBag.Message = "Such user have already registered in system";
                     _logger!.LogInformation("User with these data was found in system!");
@@ -225,7 +225,7 @@ public class AccountController : Controller
 
         ArgumentNullException.ThrowIfNull(user.EmailAdress);
 
-        var b = await _repository.FindAsync(user.EmailAdress, CancellationToken.None) == null;
+        var b = await _repository.FindNickNameAsync(user.EmailAdress, CancellationToken.None) == null;
 
         if (b)
         {
