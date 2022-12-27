@@ -234,7 +234,7 @@ public class HomeController : Controller
             .FindAsync(id, CancellationToken.None)
             .ConfigureAwait(false);
 
-        if (model.Item1.Count == 0 || model.Item2 == null)
+        if (model.Item1.Count == 0)
         {
             throw new ArgumentException();
         }

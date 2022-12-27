@@ -58,7 +58,7 @@ public class AccountController : Controller
         {
             var token = CancellationToken.None;
 
-            var user = await _repository.FindNickNameAsync(objLoginModel.NickName, token)
+            var user = await _repository.FindEmailAsync(objLoginModel.Email!, token)
                 .ConfigureAwait(false);
 
             if (user == null)
@@ -139,7 +139,7 @@ public class AccountController : Controller
         {
             var user = new User()
             {
-                Id = _repository.UserCount,
+                Id = _repository.UserCount + 1,
                 NickName = objRegisterModel.NickName,
                 Password = objRegisterModel?.Password,
                 ContactNumber = objRegisterModel?.ContactNumber,
@@ -165,6 +165,8 @@ public class AccountController : Controller
 
                 ArgumentNullException.ThrowIfNull(user!.Role.RoleCaption);
 
+                await _repository.AddAsync(user!, CancellationToken.None);
+
                 var claims = new List<Claim>() 
                 {
                     new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user!.Id)),
@@ -186,7 +188,7 @@ public class AccountController : Controller
 
                 _logger!.LogInformation("User was successfuly registered in system!");
 
-                return RedirectToAction("AuthIndex", "Home", (new List<Product>(), user, new Product()));
+                return RedirectToAction("AuthIndex", "Home", new { id = user.Id });
             }
             else
             {
@@ -225,18 +227,8 @@ public class AccountController : Controller
 
         ArgumentNullException.ThrowIfNull(user.EmailAdress);
 
-        var b = await _repository.FindNickNameAsync(user.EmailAdress, CancellationToken.None) == null;
-
-        if (b)
-        {
-            await _repository.AddAsync(user!, CancellationToken.None);
-
-            _repository.SaveChanges();
-
-            return false;
-        }
-
-        return true;
+        return await _repository
+            .FindEmailAsync(user.EmailAdress, CancellationToken.None) != null;
     }
 
     private readonly ILogger<AccountController> _logger;

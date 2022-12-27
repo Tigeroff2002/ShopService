@@ -17,7 +17,7 @@ public interface IClientsRepository
 
     Task<User> FindAsync(int userId, CancellationToken token);
 
-    Task<User> FindNickNameAsync(string nickName, CancellationToken token);
+    Task<User> FindEmailAsync(string nickName, CancellationToken token);
 
     Task<Basket> TakeBasket(int userId, CancellationToken token);
 

@@ -50,11 +50,11 @@ public sealed class ClientsRepository
         return findedUser!;
     }
 
-    public async Task<User> FindNickNameAsync(string nickName, CancellationToken token)
+    public async Task<User> FindEmailAsync(string email, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
 
-        var findedUser = await _context.Clients.FirstOrDefaultAsync(x => x.NickName == nickName)
+        var findedUser = await _context.Clients.FirstOrDefaultAsync(x => x.EmailAdress == email)
             .ConfigureAwait(false);
 
         return findedUser!;
