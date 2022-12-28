@@ -65,7 +65,7 @@ public sealed class OrderConfirmer
 
         token.ThrowIfCancellationRequested();
 
-        await Task.Delay(1_000)
+        await Task.Delay(5_000)
             .ConfigureAwait(false);
 
         return RandomNumberGenerator.GetInt32(5) == 0 ? false : true;

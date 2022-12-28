@@ -5,6 +5,8 @@
 }
 <body class="back">
     <div class="text-center">
+        <h3>Страница просмотра созданного заказа: </h3>
+        <br/>
     @{var groups = Model.Item1.SummUpProducts!;}
     @if (groups != null)
         {
@@ -53,11 +55,11 @@
             <tr>
                 <th>
             <input type="button" value="Подтвердить заказ" 
-                  onclick="location.href='@Url.Action("ConfirmOrder", "Order")'" />
+                  onclick="location.href='@Url.Action("ConfirmOrder", "Order", new {userId = Model.Item2.Id})'" />
                 </th>
                 <th>
             <input type="button" value="Отменить заказ" 
-                  onclick="location.href='@Url.Action("CancelOrder", "Order")'" />
+                  onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
                 </th>
             </tr>
         </table>

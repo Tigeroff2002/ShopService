@@ -15,9 +15,9 @@ public sealed class OrderProcessorService : BackgroundService
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    => Task.Run(
-        async () => await _manager.ProcessOrdersAsync(stoppingToken).ConfigureAwait(false),
-            stoppingToken);
+        => Task.Run(async () => 
+            await _manager.ProcessOrdersAsync(stoppingToken).ConfigureAwait(false),
+                stoppingToken);
 
     private readonly ILogger<OrderProcessorService> _logger;
     private readonly IOrderManager _manager;

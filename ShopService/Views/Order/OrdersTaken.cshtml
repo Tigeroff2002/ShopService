@@ -1,22 +1,15 @@
 ﻿@using Models
 @model (Order, User)
-
 @{
-    var item1 = Model.Item1;
-    var item2 = Model.Item2;
+    ViewData["Title"] = "Catalog Page";
 }
 <body class="back">
     <div class="text-center">
-        <h3>Страница просмотра подтвержденного заказа: </h3>
+        <h3>Страница просмотра полученного заказа: </h3>
         <br />
         @{
             var groups = Model.Item1.SummUpProducts!;
         }
-
-            <h4>Ваш заказ подтвержден и оплачен</h4>
-            <h4>Готов к получению</h4>
-
-        <br />
         @if (groups != null)
         {
             <h4>Содержимое вашего заказа: </h4>
@@ -60,17 +53,5 @@
             </table>
         }
         <br />
-        <table>
-            <tr>
-                <th>
-                    <input type="button" value="Забрать заказ"
-                           onclick="location.href='@Url.Action("TakeOrder", "Order", new {userId = Model.Item2.Id})'" />
-                </th>
-                <th>
-                    <input type="button" value="Отказаться от получения"
-                           onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
-                </th>
-            </tr>
-        </table>
     </div>
 </body>

@@ -14,7 +14,7 @@ namespace ShopService.Views.Account
         [Display(Name = "Имя пользователя (если хотите)")]
         public string? NickName { get; private set; }
         public bool isRoleChoosed { get; private set; }
-        public RoleType Role { get; private set; }
+        public int roleType { get; private set; }
         [Required]
         [Display(Name = "Номер телефона")]
         public string? ContactNumber { get; private set; }
@@ -32,7 +32,7 @@ namespace ShopService.Views.Account
         public RegisterModel()
         {
             if (!isRoleChoosed)
-                Role = RoleType.AuthUser;
+                roleType = 1;
         }
 
         public RegisterModel(
@@ -55,12 +55,12 @@ namespace ShopService.Views.Account
                 throw new ArgumentException(nameof(confirmPassword));
             ConfirmPassword = confirmPassword;
 
-            isRoleChoosed = true;
-
             if (!isRoleChoosed)
-                Role = RoleType.AuthUser;
-            else
-                Role = (RoleType)roleType;
+            {
+                roleType = 1;
+            }
+
+            isRoleChoosed = true;
 
             if (string.IsNullOrWhiteSpace(contactNumber))
                 ContactNumber = "None";

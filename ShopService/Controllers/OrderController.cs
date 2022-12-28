@@ -1,8 +1,12 @@
-﻿using Data.Contexts;
+﻿using Auth0.AspNetCore.Authentication;
+using Data.Contexts;
+using Data.Repositories;
 using Data.Repositories.Abstractions;
+using Logic.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using ShopService.Views.Account;
 
 namespace ShopService.Controllers;
 
@@ -13,11 +17,16 @@ public class OrderController : Controller
     public OrderController(
         ILogger<OrderController> logger,
         IClientsRepository clientsRepository,
-        IOrdersRepository ordersRepository)
+        IBasketsRepository basketsRepository,
+        IOrdersRepository ordersRepository,
+        IOrderManager orderManager)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
+        _basketsRepository = basketsRepository ?? throw new ArgumentNullException(nameof(basketsRepository));
         _clientsRepository = clientsRepository ?? throw new ArgumentNullException(nameof(clientsRepository));
+
+        _orderManager = orderManager ?? throw new ArgumentNullException(nameof(orderManager));
 
         _logger.LogInformation("Order Controller was started just now");
     }
@@ -27,23 +36,49 @@ public class OrderController : Controller
     {
         if (ModelState.IsValid)
         {
-            var user = new User
-            {
-                Id = 1,
-                Role = new Role(0)
-            };
-
-            var order = SeedTestOrder(user);
-
-            await _ordersRepository.AddOrderAsync(order, CancellationToken.None)
+            var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
                 .ConfigureAwait(false);
 
-            _ordersRepository.SaveChanges();
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account", new LoginModel());
+            }
 
-            return View("OrderHome", (order, user));
+            if (user!.Basket == null)
+            {
+                user!.Basket = new Basket(user);
+                user!.Basket!.SummUpProducts = new List<SummUpProduct>();
+            }
+
+            var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            if (findedBasket == null)
+            {
+                findedBasket = user!.Basket;
+            }
+
+            var order = new Order(user);
+
+            order.SummUpProducts = new List<SummUpProduct>();
+            order.SummUpProducts = findedBasket!.SummUpProducts!.ToList();
+
+            order = SeedTestOrder(user);
+
+            order.ResultCost = order.CalculateResultCost();
+
+            var task = Task.Run(async () => await _orderManager.ProcessOrdersAsync(CancellationToken.None)
+                .ConfigureAwait(false));
+
+            task.Wait();
+
+            var processedOrder = await _orderManager.CreateAsync(order, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            return View("OrderHome", (processedOrder, user));
         }
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("AuthIndex", "Home", new {id = userId});
     }
 
     [HttpPut("changeOrder/{id:int}")]
@@ -67,48 +102,71 @@ public class OrderController : Controller
         return Ok((order, testUser));
     }
 
-    [HttpPost("cancelOrder/{id:int}")]
-    public IActionResult CancelOrder(int id)
+    public async Task<IActionResult> CancelOrder(int userId)
     {
-        var order = _ordersRepository.Find(id, CancellationToken.None);
+        var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
+            .ConfigureAwait(false);
 
-        if (order == null)
+        if (user == null)
         {
-            return NotFound();
+            return RedirectToAction("Login", "Account", new LoginModel());
         }
 
-        _ordersRepository.CancelOrder(order, CancellationToken.None);
-
-        _ordersRepository.SaveChanges();
-
-        return RedirectToAction("GetBasket", "Basket");
+        return RedirectToAction("GetBasket", "Basket", new {userId = userId});
     }
 
-    [HttpGet("confirmOrder/{id:int}")]
-    public IActionResult ConfirmOrder(int id)
+    [HttpGet("confirmOrder/{userId:int}")]
+    public async Task<IActionResult> ConfirmOrder(int userId)
     {
         if (ModelState.IsValid)
         {
-            var order = _ordersRepository.Find(id, CancellationToken.None);
+            var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
+                .ConfigureAwait(false);
 
-            if (order == null)
+            if (user == null)
             {
-                return NotFound();
+                return RedirectToAction("Login", "Account", new LoginModel());
             }
 
-            if (order.Client == null)
-            {
-                return BadRequest();
-            }
+            var order = new Order(user);
 
-            var user = order.Client;
+            order = SeedTestOrder(user);
 
-            _ordersRepository.ConfirmOrder(user, order, CancellationToken.None);
+            order.ResultCost = order.CalculateResultCost();
 
-             return View("OrderConfirm", (order, user));
+            var confirmedOrder = await _orderManager.ConfirmOrderAsync(order, CancellationToken.None)
+                .ConfigureAwait(false);
+
+             return View("OrderConfirm", (confirmedOrder, user));
         }
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("AuthIndex", "Home", new {id = userId});
+    }
+
+    [HttpGet("takeOrder/{userId:int}")]
+    public async Task<IActionResult> TakeOrder(int userId)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account", new LoginModel());
+            }
+
+            var order = new Order(user);
+
+            order = SeedTestOrder(user);
+
+            var takenOrder = await _orderManager.GiveOrderAsync(order, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            return RedirectToAction("AuthIndex", "Home", new { id = userId });
+        }
+
+        return RedirectToAction("AuthIndex", "Home", new { id = userId });
     }
 
 
@@ -128,6 +186,8 @@ public class OrderController : Controller
         }
 
         var user = order.Client;
+
+        order = SeedTestOrder(user);
 
         return View((order, user));
     }
@@ -165,7 +225,7 @@ public class OrderController : Controller
                         Id = 1,
                         Product = new Product
                         {
-                            Name = "Iphone 14",
+                            Name = "Iphone 13",
                             DeviceType = new DeviceType
                             {
                                 Name = "Смартфон"
@@ -174,27 +234,12 @@ public class OrderController : Controller
                             {
                                 Name = "Apple"
                             },
+                            Cost = 60_000
                         },
-                        Quantity = 2
-                    },
-                    new SummUpProduct
-                    {
-                        Id = 2,
-                        Product = new Product
-                        {
-                            Name = "Iphone 12 Mini",
-                            DeviceType = new DeviceType
-                            {
-                                Name = "Смартфон"
-                            },
-                            Producer = new Producer
-                            {
-                                Name = "Apple"
-                            }
-                        },
-                        Quantity = 1
+                        Quantity = 3,
+                        TotalPrice = 180_000
                     }
-                }
+                },
         };
 
         return order;
@@ -202,5 +247,7 @@ public class OrderController : Controller
 
     private readonly ILogger<OrderController> _logger;
     private readonly IOrdersRepository _ordersRepository;
+    private readonly IBasketsRepository _basketsRepository;
     private readonly IClientsRepository _clientsRepository;
+    private readonly IOrderManager _orderManager;
 }

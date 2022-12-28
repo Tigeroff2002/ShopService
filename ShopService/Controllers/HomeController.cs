@@ -33,14 +33,14 @@ public class HomeController : Controller
             new List<Product>(),
             new User());
 
-        var devices = await _productsRepository.GetProductsByDeviceType(deviceTypeId, CancellationToken.None)
+        model.Item1 = await _productsRepository.GetProductsByDeviceType(deviceTypeId, CancellationToken.None)
             .ConfigureAwait(false);
 
         var user = await _clientsRepository
             .FindAsync(id, CancellationToken.None)
             .ConfigureAwait(false);
 
-        if (model.Item1.Count == 0 || model.Item2 == null)
+        if (model.Item1.Count == 0)
         {
             throw new ArgumentException();
         }
@@ -54,7 +54,6 @@ public class HomeController : Controller
             };
         }
 
-        model.Item1 = devices;
         model.Item2 = user;
 
         return View("FilterBy", model);
@@ -67,14 +66,14 @@ public class HomeController : Controller
             new List<Product>(),
             new User());
 
-        var devices = await _productsRepository.GetProductsByProducer(producerId, CancellationToken.None)
+        model.Item1 = await _productsRepository.GetProductsByProducer(producerId, CancellationToken.None)
             .ConfigureAwait(false);
 
         var user = await _clientsRepository
             .FindAsync(id, CancellationToken.None)
             .ConfigureAwait(false);
 
-        if (model.Item1.Count == 0 || model.Item2 == null)
+        if (model.Item1.Count == 0)
         {
             throw new ArgumentException();
         }
@@ -88,7 +87,6 @@ public class HomeController : Controller
             };
         }
 
-        model.Item1 = devices;
         model.Item2 = user;
 
         return View("FilterBy", model);
@@ -101,14 +99,14 @@ public class HomeController : Controller
             new List<Product>(),
             new User());
 
-        var devices = await _productsRepository.GetProductsOnExistense(CancellationToken.None)
+        model.Item1 = await _productsRepository.GetProductsOnExistense(CancellationToken.None)
             .ConfigureAwait(false);
 
         var user = await _clientsRepository
             .FindAsync(id, CancellationToken.None)
             .ConfigureAwait(false);
 
-        if (model.Item1.Count == 0 || model.Item2 == null)
+        if (model.Item1.Count == 0)
         {
             throw new ArgumentException();
         }
@@ -122,7 +120,6 @@ public class HomeController : Controller
             };
         }
 
-        model.Item1 = devices;
         model.Item2 = user;
 
         return View("FilterBy", model);
@@ -135,14 +132,14 @@ public class HomeController : Controller
             new List<Product>(),
             new User());
 
-        var devices = await _productsRepository.GetProductsWithMarkAbove(rating, CancellationToken.None)
+        model.Item1 = await _productsRepository.GetProductsWithMarkAbove(rating, CancellationToken.None)
             .ConfigureAwait(false);
 
         var user = await _clientsRepository
             .FindAsync(id, CancellationToken.None)
             .ConfigureAwait(false);
 
-        if (model.Item1.Count == 0 || model.Item2 == null)
+        if (model.Item1.Count == 0)
         {
             throw new ArgumentException();
         }
@@ -156,7 +153,6 @@ public class HomeController : Controller
             };
         }
 
-        model.Item1 = devices;
         model.Item2 = user;
 
         return View("FilterBy", model);
@@ -169,14 +165,14 @@ public class HomeController : Controller
             new List<Product>(),
             new User());
 
-        var devices = await _productsRepository.GetProductsByDeviceType(cost, CancellationToken.None)
+        model.Item1 = await _productsRepository.GetProductsByDeviceType(cost, CancellationToken.None)
             .ConfigureAwait(false);
 
         var user = await _clientsRepository
             .FindAsync(id, CancellationToken.None)
             .ConfigureAwait(false);
 
-        if (model.Item1.Count == 0 || model.Item2 == null)
+        if (model.Item1.Count == 0)
         {
             throw new ArgumentException();
         }
@@ -190,7 +186,6 @@ public class HomeController : Controller
             };
         }
 
-        model.Item1 = devices;
         model.Item2 = user;
 
         return View("FilterBy", model);
@@ -237,6 +232,11 @@ public class HomeController : Controller
         if (model.Item1.Count == 0)
         {
             throw new ArgumentException();
+        }
+
+        if (model.Item2 == null)
+        {
+            throw new ArgumentNullException();
         }
 
         model.Item3.DeviceType = new DeviceType();

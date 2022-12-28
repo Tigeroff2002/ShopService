@@ -86,12 +86,12 @@
         </table>
         <h5>
             <input type="button" value="Очистить корзину" 
-                  onclick="location.href='@Url.Action("CleanBasket", "Basket", new {id = Model.Item2.Id})'" />
+                  onclick="location.href='@Url.Action("CleanBasket", "Basket", new {userId = Model.Item2.Id})'" />
             </h5>
         <br />
         <h5>
             <input type="button" value="Создать заказ" 
-                  onclick="location.href='@Url.Action("CreateOrder", "Order", new {id = Model.Item2.Id})'" />
+                  onclick="location.href='@Url.Action("CreateOrder", "Order", new {userId = Model.Item2.Id})'" />
         </h5>
         <h5>
             <input type="button" value="На главную" 

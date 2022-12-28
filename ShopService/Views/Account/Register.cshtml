@@ -32,11 +32,11 @@
 
             <div class="form-group">
                 <div class="checkbox">
-                    <label asp-for="Role"></label>
+                    <label asp-for="roleType"></label>
                         <br />
-                        <input type="radio" asp-for="Role" name="Role" value="@Model.Role"/>User<br /> 
-                        <input type="radio" asp-for="Role" name="Role" value="@Model.Role" />Manager<br /> 
-                        <input type="radio" asp-for="Role" name="Role" value="@Model.Role" />Administrator<br />
+                        <input type="radio" asp-for="roleType" name="roleType" value=1/>User<br /> 
+                        <input type="radio" asp-for="roleType" name="roleType" value=2 />Manager<br />
+                        <input type="radio" asp-for="roleType" name="roleType" value=3 />Administrator<br />
                         <span asp-for="Role" class="text-danger"></span>
                 </div>
             </div>

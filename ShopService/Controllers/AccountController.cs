@@ -58,7 +58,7 @@ public class AccountController : Controller
         {
             var token = CancellationToken.None;
 
-            var user = await _repository.FindEmailAsync(objLoginModel.Email!, token)
+            var user = await _repository.FindNickNameAsync(objLoginModel.NickName, token)
                 .ConfigureAwait(false);
 
             if (user == null)
@@ -139,15 +139,22 @@ public class AccountController : Controller
         {
             var user = new User()
             {
-                Id = _repository.UserCount + 1,
                 NickName = objRegisterModel.NickName,
                 Password = objRegisterModel?.Password,
                 ContactNumber = objRegisterModel?.ContactNumber,
                 EmailAdress = objRegisterModel?.Email,
                 TotalPurchase = 0f,
                 Discount = 0f,
-                Role = new Role(RoleType.AuthUser)
+                Role = new Role((RoleType) roleType)
             };
+
+            if (user!.Role.RoleType != RoleType.AuthUser 
+                && user!.Role.RoleType != RoleType.Manager 
+                && user!.Role.RoleType != RoleType.Admin)
+            {
+                user.Role.RoleType = RoleType.AuthUser;
+            }
+
 
             if (user != null)
             {
@@ -161,11 +168,21 @@ public class AccountController : Controller
                     return View("Login", new LoginModel());
                 }
 
-                ArgumentNullException.ThrowIfNull(user!.EmailAdress);
+                ArgumentNullException.ThrowIfNull(user!.Role);
 
-                ArgumentNullException.ThrowIfNull(user!.Role.RoleCaption);
+                if (string.IsNullOrWhiteSpace(user!.EmailAdress))
+                {
+                    throw new ArgumentException();
+                }
+
+                if (string.IsNullOrWhiteSpace(user!.NickName))
+                {
+                    throw new ArgumentException();
+                }
 
                 await _repository.AddAsync(user!, CancellationToken.None);
+
+                _repository.SaveChanges();
 
                 var claims = new List<Claim>() 
                 {

@@ -43,10 +43,12 @@ public sealed class BasketsRepository
 
         if (findedBasket == null)
         {
-            findedBasket = new Basket(1, user);
+            findedBasket = new Basket(user);
             findedBasket.SummUpProducts = new List<SummUpProduct>();
 
             _context.Baskets!.Add(findedBasket);
+
+            _context.SaveChanges();
         }
         
         if (findedBasket.SummUpProducts == null)
@@ -78,6 +80,7 @@ public sealed class BasketsRepository
 
         ArgumentNullException.ThrowIfNull(basket);
 
+        /*
         _context.Baskets!
             .FirstOrDefault(basket => basket == user.Basket)!
             .SummUpProducts!
@@ -88,6 +91,7 @@ public sealed class BasketsRepository
             .Basket!
             .SummUpProducts!
             .Clear();
+        */
 
         //_context.Entry(basket).State = EntityState.Modified;
     }

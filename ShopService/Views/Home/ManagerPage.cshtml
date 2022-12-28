@@ -61,12 +61,12 @@
                             @if(number % 2 == 0)
                             {
                                 <input type="button" value="Заказать" 
-                                    onclick="location.href='@Url.Action("PullShip", "Shop")'" />
+                                    onclick="location.href='@Url.Action("PullShip", "Shop", new {shipId = 1})'" />
                             }
                             @if(number % 2 == 1)
                             {
                                 <input type="button" value="Отозвать" 
-                                    onclick="location.href='@Url.Action("PushShip", "Shop")'" />
+                                    onclick="location.href='@Url.Action("PushShip", "Shop", new {shipId = 1 })'" />
                             }
                         </th>
                     </tr>
@@ -81,7 +81,7 @@
 
         <div>
              <input type="button" value="Назад на главную" 
-                   onclick="location.href='@Url.Action("Index", "Home")'" />
+                   onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.Id})'" />
         </div>
 
 </body>

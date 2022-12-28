@@ -19,14 +19,12 @@ public class Basket
 
     }
 
-    public Basket(int id, User? client)
+    public Basket(User? client)
     {
-        if (id <= 0)
-        {
-            throw new ArgumentException(nameof(id));
-        }
 
         Client = client ?? throw new ArgumentNullException(nameof(client));
+
+        ClientId = Client.Id;
 
         TotalCost = 0;
         BasketStatusId = 1;
@@ -80,16 +78,24 @@ public class Basket
             basket.Client == Client;
     }
 
-    public void CalculateTotalPrice()
+    public float? CalculateTotalPrice()
     {
         TotalCost = 0;
+
         foreach (var item in SummUpProducts!)
+        {
             TotalCost += item.TotalPrice;
+        }
+
+        return TotalCost;
     }
+
     public void ChangeBasketStatusId(Basket? basket)
     {
         if (!Equals(this, basket))
+        {
             BasketStatusId += 1;
+        }
     }
     public void ResetBasket()
     {

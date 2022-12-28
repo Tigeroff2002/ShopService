@@ -36,18 +36,22 @@ public class BasketController : Controller
             return RedirectToAction("Login", "Account", new LoginModel());
         }
 
+        if (user!.Basket == null)
+        {
+            user!.Basket = new Basket(user);
+        }
+
         var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
             .ConfigureAwait(false);
 
         if (findedBasket == null)
         {
-            findedBasket = new Basket(1, user);
-            findedBasket.SummUpProducts = new List<SummUpProduct>();
-
-            user!.Basket = findedBasket;
+            findedBasket = user!.Basket;
 
             await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
-                .ConfigureAwait(false);
+                        .ConfigureAwait(false);
+
+            findedBasket.SummUpProducts = new List<SummUpProduct>();
         }
 
         return View("BasketPage", (findedBasket, user));
@@ -67,13 +71,18 @@ public class BasketController : Controller
         var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
             .ConfigureAwait(false);
 
+        if (findedBasket == null)
+        {
+            findedBasket = new Basket(user);
+        }
+
         findedBasket.SummUpProducts = new List<SummUpProduct>();
 
         user!.Basket = findedBasket;
 
-        _basketsRepository.ClearBasket(user, CancellationToken.None);
+        //_basketsRepository.ClearBasket(user, CancellationToken.None);
 
-        _basketsRepository.SaveChanges();
+        //_basketsRepository.SaveChanges();
 
         return View("BasketPage", (findedBasket, user));
     }
@@ -109,20 +118,34 @@ public class BasketController : Controller
             return RedirectToAction("Login", "Account", new LoginModel());
         }
 
+        if (user!.Basket == null)
+        {
+            user!.Basket = new Basket(user);
+        }
+
         var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
             .ConfigureAwait(false);
 
         if (findedBasket == null)
         {
-            findedBasket = new Basket(1, user);
+            findedBasket = user!.Basket;
+
+            await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
+                .ConfigureAwait(false);
+
             findedBasket.SummUpProducts = new List<SummUpProduct>();
         }
 
         findedBasket.SummUpProducts!.Add(group);
 
+        findedBasket.TotalCost = findedBasket.CalculateTotalPrice();
+
         user!.Basket = findedBasket;
 
-        _basketsRepository.AddProductGroup(user, group, CancellationToken.None);
+        await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        //_basketsRepository.AddProductGroup(user, group, CancellationToken.None);
 
 
         return View("BasketPage", (findedBasket, user));

@@ -179,8 +179,7 @@ public sealed class OrdersRepository
 
         token.ThrowIfCancellationRequested();
 
-        return await _context.Orders.FindAsync(order, token)
-            .ConfigureAwait(false);
+        return null!;
     }
 
     private readonly ILogger<OrdersRepository> _logger;

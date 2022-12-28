@@ -30,6 +30,8 @@ public sealed class OrderPay
 
         }
 
+        await Task.Delay(3_000).ConfigureAwait(false);
+
         return false;
     }
 

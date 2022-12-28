@@ -60,20 +60,16 @@ public sealed class ClientsRepository
         return findedUser!;
     }
 
-    public async Task<User> FindAsync(string email, CancellationToken token)
+    public async Task<User> FindNickNameAsync(string nickName, CancellationToken token)
     {
-        if (string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(nickName))
         {
-            throw new ArgumentException(nameof(email));
+            throw new ArgumentException(nameof(nickName));
         }
 
         token.ThrowIfCancellationRequested();
 
-        // but maybe this dont works cause email is not pk
-        var findedUser = await _context.Clients
-            .FindAsync(
-                new object?[] { email },
-                    token)
+        var findedUser = await _context.Clients.FirstOrDefaultAsync(x => x.NickName == nickName)
             .ConfigureAwait(false);
 
         return findedUser!;

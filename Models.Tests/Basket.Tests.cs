@@ -15,11 +15,10 @@ public class BasketTests
     public void CanBeCreated()
     {
         // Arrange
-        var statusId = 1;
         var client = new Mock<User>(1, 1).Object;
 
         // Act
-        var exception = Record.Exception(() => new Basket(statusId, client));
+        var exception = Record.Exception(() => new Basket(client));
 
         // Assert
         exception.Should().BeNull();
@@ -29,30 +28,10 @@ public class BasketTests
     [Trait("Category", "Unit")]
     public void CanNotBeCreatedBecauseClientNull()
     {
-        // Arrange
-        var statusId = 1;
-
         // Act
-        var exception = Record.Exception(() => new Basket(statusId, null!));
+        var exception = Record.Exception(() => new Basket(null!));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
-    }
-
-    [Theory(DisplayName = $"{nameof(Basket)} can not be created cause client is null")]
-    [Trait("Category", "Unit")]
-    [InlineData(-100)]
-    [InlineData(-1)]
-    [InlineData(0)]
-    public void CanNotBeCreatedBecauseStatusUncorrect(int statusId)
-    {
-        // Arrange
-        var client = new Mock<User>(1, 1).Object;
-
-        // Act
-        var exception = Record.Exception(() => new Basket(statusId, client));
-
-        // Assert
-        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
     }
 }

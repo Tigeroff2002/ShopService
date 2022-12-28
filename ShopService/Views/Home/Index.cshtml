@@ -78,19 +78,7 @@
                     </th>
                     <th>                    
                         <input type="button" value="По производителю" 
-                            onclick="location.href='@Url.Action("GetProductsByProducer", "Home", new {id = user.Id, producerId = 1})'" />     
-                    </th>
-                    <th>                    
-                        <input type="button" value="По наличию" 
-                            onclick="location.href='@Url.Action("GetProductsOnExistense", "Home", new {id = user.Id})'" />
-                    </th>
-                    <th>                    
-                        <input type="button" value="По оценке (выше)" 
-                            onclick="location.href='@Url.Action("GetProductsByMark", "Home", new {id = user.Id, rating = 4})'" />     
-                    </th>
-                    <th>                    
-                        <input type="button" value="По цене (ниже)" 
-                            onclick="location.href='@Url.Action("GetProductsByCost", "Home", new {id = user.Id, cost = 20000})'" /> 
+                            onclick="location.href='@Url.Action("GetProductsByProducer", "Home", new {id = user.Id, producerId = 2})'" />     
                     </th>
                 </tr>
             </thead>
@@ -101,15 +89,6 @@
                     </td>
                     <td>
                         <input type="number" name="producerId" value="@product.Producer!.Id" class="form-control"/>
-                    </td>
-                    <td>
-                        <input type="text" name="existense" value="@product.Name" class="form-control"/>
-                    </td>
-                    <td>
-                        <input type="number" name="rating" value="@product.RAM" class="form-control"/>
-                    </td>
-                    <td>
-                        <input type="number" name="cost" value="@product.Cost" class="form-control"/>
                     </td>
                 </tr>
             </tbody>

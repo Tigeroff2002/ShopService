@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Azure.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace Models;
 
@@ -27,23 +28,15 @@ public class Order
 
     }
 
-    public Order(int shippingType, User? client)
+    public Order(User? client)
     {
-        if (shippingType < 1 || shippingType > 3)
-        {
-            throw new ArgumentException(nameof(shippingType));
-        }
-
         Client = client ?? throw new ArgumentNullException(nameof(client));
 
-        ArgumentNullException.ThrowIfNull(Client.Basket);
-
-        Shipping = new Shipping(shippingType);
         isReadyForConfirmation = default;
         isReadyForPayment = default;
         isPayd = default;
 
-        CreateOrderWithCurrentBasket();
+        SummUpProducts = new List<SummUpProduct>();
 
         OrderDescription = CreateDescription();
     }
@@ -102,6 +95,17 @@ public class Order
         isPayd = true;
     }
 
+    public float? CalculateResultCost()
+    {
+        ResultCost = 0;
+
+        foreach(var group in SummUpProducts)
+        {
+            ResultCost += group.TotalPrice;
+        }
+
+        return ResultCost;
+    }
     public string CreateDescription()
     {
         var s = "";

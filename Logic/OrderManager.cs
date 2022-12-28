@@ -1,5 +1,6 @@
 ﻿using Data.Repositories.Abstractions;
 using Logic.Abstractions;
+using Microsoft.AspNetCore.DataProtection.KeyManagement.Internal;
 using Microsoft.Extensions.Logging;
 using Models;
 using System.Security.Cryptography;
@@ -10,7 +11,7 @@ public sealed class OrderManager
     : IOrderManager
 {
     public OrderManager(
-        ILogger<OrderManager> logger, 
+        ILogger<OrderManager> logger,
         IOrderConfirmer confirmer,
         IOrdersRepository repository)
     {
@@ -24,13 +25,10 @@ public sealed class OrderManager
 
     public async Task ProcessOrdersAsync(CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            await Task.Delay(1_000, cancellationToken)
-                .ConfigureAwait(false);
+        await Task.Delay(3_000, cancellationToken)
+            .ConfigureAwait(false);
 
-            _logger.LogInformation("Processor is starting now after 1s delay");
-        }
+        _logger.LogInformation("Processor is starting now after 1s delay");
     }
 
     public async Task<Order> ProcessAsync(Order order, CancellationToken cancellationToken)
@@ -60,7 +58,7 @@ public sealed class OrderManager
 
             _logger.LogInformation("OrderManager is waiting when client will take his order...");
 
-            var orderToGet = await GiveOrder(orderToConfirm, cancellationToken)
+            var orderToGet = await GiveOrderAsync(orderToConfirm, cancellationToken)
                 .ConfigureAwait(false);
 
             order.isGot = orderToGet;
@@ -119,7 +117,7 @@ public sealed class OrderManager
         return order;
     }
 
-    public async Task<bool> GiveOrder(Order order, CancellationToken cancellationToken)
+    public async Task<bool> GiveOrderAsync(Order order, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(order);
 
@@ -154,6 +152,19 @@ public sealed class OrderManager
         return false;
     }
 
+    public async Task<Order> ConfirmOrderAsync(Order order, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var taskWaiting = Task.Run(async () => await Task.Delay(10_000).ConfigureAwait(false));
+
+        taskWaiting.Wait();
+
+        return await _confirmer.ConfirmOrderAsync(order, cancellationToken)
+            .ConfigureAwait(false);
+    }
     public void CancelOrder(Order order, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(order);
