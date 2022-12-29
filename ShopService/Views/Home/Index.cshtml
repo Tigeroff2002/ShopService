@@ -131,7 +131,11 @@
                                         id = item.Id,
                                         count = item.SummUpProducts!.FirstOrDefault(x => x.ProductId == item.Id)!.Quantity + 1,
                                         onBasket = false
-                                    })'" />   
+                                    })'" />
+                                @{
+                                    var quantity = item.SummUpProducts!.FirstOrDefault(x => x.ProductId == item.Id).Quantity.ToString();
+                                }
+                                <h4>@quantity</h4>
                             <input type="button" value="-" 
                                 onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
                                     new 
