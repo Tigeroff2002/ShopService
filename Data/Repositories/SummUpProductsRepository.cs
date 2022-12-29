@@ -115,6 +115,19 @@ public sealed class SummUpProductsRepository
         //_context.Entry(summUpProduct).State = EntityState.Modified;
     }
 
+    public List<SummUpProduct> FindGroups(int basketId, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+
+        List<SummUpProduct> findedGroups = null!;
+
+        findedGroups = _context.SummUpProducts
+            .Where(x => x.BasketId == basketId).ToList();
+
+        return findedGroups!;
+
+    }
+
     private readonly ILogger<SummUpProductsRepository> _logger;
     private readonly IRepositoryContext _context;
 }

@@ -23,7 +23,7 @@ public class User
 
         Basket = new Basket(this);
 
-        Orders = new HashSet<Order>();
+        OldOrders = new List<Order>();
         Reviews = new HashSet<Review>();
         Notifications = new HashSet<Notification>();
     }
@@ -36,7 +36,9 @@ public class User
     public float TotalPurchase { get; set; } = default!;
     public float Discount { get; set; } = default!;
     public virtual Basket? Basket { get; set; } = default!;
-    public virtual ICollection<Order> Orders { get; set; } = default!;
+    public virtual Order? Order { get; set; } = default;
+
+    public virtual List<Order>? OldOrders { get; set; } = default!;
     public virtual ICollection<Review> Reviews { get; set; } = default!;
     public virtual ICollection<Notification> Notifications { get; set; } = default!;
     public virtual Role? Role { get; set; } = default!;

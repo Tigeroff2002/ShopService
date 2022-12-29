@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    [Migration("20221229090703_InitMigration")]
-    partial class InitMigration
+    [Migration("20221229185029_SeedData")]
+    partial class SeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,9 +42,6 @@ namespace Data.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<float?>("TotalCost")
                         .HasColumnType("real");
 
@@ -52,8 +49,6 @@ namespace Data.Migrations
 
                     b.HasIndex("ClientId")
                         .IsUnique();
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Baskets");
                 });
@@ -142,17 +137,11 @@ namespace Data.Migrations
                     b.Property<string>("OrderDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<float?>("ResultCost")
                         .HasColumnType("real");
 
                     b.Property<DateTime>("ShippedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("ShippingId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("isDeleted")
                         .HasColumnType("bit");
@@ -172,10 +161,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ShippingId");
 
                     b.ToTable("Orders");
                 });
@@ -458,10 +443,6 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Product", null)
-                        .WithMany("Baskets")
-                        .HasForeignKey("ProductId");
-
                     b.Navigation("Client");
                 });
 
@@ -489,17 +470,7 @@ namespace Data.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("ClientId");
 
-                    b.HasOne("Models.Product", null)
-                        .WithMany("Orders")
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("Models.Shipping", "Shipping")
-                        .WithMany()
-                        .HasForeignKey("ShippingId");
-
                     b.Navigation("Client");
-
-                    b.Navigation("Shipping");
                 });
 
             modelBuilder.Entity("Models.Product", b =>
@@ -605,10 +576,6 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Models.Product", b =>
                 {
-                    b.Navigation("Baskets");
-
-                    b.Navigation("Orders");
-
                     b.Navigation("SummUpProducts");
                 });
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using ShopService.Models;
+using ShopService.Views.Account;
 using System.Diagnostics;
 
 namespace ShopService.Controllers;
@@ -266,7 +267,7 @@ public class HomeController : Controller
         return View("Index", model);
     }
 
-    [HttpGet("Details/{id:int}")]
+    [HttpGet("{userId:int}/Details/{id:int}")]
     public async Task<IActionResult> Details(int userId, int? id)
     {
         if (id == null)
@@ -295,25 +296,35 @@ public class HomeController : Controller
         return View("Details", (device, user));
     }
 
-    [HttpGet("adminPage")]
-    public async Task<IActionResult> AdminPageShow()
+    [HttpGet("adminPage/{id:int}")]
+    public async Task<IActionResult> AdminPageShow(int id)
     {
+        var user = await _clientsRepository.FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (user == null)
+        {
+            return RedirectToAction("Login", "Account", new LoginModel());
+        }
+
         var users = await _clientsRepository.GetAllUsers(CancellationToken.None)
             .ConfigureAwait(false);
 
-        return View("AdminPage", (users.ToList(), users.First()));
+        return View("AdminPage", (users.ToList(), user));
     }
 
-    [HttpGet("managerPage")]
-    public IActionResult ManagerPageShow()
+    [HttpGet("managerPage/{id:int}")]
+    public async Task<IActionResult> ManagerPageShow(int id)
     {
         var houses = SeedWarehousesProducts();
 
-        var user = new User
+        var user = await _clientsRepository.FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (user == null)
         {
-            Id = 1,
-            Role = new Role(0)
-        };
+            return RedirectToAction("Login", "Account", new LoginModel());
+        }
 
         return View("ManagerPage", (houses, user));
     }
@@ -380,7 +391,7 @@ public class HomeController : Controller
             new User
             {
                 Id = 1,
-                Orders = new List<Order>
+                OldOrders = new List<Order>
                 {
                     new Order
                     {
@@ -430,7 +441,7 @@ public class HomeController : Controller
             new User
             {
                 Id = 2,
-                Orders = new List<Order>
+                OldOrders = new List<Order>
                 {
                     new Order
                     {
@@ -523,35 +534,35 @@ public class HomeController : Controller
         };
 
         users
-            .First(x => x.Id == 1).Orders
+            .First(x => x.Id == 1).OldOrders
             .First(x => x.Id == 1).ResultCost = 100_000;
 
         users
-            .First(x => x.Id == 1).Orders
+            .First(x => x.Id == 1).OldOrders
             .First(x => x.Id == 1).OrderDescription = users
-                    .First(x => x.Id == 1).Orders
+                    .First(x => x.Id == 1).OldOrders
                     .First(x => x.Id == 1)
                     .CreateDescription();
 
         users
-            .First(x => x.Id == 2).Orders
+            .First(x => x.Id == 2).OldOrders
             .First(x => x.Id == 1).ResultCost = 50_000;
 
         users
-            .First(x => x.Id == 2).Orders
+            .First(x => x.Id == 2).OldOrders
             .First(x => x.Id == 1).OrderDescription = users
-                .First(x => x.Id == 2).Orders
+                .First(x => x.Id == 2).OldOrders
                 .First(x => x.Id == 1)
                 .CreateDescription();
 
         users
-            .First(x => x.Id == 2).Orders
+            .First(x => x.Id == 2).OldOrders
             .First(x => x.Id == 2).ResultCost = 50_000;
 
         users
-            .First(x => x.Id == 2).Orders
+            .First(x => x.Id == 2).OldOrders
             .First(x => x.Id == 2).OrderDescription = users
-                .First(x => x.Id == 2).Orders
+                .First(x => x.Id == 2).OldOrders
                 .First(x => x.Id == 2)
                 .CreateDescription();
 

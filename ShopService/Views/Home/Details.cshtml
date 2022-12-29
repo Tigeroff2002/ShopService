@@ -82,7 +82,8 @@
                                     {
                                         userId = Model.Item2.Id,
                                         id = item!.Id,
-                                        count = 1
+                                        count = 1,
+                                        place = PlaceEnum.OnDetails
                                     })'" />   
                         }
                         @if(Model.Item2.Id > 0)
@@ -93,7 +94,8 @@
                                     {
                                         userId = Model.Item2.Id,
                                         id = item!.Id,
-                                        count = Model.Item2.Basket!.SummUpProducts!.FirstOrDefault(x => x.Product == item)!.Quantity + 1
+                                        count = Model.Item2.Basket!.SummUpProducts!.FirstOrDefault(x => x.Product == item)!.Quantity + 1,
+                                        place = PlaceEnum.OnDetails
                                     })'" />   
                         }
                 </h4>

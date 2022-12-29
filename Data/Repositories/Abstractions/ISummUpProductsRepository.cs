@@ -13,6 +13,8 @@ public interface ISummUpProductsRepository
 
     void Update(SummUpProduct summUpProduct, CancellationToken token);
 
+    List <SummUpProduct> FindGroups(int basketId, CancellationToken token);
+
     Task<bool> Find(SummUpProduct summUpProduct, CancellationToken token);
 
     void Delete(SummUpProduct summUpProduct, CancellationToken token);

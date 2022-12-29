@@ -118,7 +118,7 @@
                     <td>@Html.DisplayFor(x => item.Cost)</td>
                     <td class="link">                   
                     <input type="button" value="Подробнее" 
-                        onclick="location.href='@Url.Action("Details", "Home", new {id = item.Id})'" />          
+                        onclick="location.href='@Url.Action("Details", "Home", new {userId = user.Id, id = item.Id})'" />          
                    </td>
                         @if (user!.Basket!.SummUpProducts.Any(x => x.ProductId == item.Id))
                         {
@@ -129,7 +129,8 @@
                                     {
                                         userId = user!.Id,
                                         id = item.Id,
-                                        count = item.SummUpProducts!.FirstOrDefault(x => x.ProductId == item.Id)!.Quantity + 1
+                                        count = item.SummUpProducts!.FirstOrDefault(x => x.ProductId == item.Id)!.Quantity + 1,
+                                        onBasket = false
                                     })'" />   
                             <input type="button" value="-" 
                                 onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
@@ -137,7 +138,8 @@
                                     {
                                         userId = user!.Id,
                                         id = item.Id,
-                                        count = item.SummUpProducts!.FirstOrDefault(x => x.ProductId == item!.Id)!.Quantity - 1
+                                        count = item.SummUpProducts!.FirstOrDefault(x => x.ProductId == item!.Id)!.Quantity - 1,
+                                        place = PlaceEnum.OnIndex
                                     })'" />   
                             </td>
                         }
@@ -145,7 +147,14 @@
                         {
                             <td class="link">
                             <input type="button" value="Добавить в корзину" 
-                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {userId = user!.Id, id = item.Id, count = 1})'" />   
+                                onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
+                                    new 
+                                    {
+                                        userId = user!.Id,
+                                        id = item.Id,
+                                        count = 1,
+                                        place = PlaceEnum.OnIndex
+                                    })'" />   
                             </td>                            
                         }
                 </tr>
@@ -158,7 +167,7 @@
     {
     <div class="text-lg-start">
     <input type="button" value="Страница пользователей с заказами" size="100"
-        onclick="location.href='@Url.Action("AdminPageShow", "Home")'" />      
+        onclick="location.href='@Url.Action("AdminPageShow", "Home", new {id = user!.Id})'" />      
     </div>    
     }
 
@@ -166,7 +175,7 @@
     {
     <div class="text-lg-start">
     <input type="button" value="Страница заказа доставок со складов" size="100"
-        onclick="location.href='@Url.Action("ManagerPageShow", "Home")'" />      
+        onclick="location.href='@Url.Action("ManagerPageShow", "Home", new {id = user!.Id})'" />      
     </div>    
     }
 

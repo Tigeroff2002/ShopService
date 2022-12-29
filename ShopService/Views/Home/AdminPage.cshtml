@@ -41,14 +41,14 @@
                     <th>Заказ получен?</th>
                     <th>Действие</th>
                 </tr>
-                @if(user.Orders.Count == 0)
+                @if(user.OldOrders.Count == 0)
                 {
                     <tr>
                         У пользователя заказов нет
                     </tr>
                 }
                 @{var number = 0;}
-                @foreach(var order in user.Orders)
+                @foreach(var order in user.OldOrders)
                 {
                     <tr>
                         <th>@Html.DisplayName($"{++number}")</th>

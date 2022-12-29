@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using ShopService.Views.Account;
-using System.Transactions;
 
 namespace ShopService.Controllers;
 
@@ -50,6 +49,24 @@ public class BasketController : Controller
 
             _basketsRepository.SaveChanges();
         }
+
+        var findedGroups = _summUpProductsRepository.FindGroups(findedBasket.Id, CancellationToken.None);
+
+
+        if (findedGroups != null)
+        {
+            findedBasket.SummUpProducts = findedGroups;
+
+            findedBasket.TotalCost = 0;
+
+            foreach (var item in findedGroups)
+            {
+                var price = item!.Product!.Cost * item.Quantity;
+
+                findedBasket.TotalCost += price;
+            }
+        }
+
 
         if (user!.Basket == null)
         {
@@ -107,10 +124,8 @@ public class BasketController : Controller
     }
 
     [HttpGet("addProductBasket/{userId:int}")]
-    public async Task<ActionResult<Basket>> AddProductToBasket(int userId, int id, int count)
+    public async Task<ActionResult<Basket>> AddProductToBasket(int userId, int id, int count, PlaceEnum place)
     {
-        var group = await TryAddProductToBasket(id, count);
-
         var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
             .ConfigureAwait(false);
 
@@ -124,106 +139,52 @@ public class BasketController : Controller
         if (findedBasket == null)
         {
             findedBasket = new Basket(user);
+
             await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
                 .ConfigureAwait(false);
         }
 
-        var newFindedBasket = findedBasket;
-
-        var newBasket = new Basket(user);
-
-        foreach (var item in findedBasket.SummUpProducts)
-        {
-            newBasket.SummUpProducts.Add(item);
-        }
-
-        foreach (var groupItem in findedBasket.SummUpProducts)
-        {
-            if (groupItem.ProductId == group.ProductId)
-            {
-                newBasket.SummUpProducts.Remove(groupItem);
-
-                group.Quantity += groupItem.Quantity;
-
-                newBasket.SummUpProducts.Add(group);
-
-                group = null!;
-
-                break;
-            }
-        }
-
-        if (group != null)
-        {
-            newBasket.SummUpProducts.Add(group);
-        }
-
-        foreach (var item in newBasket.SummUpProducts)
-        {
-            newFindedBasket.SummUpProducts.Add(item);
-        }
-
-        foreach (var itemGroup in findedBasket.SummUpProducts)
-        {
-            if (itemGroup.Quantity == 0)
-            {
-                newBasket.SummUpProducts.Remove(itemGroup);
-            }
-        }
-
-        newBasket.TotalCost = newBasket.CalculateTotalPrice();
-
-        user!.Basket = new Basket(user);
-
-        user!.Basket!.SummUpProducts = new List<SummUpProduct>();
-
-        user!.Basket.TotalCost = newBasket!.TotalCost;
-
-        foreach (var item in newBasket.SummUpProducts)
-        {
-            user!.Basket.SummUpProducts.Add(item);
-        }
-
-        findedBasket.TotalCost = newBasket.TotalCost;
-
-        foreach (var item in newBasket.SummUpProducts)
-        {
-            findedBasket.SummUpProducts.Add(item);
-        }
-
-        _basketsRepository.Update(findedBasket, CancellationToken.None);
-
-        _clientsRepository.Update(user, CancellationToken.None);
-
-        _basketsRepository.SaveChanges();
-
-        var newFindedBasket1 = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
-
-        return Content(newFindedBasket1.SummUpProducts.Count.ToString());
-
-        return RedirectToAction("AuthIndex", "Home", new {id = user!.Id});
-    }
-
-    private async Task<SummUpProduct> TryAddProductToBasket(int id, int count)
-    {
         var product = await _productsRepository.FindProduct(id, CancellationToken.None)
             .ConfigureAwait(false);
 
         if (product == null)
         {
-            return null!;
+            return RedirectToAction("AuthIndex", "Home", new { id = userId });
         }
 
         var summUpProduct = new SummUpProduct
         {
             Product = product,
+            ProductId = product!.Id,
             Quantity = count,
-            TotalPrice = product.Cost * count
+            TotalPrice = product.Cost * count,
+            Basket = findedBasket,
+            BasketId = findedBasket.Id
         };
 
         //await _summUpProductsRepository.Add(summUpProduct, CancellationToken.None);
 
-        return summUpProduct;
+        findedBasket.SummUpProducts.Add(summUpProduct);
+
+        user.Basket = findedBasket;
+
+        _clientsRepository.Update(user, CancellationToken.None);
+
+        _clientsRepository.SaveChanges();
+
+        switch (place)
+        {
+            case PlaceEnum.OnIndex:
+                return RedirectToAction("AuthIndex", "Home", new { id = user!.Id });
+            case PlaceEnum.OnDetails:
+                return RedirectToAction("Details", "Home", new {userId = user!.Id});
+            case PlaceEnum.OnBasket:
+                return View("BasketPage", (findedBasket, user));
+            case PlaceEnum.OnFilter:
+                return RedirectToAction("AuthIndex", "Home", new { id = user!.Id });
+            default:
+                return RedirectToAction("AuthIndex", "Home", new { id = user!.Id });
+        }
     }
 
     [HttpPost("removeProduct/{id}")]

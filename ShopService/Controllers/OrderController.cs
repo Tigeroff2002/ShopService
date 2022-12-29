@@ -31,8 +31,8 @@ public class OrderController : Controller
         _logger.LogInformation("Order Controller was started just now");
     }
 
-    [HttpGet("createOrder/{userId:int}")]
-    public async Task<IActionResult> CreateOrder(int userId)
+    [HttpGet("{userId:int}/createOrder/{id:int}")]
+    public async Task<IActionResult> CreateOrder(int userId, int id)
     {
         if (ModelState.IsValid)
         {
@@ -58,6 +58,10 @@ public class OrderController : Controller
             }
 
             var order = new Order(user);
+
+            order.ShippedDate = DateTime.Today;
+
+            order.OrderDate = DateTime.Now;
 
 
             if (findedBasket!.SummUpProducts == null)
@@ -92,8 +96,8 @@ public class OrderController : Controller
         return RedirectToAction("AuthIndex", "Home", new {id = userId});
     }
 
-    [HttpPut("changeOrder/{id:int}")]
-    public IActionResult ChangeOrder(int id)
+    [HttpPut("{userId:int}/changeOrder/{id:int}")]
+    public IActionResult ChangeOrder(int userId, int id)
     {
         var order = _ordersRepository.Find(id, CancellationToken.None);
 
@@ -126,8 +130,8 @@ public class OrderController : Controller
         return RedirectToAction("GetBasket", "Basket", new {userId = userId});
     }
 
-    [HttpGet("confirmOrder/{userId:int}")]
-    public async Task<IActionResult> ConfirmOrder(int userId)
+    [HttpGet("{userId:int}/confirmOrder/{id:int}")]
+    public async Task<IActionResult> ConfirmOrder(int userId, int id)
     {
         if (ModelState.IsValid)
         {
@@ -181,8 +185,8 @@ public class OrderController : Controller
         return RedirectToAction("AuthIndex", "Home", new {id = userId});
     }
 
-    [HttpGet("takeOrder/{userId:int}")]
-    public async Task<IActionResult> TakeOrder(int userId)
+    [HttpGet("{userId:int}/takeOrder/{id:int}")]
+    public async Task<IActionResult> TakeOrder(int userId, int id)
     {
         if (ModelState.IsValid)
         {
@@ -208,8 +212,8 @@ public class OrderController : Controller
     }
 
 
-    [HttpGet("getOrder/{id:int}")]
-    public IActionResult GetOrder(int id)
+    [HttpGet("{userId:int}/getOrder/{id:int}")]
+    public IActionResult GetOrder(int userId, int id)
     {
         var order = _ordersRepository.Find(id, CancellationToken.None);
 

@@ -341,7 +341,7 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BasketId")
+                    b.Property<int>("BasketId")
                         .HasColumnType("int");
 
                     b.Property<int?>("OrderId")
@@ -517,9 +517,11 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Models.SummUpProduct", b =>
                 {
-                    b.HasOne("Models.Basket", null)
+                    b.HasOne("Models.Basket", "Basket")
                         .WithMany("SummUpProducts")
-                        .HasForeignKey("BasketId");
+                        .HasForeignKey("BasketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Models.Order", null)
                         .WithMany("SummUpProducts")
@@ -538,6 +540,8 @@ namespace Data.Migrations
                     b.HasOne("Models.Warehouse", null)
                         .WithMany("ProductQuantities")
                         .HasForeignKey("WarehouseId");
+
+                    b.Navigation("Basket");
 
                     b.Navigation("Product");
                 });

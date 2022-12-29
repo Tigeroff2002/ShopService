@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    [Migration("20221229184033_DeleteIndex")]
-    partial class DeleteIndex
+    [Migration("20221229185012_InitMigration")]
+    partial class InitMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
