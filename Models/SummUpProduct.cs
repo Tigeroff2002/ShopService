@@ -11,6 +11,8 @@ public class SummUpProduct
     public virtual Product? Product { get; set; }
     public int Quantity { get; set; }
     public float? TotalPrice { get; set; }
+    public int BasketId { get; set; }
+    public virtual Basket? Basket { get; set; }
 
     public SummUpProduct()
     {

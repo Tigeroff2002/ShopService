@@ -19,5 +19,11 @@ public interface IRepositoryContext
 
     public DbSet<Basket> Baskets { get; }
 
+    public void UpdateClient(User? user);
+
+    public void UpdateBasket(Basket? basket);
+
+    public void UpdateOrder(Order? order);
+
     public void SaveChanges();
 }

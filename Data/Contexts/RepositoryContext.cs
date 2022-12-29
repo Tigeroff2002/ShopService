@@ -32,6 +32,27 @@ namespace Data.Contexts
             _logger.LogDebug("Changes sent to database");
         }
 
+        public void UpdateClient(User? user)
+        {
+            ArgumentNullException.ThrowIfNull(user);
+
+            _storeContext.Entry(user).State = EntityState.Modified;
+        }
+
+        public void UpdateBasket(Basket? basket)
+        {
+            ArgumentNullException.ThrowIfNull(basket);
+
+            _storeContext.Entry(basket).State = EntityState.Modified;
+        }
+
+        public void UpdateOrder(Order? order)
+        {
+            ArgumentNullException.ThrowIfNull(order);
+
+            _storeContext.Entry(order).State = EntityState.Modified;
+        }
+
         private readonly ILogger<RepositoryContext> _logger;
         private readonly RetailStoreDataContext _storeContext;
     }

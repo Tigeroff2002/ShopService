@@ -61,7 +61,7 @@ public sealed class OrderManager
             var orderToGet = await GiveOrderAsync(orderToConfirm, cancellationToken)
                 .ConfigureAwait(false);
 
-            order.isGot = orderToGet;
+            order.isGot = orderToGet.isGot;
         }
 
         if (orderToConfirm.isGot == false && orderToConfirm.isPayd == true)
@@ -117,7 +117,7 @@ public sealed class OrderManager
         return order;
     }
 
-    public async Task<bool> GiveOrderAsync(Order order, CancellationToken cancellationToken)
+    public async Task<Order> GiveOrderAsync(Order order, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(order);
 
@@ -144,12 +144,16 @@ public sealed class OrderManager
         {
             _logger.LogInformation("OrderManager gave the order to client");
 
-            return true;
+            order.isGot = true;
+
+            return order;
         }
 
         _logger.LogInformation("OrderManager didnt give the order to client");
 
-        return false;
+        order.isGot = false;
+
+        return order;
     }
 
     public async Task<Order> ConfirmOrderAsync(Order order, CancellationToken cancellationToken)
@@ -171,7 +175,7 @@ public sealed class OrderManager
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        _repository.CancelOrder(order, cancellationToken);
+        _repository.UpdateOrder(order, cancellationToken);
 
         _logger.LogInformation("OrderManager cancelled and deleted the old order from db");
 

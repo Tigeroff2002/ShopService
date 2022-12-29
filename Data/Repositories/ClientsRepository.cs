@@ -124,7 +124,7 @@ public sealed class ClientsRepository
 
         token.ThrowIfCancellationRequested();
 
-        //_context.Entry(user).State = EntityState.Modified;
+        _context.UpdateClient(user);
     }
 
     public int UserCount 

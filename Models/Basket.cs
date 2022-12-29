@@ -27,6 +27,7 @@ public class Basket
 
         TotalCost = 0;
         BasketStatusId = 1;
+
         SummUpProducts = new List<SummUpProduct>();
     }
 

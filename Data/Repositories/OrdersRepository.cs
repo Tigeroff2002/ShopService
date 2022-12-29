@@ -50,7 +50,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .Add(order);
     }
 
@@ -68,7 +68,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .Remove(order);
     }
 
@@ -91,7 +91,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .FirstOrDefault(o => o.Equals(order))!
             .ConfirmCreatedOrder();
 
@@ -120,15 +120,30 @@ public sealed class OrdersRepository
         throw new NotImplementedException();
     }
 
-    public List<Order> GetAllUserOrders(User user, CancellationToken token)
+    public List<Order> GetAllUserOrders(User user,CancellationToken token, bool skipLast = false)
     {
         ArgumentNullException.ThrowIfNull(user);
 
         token.ThrowIfCancellationRequested();
 
+        /*
         return _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders.ToList();
+            .OldOrders
+            .Where(x => 
+                x.isDeleted == false &&
+                x.OrderDescription != "Deleted By Admin")
+            .ToList();
+        */
+
+        if (!skipLast)
+        {
+            return _context.Clients.FirstOrDefault(u => u.Equals(user))!.OldOrders.ToList();
+        }
+        else
+        {
+            return _context.Clients.FirstOrDefault(u => u.Equals(user))!.OldOrders.SkipLast(1).ToList();
+        }
     }
 
     public void PayOrder(User user, Order order, CancellationToken token)
@@ -141,7 +156,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .FirstOrDefault(o => o.Equals(order))!
             .PayConfirmedOrder();
 
@@ -158,7 +173,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .FirstOrDefault(o => o.Equals(order))!
             .isGot = true;
 
