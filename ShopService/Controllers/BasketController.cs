@@ -36,22 +36,13 @@ public class BasketController : Controller
             return RedirectToAction("Login", "Account", new LoginModel());
         }
 
+        var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
+
+        //return Content(findedBasket.SummUpProducts.Count.ToString());
+
         if (user!.Basket == null)
         {
-            user!.Basket = new Basket(user);
-        }
-
-        var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
-            .ConfigureAwait(false);
-
-        if (findedBasket == null)
-        {
-            findedBasket = user!.Basket;
-
-            await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
-                        .ConfigureAwait(false);
-
-            findedBasket.SummUpProducts = new List<SummUpProduct>();
+            user!.Basket = findedBasket;
         }
 
         return View("BasketPage", (findedBasket, user));
@@ -68,8 +59,7 @@ public class BasketController : Controller
             return RedirectToAction("Login", "Account", new LoginModel());
         }
 
-        var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
-            .ConfigureAwait(false);
+        var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
 
         if (findedBasket == null)
         {
@@ -106,6 +96,7 @@ public class BasketController : Controller
         return 0;
     }
 
+    [HttpGet("addProductBasket/{userId:int}")]
     public async Task<ActionResult<Basket>> AddProductToBasket(int userId, int id, int count)
     {
         var group = await TryAddProductToBasket(id, count);
@@ -118,37 +109,27 @@ public class BasketController : Controller
             return RedirectToAction("Login", "Account", new LoginModel());
         }
 
-        if (user!.Basket == null)
-        {
-            user!.Basket = new Basket(user);
-        }
-
-        var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
-            .ConfigureAwait(false);
+        var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
 
         if (findedBasket == null)
         {
-            findedBasket = user!.Basket;
-
-            await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
-                .ConfigureAwait(false);
-
-            findedBasket.SummUpProducts = new List<SummUpProduct>();
+            findedBasket = new Basket(user);
         }
 
-        findedBasket.SummUpProducts!.Add(group);
+        var newBasket = new Basket(user);
 
-        findedBasket.TotalCost = findedBasket.CalculateTotalPrice();
+        newBasket.SummUpProducts!.Add(group);
 
-        user!.Basket = findedBasket;
+        newBasket.TotalCost = newBasket.CalculateTotalPrice();
 
-        await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
+        user!.Basket = newBasket;
+
+        await _basketsRepository.AddBasketAsync(newBasket, CancellationToken.None)
             .ConfigureAwait(false);
 
-        //_basketsRepository.AddProductGroup(user, group, CancellationToken.None);
+        _basketsRepository.SaveChanges();
 
-
-        return View("BasketPage", (findedBasket, user));
+        return View("BasketPage", (newBasket, user));
     }
 
     private async Task<SummUpProduct> TryAddProductToBasket(int id, int count)
@@ -163,11 +144,12 @@ public class BasketController : Controller
 
         var summUpProduct = new SummUpProduct
         {
-            Id = 1,
             Product = product,
             Quantity = count,
             TotalPrice = product.Cost * count
         };
+
+        await _summUpProductsRepository.Add(summUpProduct, CancellationToken.None);
 
         return summUpProduct;
     }

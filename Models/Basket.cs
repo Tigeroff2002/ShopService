@@ -21,7 +21,6 @@ public class Basket
 
     public Basket(User? client)
     {
-
         Client = client ?? throw new ArgumentNullException(nameof(client));
 
         ClientId = Client.Id;

@@ -50,8 +50,7 @@ public class OrderController : Controller
                 user!.Basket!.SummUpProducts = new List<SummUpProduct>();
             }
 
-            var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
-                .ConfigureAwait(false);
+            var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
 
             if (findedBasket == null)
             {

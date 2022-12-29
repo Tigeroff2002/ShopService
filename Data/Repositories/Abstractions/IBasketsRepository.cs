@@ -19,7 +19,7 @@ public interface IBasketsRepository
 
     void ClearBasket(User user, CancellationToken token);
 
-    Task<Basket> FindBasket(int clientId, CancellationToken token);
+    Basket FindLastBasket(int clientId, CancellationToken token);
 
     Task<IList<Basket>> GetAllBaskets(CancellationToken token);
 
