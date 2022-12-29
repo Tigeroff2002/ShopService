@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using ShopService.Views.Account;
+using System.Transactions;
 
 namespace ShopService.Controllers;
 
@@ -78,9 +79,8 @@ public class BasketController : Controller
 
         user!.Basket = findedBasket;
 
-        //_basketsRepository.ClearBasket(user, CancellationToken.None);
-
-        //_basketsRepository.SaveChanges();
+        await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
+            .ConfigureAwait(false);
 
         return View("BasketPage", (findedBasket, user));
     }
@@ -126,9 +126,46 @@ public class BasketController : Controller
 
         var newBasket = new Basket(user);
 
-        newBasket.SummUpProducts = findedBasket.SummUpProducts;
+        foreach (var item in findedBasket.SummUpProducts)
+        {
+            newBasket.SummUpProducts.Add(item);
+        }
 
-        newBasket.SummUpProducts!.Add(group);
+        foreach (var groupItem in findedBasket.SummUpProducts)
+        {
+            if (groupItem.ProductId == group.ProductId)
+            {
+                newBasket.SummUpProducts.Remove(groupItem);
+
+                group.Quantity += groupItem.Quantity;
+
+                newBasket.SummUpProducts.Add(group);
+
+                group = null!;
+
+                break;
+            }
+        }
+
+        if (group != null)
+        {
+            newBasket.SummUpProducts.Add(group);
+        }
+
+        //findedBasket.SummUpProducts = newBasket.SummUpProducts;
+
+        foreach (var item in newBasket.SummUpProducts)
+        {
+            findedBasket.SummUpProducts.Add(item);
+        }
+
+        foreach (var itemGroup in findedBasket.SummUpProducts)
+        {
+            if (itemGroup.Quantity == 0)
+            {
+                newBasket.SummUpProducts.Remove(itemGroup);
+            }
+        }
 
         newBasket.TotalCost = newBasket.CalculateTotalPrice();
 
@@ -137,7 +174,7 @@ public class BasketController : Controller
         await _basketsRepository.AddBasketAsync(newBasket, CancellationToken.None)
             .ConfigureAwait(false);
 
-        _basketsRepository.SaveChanges();
+        //_basketsRepository.SaveChanges();
 
         return View("BasketPage", (newBasket, user));
     }
