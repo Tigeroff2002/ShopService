@@ -39,6 +39,8 @@ public class BasketController : Controller
 
         var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
 
+        //return Content(findedBasket.SummUpProducts.Count.ToString());
+
         if (findedBasket == null)
         {
             findedBasket = new Basket(user);
@@ -122,7 +124,11 @@ public class BasketController : Controller
         if (findedBasket == null)
         {
             findedBasket = new Basket(user);
+            await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
+                .ConfigureAwait(false);
         }
+
+        var newFindedBasket = findedBasket;
 
         var newBasket = new Basket(user);
 
@@ -152,11 +158,9 @@ public class BasketController : Controller
             newBasket.SummUpProducts.Add(group);
         }
 
-        //findedBasket.SummUpProducts = newBasket.SummUpProducts;
-
         foreach (var item in newBasket.SummUpProducts)
         {
-            findedBasket.SummUpProducts.Add(item);
+            newFindedBasket.SummUpProducts.Add(item);
         }
 
         foreach (var itemGroup in findedBasket.SummUpProducts)
@@ -169,17 +173,33 @@ public class BasketController : Controller
 
         newBasket.TotalCost = newBasket.CalculateTotalPrice();
 
-        await _basketsRepository.AddBasketAsync(newBasket, CancellationToken.None)
-            .ConfigureAwait(false);
+        user!.Basket = new Basket(user);
 
-        var newUser = user;
+        user!.Basket!.SummUpProducts = new List<SummUpProduct>();
 
-        newUser!.Basket = newBasket;
+        user!.Basket.TotalCost = newBasket!.TotalCost;
 
-        await _clientsRepository.AddAsync(newUser, CancellationToken.None)
-            .ConfigureAwait(false);
+        foreach (var item in newBasket.SummUpProducts)
+        {
+            user!.Basket.SummUpProducts.Add(item);
+        }
+
+        findedBasket.TotalCost = newBasket.TotalCost;
+
+        foreach (var item in newBasket.SummUpProducts)
+        {
+            findedBasket.SummUpProducts.Add(item);
+        }
+
+        _basketsRepository.Update(findedBasket, CancellationToken.None);
+
+        _clientsRepository.Update(user, CancellationToken.None);
 
         _basketsRepository.SaveChanges();
+
+        var newFindedBasket1 = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
+
+        return Content(newFindedBasket1.SummUpProducts.Count.ToString());
 
         return RedirectToAction("AuthIndex", "Home", new {id = user!.Id});
     }

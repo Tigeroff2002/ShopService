@@ -225,6 +225,15 @@ public sealed class BasketsRepository
         return findedBasket!;
     }
 
+    public void Update(Basket basket, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(basket);
+
+        token.ThrowIfCancellationRequested();
+
+        _context.UpdateBasket(basket);
+    }
+
     private readonly ILogger<BasketsRepository> _logger;
     private readonly IRepositoryContext _context;
 }

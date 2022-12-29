@@ -13,6 +13,8 @@ public interface IBasketsRepository
 
     void AddProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token);
 
+    void Update(Basket basket, CancellationToken token);
+
     void UpdateQuantity(User user, SummUpProduct summUpProduct, int changing, CancellationToken token);
 
     void DeleteProductGroup(User user, SummUpProduct summUpProduct, CancellationToken token);
