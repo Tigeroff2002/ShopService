@@ -52,8 +52,6 @@ public class OrderController : Controller
 
             var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
 
-            return Content(findedBasket.SummUpProducts.Count.ToString());
-
             if (findedBasket == null)
             {
                 findedBasket = user!.Basket;
@@ -69,7 +67,10 @@ public class OrderController : Controller
 
             order.SummUpProducts = findedBasket!.SummUpProducts!.ToList();
 
-            //order = SeedTestOrder(user);
+            if (order.SummUpProducts.Count == 0)
+            {
+                order = SeedTestOrder(user);
+            }
 
             order.ResultCost = order.CalculateResultCost();
 
@@ -160,7 +161,10 @@ public class OrderController : Controller
 
             order.SummUpProducts = findedOrder!.SummUpProducts!.ToList();
 
-            //order = SeedTestOrder(user);
+            if (order.SummUpProducts.Count == 0)
+            {
+                order = SeedTestOrder(user);
+            }
 
             order.ResultCost = order.CalculateResultCost();
 
@@ -256,7 +260,6 @@ public class OrderController : Controller
                 {
                     new SummUpProduct
                     {
-                        Id = 1,
                         Product = new Product
                         {
                             Name = "Iphone 13",
