@@ -15,7 +15,7 @@
             </h4>
             <br>
             <input type="button" value="Назад на главную" 
-                   onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.UserId})'" />
+                   onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.Id})'" />
         </div>
     }
     @if (groups != null)
@@ -48,15 +48,15 @@
                             <td>@Html.DisplayFor(x => group.Quantity)</td>
                             <td>@Html.DisplayFor(x => group.TotalPrice)</td>
                             <td class="link">                    
-                                <input type="button" value="Подробнее"
-                               onclick="location.href='@Url.Action("Details", "Home", new {userId = Model.Item2.UserId, id = group.Product!.Id})'" />
+                                <input type="button" value="Подробнее" 
+                                    onclick="location.href='@Url.Action("Details", "Home", new {id = group.Product!.Id})'" />
                                 </td>
                             <td class="link">
                              <input type="button" value="+" 
                                 onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
                                     new 
                                     {
-                                        userId = Model.Item2.UserId,
+                                        userId = Model.Item2.Id,
                                         id = group.Product!.Id,
                                         count = item.SummUpProducts!.FirstOrDefault(x => x.Product == group.Product)!.Quantity + 1
                                     })'" />   
@@ -66,7 +66,7 @@
                                 onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
                                     new 
                                     {
-                                        userId = Model.Item2.UserId,
+                                        userId = Model.Item2.Id,
                                         id = group.Product!.Id,
                                         count = item.SummUpProducts!.FirstOrDefault(x => x.Product == group.Product)!.Quantity - 1
                                     })'" />   
@@ -86,18 +86,19 @@
         </table>
         <h5>
             <input type="button" value="Очистить корзину" 
-                  onclick="location.href='@Url.Action("CleanBasket", "Basket", new {userId = Model.Item2.UserId})'" />
+                  onclick="location.href='@Url.Action("CleanBasket", "Basket", new {userId = Model.Item2.Id})'" />
             </h5>
         <br />
         <h5>
             <input type="button" value="Создать заказ" 
-                  onclick="location.href='@Url.Action("CreateOrder", "Order", new {userId = Model.Item2.UserId})'" />
+                  onclick="location.href='@Url.Action("CreateOrder", "Order", new {userId = Model.Item2.Id})'" />
         </h5>
         <h5>
             <input type="button" value="На главную" 
-                onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.UserId})'" />
+                onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.Id})'" />
         </h5>
         }            
     }
+
     </div>
 </body>

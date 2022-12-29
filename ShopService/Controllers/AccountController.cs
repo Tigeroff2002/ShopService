@@ -69,7 +69,7 @@ public class AccountController : Controller
             else
             {
                 var claims = new List<Claim>() {
-                new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user.UserId)),
+                new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user.Id)),
                     new Claim(ClaimTypes.Name, user!.EmailAdress!),
                     new Claim(ClaimTypes.Role, user!.Role!.RoleCaption!)};
 
@@ -84,7 +84,7 @@ public class AccountController : Controller
 
                 _logger!.LogInformation("User was successfuly authorized!");
 
-                return RedirectToAction("AuthIndex", "Home", new {id = user.UserId});
+                return RedirectToAction("AuthIndex", "Home", new {id = user.Id});
             }
         }
 
@@ -139,7 +139,6 @@ public class AccountController : Controller
         {
             var user = new User()
             {
-                UserId = _repository.UserCount + 1,
                 NickName = objRegisterModel.NickName,
                 Password = objRegisterModel?.Password,
                 ContactNumber = objRegisterModel?.ContactNumber,
@@ -187,7 +186,7 @@ public class AccountController : Controller
 
                 var claims = new List<Claim>() 
                 {
-                    new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user!.UserId)),
+                    new Claim(ClaimTypes.NameIdentifier, Convert.ToString(user!.Id)),
                     new Claim(ClaimTypes.Name, user!.EmailAdress!),
                     new Claim(ClaimTypes.Role, user!.Role!.RoleCaption!
                 )};
@@ -206,7 +205,7 @@ public class AccountController : Controller
 
                 _logger!.LogInformation("User was successfuly registered in system!");
 
-                return RedirectToAction("AuthIndex", "Home", new { id = user.UserId });
+                return RedirectToAction("AuthIndex", "Home", new { id = user.Id });
             }
             else
             {

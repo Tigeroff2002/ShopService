@@ -79,7 +79,7 @@
                                 <th>@Html.DisplayName("Заказ получен") </th>
                                 <th>
                                         <input type="button" value="Отказаться от получения"
-                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.UserId })'" />
+                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
                                 </th>
                             }
                             @if(!order.isGot && order.ShippedDate < DateTime.Now)
@@ -87,7 +87,7 @@
                                 <th>@Html.DisplayName("Заказ истек") </th>
                                 <th>
                                         <input type="button" value="Отказаться от получения"
-                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.UserId })'" />
+                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
                                 </th>
                             }
                             @if(!order.isGot && order.ShippedDate >= DateTime.Now)
@@ -95,7 +95,7 @@
                                 <th>@Html.DisplayName("Заказ ожидает действия пользователя") </th>
                                 <th>
                                         <input type="button" value="Отказаться от получения"
-                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.UserId })'" />
+                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
                                 </th>
                             }
                     </tr>
@@ -110,7 +110,7 @@
 
         <div>
              <input type="button" value="Назад на главную" 
-                   onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.UserId})'" />
+                   onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.Id})'" />
         </div>
 
 </body>

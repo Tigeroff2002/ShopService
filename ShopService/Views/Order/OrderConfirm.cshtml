@@ -64,11 +64,11 @@
             <tr>
                 <th>
                     <input type="button" value="Забрать заказ"
-                           onclick="location.href='@Url.Action("TakeOrder", "Order", new {userId = Model.Item2.UserId})'" />
+                           onclick="location.href='@Url.Action("TakeOrder", "Order", new {userId = Model.Item2.Id})'" />
                 </th>
                 <th>
                     <input type="button" value="Отказаться от получения"
-                           onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.UserId })'" />
+                           onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
                 </th>
             </tr>
         </table>

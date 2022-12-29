@@ -106,7 +106,7 @@ public class OrderController : Controller
 
         var testUser = new User
         {
-            Id = -1,
+            Id = 1,
             Role = new Role(0)
         };
 

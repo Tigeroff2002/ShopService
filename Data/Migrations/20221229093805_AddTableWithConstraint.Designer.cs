@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    [Migration("20221229165046_DeleteFK")]
-    partial class DeleteFK
+    [Migration("20221229093805_AddTableWithConstraint")]
+    partial class AddTableWithConstraint
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -80,7 +80,7 @@
                                 onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
                                     new 
                                     {
-                                        userId = Model.Item2.UserId,
+                                        userId = Model.Item2.Id,
                                         id = item!.Id,
                                         count = 1
                                     })'" />   
@@ -91,7 +91,7 @@
                                 onclick="location.href='@Url.Action("AddProductToBasket", "Basket", 
                                     new 
                                     {
-                                        userId = Model.Item2.UserId,
+                                        userId = Model.Item2.Id,
                                         id = item!.Id,
                                         count = Model.Item2.Basket!.SummUpProducts!.FirstOrDefault(x => x.Product == item)!.Quantity + 1
                                     })'" />   
@@ -108,7 +108,7 @@
                         @if (Model.Item2.Id > 0)
                         {
                              <input type="button" value="Назад на главную" 
-                                onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.UserId})'" />
+                                onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.Id})'" />
                         }
                 </h4>
             </th>

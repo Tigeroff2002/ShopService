@@ -152,6 +152,8 @@ public class BasketController : Controller
             newBasket.SummUpProducts.Add(group);
         }
 
+        //findedBasket.SummUpProducts = newBasket.SummUpProducts;
+
         foreach (var item in newBasket.SummUpProducts)
         {
             findedBasket.SummUpProducts.Add(item);
@@ -167,37 +169,19 @@ public class BasketController : Controller
 
         newBasket.TotalCost = newBasket.CalculateTotalPrice();
 
-        var newUser = new User
-        {
-            UserId = user.UserId,
-            NickName = user!.NickName,
-            EmailAdress = user!.EmailAdress,
-            Password = user!.Password,
-            ContactNumber = user!.Password,
-            Role = user!.Role,
-            Basket = new Basket(user)
-        };
+        await _basketsRepository.AddBasketAsync(newBasket, CancellationToken.None)
+            .ConfigureAwait(false);
 
-        newUser!.Basket.SummUpProducts = new List<SummUpProduct>();
+        var newUser = user;
 
-        foreach (var item in newBasket.SummUpProducts)
-        {
-            newUser!.Basket!.SummUpProducts.Add(item);
-        }
-
-        _clientsRepository.Delete(user, CancellationToken.None);
+        newUser!.Basket = newBasket;
 
         await _clientsRepository.AddAsync(newUser, CancellationToken.None)
             .ConfigureAwait(false);
 
-        await _basketsRepository.AddBasketAsync(newBasket, CancellationToken.None)
-            .ConfigureAwait(false);
+        _basketsRepository.SaveChanges();
 
-        await _summUpProductsRepository.Add(group!, CancellationToken.None);
-
-        _clientsRepository.SaveChanges();
-
-        return RedirectToAction("AuthIndex", "Home", new {id = user!.UserId});
+        return RedirectToAction("AuthIndex", "Home", new {id = user!.Id});
     }
 
     private async Task<SummUpProduct> TryAddProductToBasket(int id, int count)
@@ -216,6 +200,8 @@ public class BasketController : Controller
             Quantity = count,
             TotalPrice = product.Cost * count
         };
+
+        //await _summUpProductsRepository.Add(summUpProduct, CancellationToken.None);
 
         return summUpProduct;
     }

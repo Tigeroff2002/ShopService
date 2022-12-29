@@ -406,9 +406,6 @@ namespace Data.Migrations
                     b.Property<float>("TotalPurchase")
                         .HasColumnType("real");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
