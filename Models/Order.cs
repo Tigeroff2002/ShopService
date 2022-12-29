@@ -33,11 +33,16 @@ public class Order
     {
         Client = client ?? throw new ArgumentNullException(nameof(client));
 
+        if (client!.Basket != null)
+        {
+            BasketId = client.Basket.Id;
+        }
+
         isReadyForConfirmation = default;
         isReadyForPayment = default;
         isPayd = default;
 
-        OrderDescription = CreateDescription();
+        //OrderDescription = CreateDescription();
     }
 
     public bool Equals1(Order? order)

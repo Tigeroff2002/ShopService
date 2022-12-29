@@ -126,6 +126,8 @@ public class BasketController : Controller
 
         var newBasket = new Basket(user);
 
+        newBasket.SummUpProducts = findedBasket.SummUpProducts;
+
         newBasket.SummUpProducts!.Add(group);
 
         newBasket.TotalCost = newBasket.CalculateTotalPrice();
