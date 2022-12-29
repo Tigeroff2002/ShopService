@@ -2,6 +2,7 @@
 using Data.Contexts;
 using Data.Repositories;
 using Data.Repositories.Abstractions;
+using Logic;
 using Logic.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -78,13 +79,9 @@ public class OrderController : Controller
                 return RedirectToAction("BasketPage", (findedBasket, user));
             }
 
-            order.ShippedDate = DateTime.Today;
-
             order.OrderDate = DateTime.Now;
 
-            await _ordersRepository.AddOrderAsync(order, CancellationToken.None);
-
-            _ordersRepository.SaveChanges();
+            order.ShippedDate = DateTime.Today.AddDays(1);
 
             var task = Task.Run(async () => await _orderManager.ProcessOrdersAsync(CancellationToken.None)
                 .ConfigureAwait(false));
@@ -93,6 +90,12 @@ public class OrderController : Controller
 
             var processedOrder = await _orderManager.CreateAsync(order, CancellationToken.None)
                 .ConfigureAwait(false);
+
+            processedOrder.isReadyForConfirmation = true;
+
+            await _ordersRepository.AddOrderAsync(processedOrder, CancellationToken.None);
+
+            _ordersRepository.SaveChanges();
 
             return View("OrderHome", (processedOrder, user));
         }
@@ -130,6 +133,45 @@ public class OrderController : Controller
         {
             return RedirectToAction("Login", "Account", new LoginModel());
         }
+
+        if (user!.Basket == null)
+        {
+            user!.Basket = new Basket(user);
+            user!.Basket!.SummUpProducts = new List<SummUpProduct>();
+        }
+
+        var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
+
+        if (findedBasket == null)
+        {
+            findedBasket = user!.Basket;
+        }
+
+        var order = new Order(user);
+
+        if (findedBasket!.SummUpProducts == null)
+        {
+            order.SummUpProducts = new List<SummUpProduct>();
+        }
+
+        order.SummUpProducts = findedBasket!.SummUpProducts!.ToList();
+
+        if (order.SummUpProducts.Count == 0)
+        {
+            order = SeedTestOrder(user);
+        }
+
+        order.ResultCost = order.CalculateResultCost();
+
+        order.OrderDate = DateTime.Now;
+
+        order.ShippedDate = DateTime.Today.AddDays(1);
+
+        order.isDeleted = true;
+
+        _orderManager.CancelOrder(order, CancellationToken.None);
+
+        _ordersRepository.SaveChanges();
 
         return RedirectToAction("GetBasket", "Basket", new {userId = userId});
     }
@@ -183,6 +225,14 @@ public class OrderController : Controller
             var confirmedOrder = await _orderManager.ConfirmOrderAsync(order, CancellationToken.None)
                 .ConfigureAwait(false);
 
+            confirmedOrder.isReadyForConfirmation = true;
+            confirmedOrder.isReadyForPayment = true;
+            confirmedOrder.isPayd = true;
+
+            _ordersRepository.UpdateOrder(confirmedOrder, CancellationToken.None);
+
+            _ordersRepository.SaveChanges();
+
              return View("OrderConfirm", (confirmedOrder, user));
         }
 
@@ -204,10 +254,10 @@ public class OrderController : Controller
 
             var order = new Order(user);
 
-            order = SeedTestOrder(user);
-
             var takenOrder = await _orderManager.GiveOrderAsync(order, CancellationToken.None)
                 .ConfigureAwait(false);
+
+            _ordersRepository.UpdateOrder(takenOrder, CancellationToken.None);
 
             return RedirectToAction("AuthIndex", "Home", new { id = userId });
         }
@@ -238,8 +288,63 @@ public class OrderController : Controller
         return View((order, user));
     }
 
+    [HttpGet("{adminId:int}/cancelUserOrder/{id:int}")]
+    public async Task<IActionResult> CancelUserOrder(int adminId, int id)
+    {
+        var order = _ordersRepository.FindOrder(id, CancellationToken.None);
+
+        var admin = await _clientsRepository.FindAsync(adminId, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (order == null)
+        {
+            if (admin != null)
+            {
+                return RedirectToAction("AdminPageShow", "Home", new { id = admin!.Id });
+            }
+        }
+
+        var user = await _clientsRepository.FindAsync(order!.Id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        var findedBasket = _basketsRepository.FindLastBasket(order!.BasketId, CancellationToken.None);
+
+        if (findedBasket == null)
+        {
+            findedBasket = user!.Basket;
+        }
+
+        if (findedBasket!.SummUpProducts == null)
+        {
+            order.SummUpProducts = new List<SummUpProduct>();
+        }
+
+        order.SummUpProducts = findedBasket!.SummUpProducts!.ToList();
+
+        if (order.SummUpProducts.Count == 0)
+        {
+            order = SeedTestOrder(user);
+        }
+
+        order.ResultCost = order.CalculateResultCost();
+
+        order.OrderDate = DateTime.Now;
+
+        order.ShippedDate = DateTime.Today.AddDays(1);
+
+        order.isDeleted = true;
+
+        order.OrderDescription = "Deleted By Admin";
+
+        _orderManager.CancelOrder(order, CancellationToken.None);
+
+        _ordersRepository.SaveChanges();
+
+        return RedirectToAction("AdminPageShow", "Home", new { id = admin!.Id });
+    }
+
     [HttpGet("ordersList/{userId:int}")]
-    public async Task<ActionResult<IEnumerable<Order>>> GetUserOrdersAsync(int userId)
+    public async Task<ActionResult<IEnumerable<Order>>> GetUserOrdersAsync(int userId, bool skipLast)
     {
         if (ModelState.IsValid)
         {
@@ -251,7 +356,7 @@ public class OrderController : Controller
                 return NotFound();
             }
 
-            return _ordersRepository.GetAllUserOrders(user, CancellationToken.None);
+            return _ordersRepository.GetAllUserOrders(user, CancellationToken.None, skipLast);
         }
 
         return RedirectToAction("Index", "Home");

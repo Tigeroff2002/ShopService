@@ -23,5 +23,7 @@ public interface IRepositoryContext
 
     public void UpdateBasket(Basket? basket);
 
+    public void UpdateOrder(Order? order);
+
     public void SaveChanges();
 }

@@ -46,6 +46,13 @@ namespace Data.Contexts
             _storeContext.Entry(basket).State = EntityState.Modified;
         }
 
+        public void UpdateOrder(Order? order)
+        {
+            ArgumentNullException.ThrowIfNull(order);
+
+            _storeContext.Entry(order).State = EntityState.Modified;
+        }
+
         private readonly ILogger<RepositoryContext> _logger;
         private readonly RetailStoreDataContext _storeContext;
     }

@@ -297,7 +297,7 @@ public class HomeController : Controller
     }
 
     [HttpGet("adminPage/{id:int}")]
-    public async Task<IActionResult> AdminPageShow(int id)
+    public async Task<IActionResult> AdminPageShow(int id, bool skipLast)
     {
         var user = await _clientsRepository.FindAsync(id, CancellationToken.None)
             .ConfigureAwait(false);

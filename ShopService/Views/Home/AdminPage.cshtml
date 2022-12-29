@@ -79,7 +79,12 @@
                                 <th>@Html.DisplayName("Заказ получен") </th>
                                 <th>
                                         <input type="button" value="Отказаться от получения"
-                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
+                                            onclick="location.href='@Url.Action("CancelUserOrder", "Order", 
+                                                new 
+                                                {
+                                                    adminId = Model.Item2.Id,
+                                                    Id = order.Id 
+                                                })'" />
                                 </th>
                             }
                             @if(!order.isGot && order.ShippedDate < DateTime.Now)
@@ -87,7 +92,12 @@
                                 <th>@Html.DisplayName("Заказ истек") </th>
                                 <th>
                                         <input type="button" value="Отказаться от получения"
-                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
+                                            onclick="location.href='@Url.Action("CancelUserOrder", "Order", 
+                                                new 
+                                                {
+                                                    adminId = Model.Item2.Id,
+                                                    Id = order.Id 
+                                                })'" />
                                 </th>
                             }
                             @if(!order.isGot && order.ShippedDate >= DateTime.Now)
@@ -95,7 +105,12 @@
                                 <th>@Html.DisplayName("Заказ ожидает действия пользователя") </th>
                                 <th>
                                         <input type="button" value="Отказаться от получения"
-                                            onclick="location.href='@Url.Action("CancelOrder", "Order", new {userId = Model.Item2.Id })'" />
+                                            onclick="location.href='@Url.Action("CancelUserOrder", "Order",
+                                                new 
+                                                {
+                                                    adminId = Model.Item2.Id,
+                                                    Id = order.Id 
+                                                })'" />
                                 </th>
                             }
                     </tr>

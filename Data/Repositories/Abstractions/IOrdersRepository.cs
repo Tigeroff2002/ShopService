@@ -1,9 +1,4 @@
 ﻿using Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data.Repositories.Abstractions;
 
@@ -33,7 +28,7 @@ public interface IOrdersRepository
 
     Task<List<Order>> GetAllOrders(CancellationToken token);
 
-    List<Order> GetAllUserOrders(User user, CancellationToken token);
+    List<Order> GetAllUserOrders(User user, CancellationToken token, bool skipLast);
 
     List<Order> GetAllShopOrders(Shop shop, CancellationToken token);
 
