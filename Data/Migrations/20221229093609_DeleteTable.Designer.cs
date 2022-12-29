@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    [Migration("20221120173533_InitMigration")]
-    partial class InitMigration
+    [Migration("20221229093609_DeleteTable")]
+    partial class DeleteTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,12 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Models.Basket", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("BasketStatusId")
                         .HasColumnType("int");
 
@@ -39,7 +45,7 @@ namespace Data.Migrations
                     b.Property<float?>("TotalCost")
                         .HasColumnType("real");
 
-                    b.HasKey("BasketStatusId", "ClientId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ClientId")
                         .IsUnique();
@@ -119,14 +125,17 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BasketId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<string>("OrderDescription")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float?>("ResultCost")
                         .HasColumnType("real");
@@ -134,8 +143,14 @@ namespace Data.Migrations
                     b.Property<DateTime>("ShippedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ShippingId")
-                        .HasColumnType("int");
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isGot")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isPayd")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("isReadyForConfirmation")
                         .HasColumnType("bit");
@@ -143,16 +158,9 @@ namespace Data.Migrations
                     b.Property<bool>("isReadyForPayment")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("isReadyForShipping")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ShippingId");
 
                     b.ToTable("Orders");
                 });
@@ -336,13 +344,13 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BasketClientId")
+                    b.Property<int?>("BasketId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BasketStatusId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -359,13 +367,15 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BasketId");
+
+                    b.HasIndex("OrderId");
+
                     b.HasIndex("ProductId");
 
                     b.HasIndex("ShopId");
 
                     b.HasIndex("WarehouseId");
-
-                    b.HasIndex("BasketStatusId", "BasketClientId");
 
                     b.ToTable("SummUpProducts");
                 });
@@ -414,6 +424,9 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -457,17 +470,7 @@ namespace Data.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("ClientId");
 
-                    b.HasOne("Models.Product", null)
-                        .WithMany("Orders")
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("Models.Shipping", "Shipping")
-                        .WithMany()
-                        .HasForeignKey("ShippingId");
-
                     b.Navigation("Client");
-
-                    b.Navigation("Shipping");
                 });
 
             modelBuilder.Entity("Models.Product", b =>
@@ -517,9 +520,19 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Models.SummUpProduct", b =>
                 {
+                    b.HasOne("Models.Basket", null)
+                        .WithMany("SummUpProducts")
+                        .HasForeignKey("BasketId");
+
+                    b.HasOne("Models.Order", null)
+                        .WithMany("SummUpProducts")
+                        .HasForeignKey("OrderId");
+
                     b.HasOne("Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
+                        .WithMany("SummUpProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Models.Shop", null)
                         .WithMany("ProductQuantities")
@@ -528,10 +541,6 @@ namespace Data.Migrations
                     b.HasOne("Models.Warehouse", null)
                         .WithMany("ProductQuantities")
                         .HasForeignKey("WarehouseId");
-
-                    b.HasOne("Models.Basket", null)
-                        .WithMany("SummUpProducts")
-                        .HasForeignKey("BasketStatusId", "BasketClientId");
 
                     b.Navigation("Product");
                 });
@@ -555,6 +564,11 @@ namespace Data.Migrations
                     b.Navigation("Devices");
                 });
 
+            modelBuilder.Entity("Models.Order", b =>
+                {
+                    b.Navigation("SummUpProducts");
+                });
+
             modelBuilder.Entity("Models.Producer", b =>
                 {
                     b.Navigation("Products");
@@ -562,7 +576,7 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Models.Product", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("SummUpProducts");
                 });
 
             modelBuilder.Entity("Models.Role", b =>

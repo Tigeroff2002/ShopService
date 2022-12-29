@@ -12,6 +12,11 @@ public class RetailStoreDataContext : DbContext
         optionsBuilder.UseLazyLoadingProxies();
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        
+    }
+
     public DbSet<Producer> Producers { get; set; }
     public DbSet<DeviceType> DeviceTypes { get; set; }
     public DbSet<Product> Products { get; set; }

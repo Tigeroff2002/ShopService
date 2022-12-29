@@ -275,11 +275,12 @@ public class HomeController : Controller
     }
 
     [HttpGet("adminPage")]
-    public IActionResult AdminPageShow()
+    public async Task<IActionResult> AdminPageShow()
     {
-        var users = SeedUsersOrders();
+        var users = await _clientsRepository.GetAllUsers(CancellationToken.None)
+            .ConfigureAwait(false);
 
-        return View("AdminPage", (users, users.First()));
+        return View("AdminPage", (users.ToList(), users.First()));
     }
 
     [HttpGet("managerPage")]

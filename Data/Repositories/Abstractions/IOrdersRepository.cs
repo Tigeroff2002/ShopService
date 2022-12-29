@@ -27,6 +27,8 @@ public interface IOrdersRepository
 
     Order Find(int id, CancellationToken token);
 
+    Order FindOrder(int clientId, CancellationToken token);
+
     Task<Order> FindOrderAsync(Order order, CancellationToken token);
 
     Task<List<Order>> GetAllOrders(CancellationToken token);

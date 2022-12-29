@@ -23,8 +23,6 @@ public class Product
         DeviceType = deviceType ?? throw new ArgumentNullException(nameof(deviceType));
         Producer = producer ?? throw new ArgumentNullException(nameof(producer));
 
-        Baskets = new HashSet<Basket>();
-        Orders = new HashSet<Order>();
         SummUpProducts = new HashSet<SummUpProduct>();
     }
 
@@ -41,8 +39,6 @@ public class Product
     public float? RAM { get; set; }
     //public float? Rating { get; set; } = 5f;
     //public string? ImageLink { get; set; } = "image/product1.jpg";
-    public virtual ICollection<Order>? Orders { get; set; }
-    public virtual ICollection<Basket>? Baskets { get; set; }
     public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
 
     public override bool Equals(object? obj)

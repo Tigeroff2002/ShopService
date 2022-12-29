@@ -7,10 +7,9 @@ public class Order
 {
     [Key]
     public int Id { get; set; }
+    public int BasketId { get; set; }
     public virtual User? Client { get; set; }
-    public virtual IList<SummUpProduct> SummUpProducts { get; set; }
     public float? ResultCost { get; set; }
-    public virtual Shipping? Shipping { get; set; }
     public DateTime OrderDate { get; set; }
     public DateTime ShippedDate { get; set; }
     public bool isReadyForConfirmation { get; set; } = false;
@@ -23,6 +22,8 @@ public class Order
 
     public string? OrderDescription { get; set; }
 
+    public virtual List<SummUpProduct> SummUpProducts { get; set; }
+
     public Order()
     {
 
@@ -32,13 +33,16 @@ public class Order
     {
         Client = client ?? throw new ArgumentNullException(nameof(client));
 
+        if (client!.Basket != null)
+        {
+            BasketId = client.Basket.Id;
+        }
+
         isReadyForConfirmation = default;
         isReadyForPayment = default;
         isPayd = default;
 
-        SummUpProducts = new List<SummUpProduct>();
-
-        OrderDescription = CreateDescription();
+        //OrderDescription = CreateDescription();
     }
 
     public bool Equals1(Order? order)

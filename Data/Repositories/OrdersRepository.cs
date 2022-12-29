@@ -22,6 +22,15 @@ public sealed class OrdersRepository
         _logger.LogInformation("OrdersRepository has created jsut now");
     }
 
+    public async Task<Order> FindOrderAsync(Order order, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+
+        token.ThrowIfCancellationRequested();
+
+        return null!;
+    }
+
     public async Task AddOrderAsync(Order order, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(order);
@@ -173,13 +182,28 @@ public sealed class OrdersRepository
         _context.SaveChanges();
     }
 
-    public async Task<Order> FindOrderAsync(Order order, CancellationToken token)
-    {
-        ArgumentNullException.ThrowIfNull(order);
-
+    public Order FindOrder(int clientId, CancellationToken token)
+    { 
         token.ThrowIfCancellationRequested();
 
-        return null!;
+        Order findedOrder = null!;
+
+        var findedOrders = _context.Orders
+            .Where(x => x.Client!.Id == clientId).ToList();
+
+        if (findedOrders != null)
+        {
+            if (findedOrders.Count > 1)
+            {
+                findedOrder = findedOrders.Last()!;
+            }
+            else if (findedOrders.Count == 1)
+            {
+                findedOrder = findedOrders.First();
+            }
+        }
+
+        return findedOrder;
     }
 
     private readonly ILogger<OrdersRepository> _logger;

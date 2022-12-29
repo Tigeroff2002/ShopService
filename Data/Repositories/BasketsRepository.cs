@@ -201,13 +201,26 @@ public sealed class BasketsRepository
         return findedBasket == null ? false : true;
     }
 
-    public async Task<Basket> FindBasket(int clientId, CancellationToken token)
+    public Basket FindLastBasket(int clientId, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
 
-        var findedBasket = await _context.Baskets
-            .FirstOrDefaultAsync(x => x.ClientId == clientId)
-            .ConfigureAwait(false);
+        Basket findedBasket = null!;
+
+        var findedBaskets = _context.Baskets
+            .Where(x => x.ClientId == clientId).ToList();
+
+        if (findedBaskets != null)
+        {
+            if (findedBaskets.Count > 1)
+            {
+                findedBasket = findedBaskets.Last()!;
+            }
+            else if (findedBaskets.Count == 1)
+            {
+                findedBasket = findedBaskets.First();
+            }
+        }
 
         return findedBasket!;
     }

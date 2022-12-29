@@ -50,8 +50,7 @@ public class OrderController : Controller
                 user!.Basket!.SummUpProducts = new List<SummUpProduct>();
             }
 
-            var findedBasket = await _basketsRepository.FindBasket(userId, CancellationToken.None)
-                .ConfigureAwait(false);
+            var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
 
             if (findedBasket == null)
             {
@@ -60,12 +59,24 @@ public class OrderController : Controller
 
             var order = new Order(user);
 
-            order.SummUpProducts = new List<SummUpProduct>();
+
+            if (findedBasket!.SummUpProducts == null)
+            {
+                order.SummUpProducts = new List<SummUpProduct>();
+            }
+
             order.SummUpProducts = findedBasket!.SummUpProducts!.ToList();
 
-            order = SeedTestOrder(user);
+            if (order.SummUpProducts.Count == 0)
+            {
+                order = SeedTestOrder(user);
+            }
 
             order.ResultCost = order.CalculateResultCost();
+
+            await _ordersRepository.AddOrderAsync(order, CancellationToken.None);
+
+            _ordersRepository.SaveChanges();
 
             var task = Task.Run(async () => await _orderManager.ProcessOrdersAsync(CancellationToken.None)
                 .ConfigureAwait(false));
@@ -121,16 +132,43 @@ public class OrderController : Controller
         if (ModelState.IsValid)
         {
             var user = await _clientsRepository.FindAsync(userId, CancellationToken.None)
-                .ConfigureAwait(false);
+                            .ConfigureAwait(false);
 
             if (user == null)
             {
                 return RedirectToAction("Login", "Account", new LoginModel());
             }
 
+            if (user!.Basket == null)
+            {
+                user!.Basket = new Basket(user);
+                user!.Basket!.SummUpProducts = new List<SummUpProduct>();
+            }
+
+            var findedOrder = _ordersRepository.FindOrder(userId, CancellationToken.None);
+
+            if (findedOrder == null)
+            {
+                findedOrder = new Order(user);
+            }
+
             var order = new Order(user);
 
-            order = SeedTestOrder(user);
+            if (findedOrder!.SummUpProducts == null)
+            {
+                order.SummUpProducts = new List<SummUpProduct>();
+            }
+
+            order.SummUpProducts = findedOrder!.SummUpProducts!.ToList();
+
+            if (order.SummUpProducts.Count == 0)
+            {
+                order = SeedTestOrder(user);
+            }
+
+            order.ResultCost = order.CalculateResultCost();
+
+            _ordersRepository.SaveChanges();
 
             order.ResultCost = order.CalculateResultCost();
 
@@ -222,7 +260,6 @@ public class OrderController : Controller
                 {
                     new SummUpProduct
                     {
-                        Id = 1,
                         Product = new Product
                         {
                             Name = "Iphone 13",
