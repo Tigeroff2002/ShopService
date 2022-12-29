@@ -12,7 +12,7 @@
         <input type="number" name="shopNumber" class="form-control"/>
         <br />
         <input type="button" value="Выбрать" 
-            onclick="location.href='@Url.Action("ManagerPageShow", "Home")'" />
+            onclick="location.href='@Url.Action("ManagerPageShow", "Home", new {id = Model.Item2.UserId})'" />
     </div>
 
     @if (warehouses.Count == 0)
@@ -81,7 +81,7 @@
 
         <div>
              <input type="button" value="Назад на главную" 
-                   onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.Id})'" />
+                   onclick="location.href='@Url.Action("AuthIndex", "Home", new {id = Model.Item2.UserId})'" />
         </div>
 
 </body>

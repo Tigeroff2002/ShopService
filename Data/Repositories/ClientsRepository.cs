@@ -44,7 +44,7 @@ public sealed class ClientsRepository
     {
         token.ThrowIfCancellationRequested();
 
-        var findedUser = await _context.Clients.FirstOrDefaultAsync(x => x.Id == userId)
+        var findedUser = await _context.Clients.FirstOrDefaultAsync(x => x.UserId == userId)
             .ConfigureAwait(false);
 
         return findedUser!;

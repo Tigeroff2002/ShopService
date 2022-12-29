@@ -42,13 +42,13 @@
                         <th align="right">
                             <h4>
                                  <input type="button" value="Открыть корзину" 
-                                         onclick="location.href='@Url.Action("GetBasket", "Basket", new {userId = user.Id})'" />
+                                         onclick="location.href='@Url.Action("GetBasket", "Basket", new {userId = user.UserId})'" />
                             </h4>
                         </th>
                         <th align="right">
                             <h4>
                                 <input type="button" value="Войти/Зарегистрироваться" 
-                                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                                        onclick="location.href='@Url.Action("Login", "Account")'" />
                             </h4>
                         </th>
                         <th align="right">
@@ -56,7 +56,7 @@
                                 @if (user.Role!.RoleType != RoleType.AuthUser)
                                 {
                                     <input type="button" value="Выйти из аккаунта" 
-                                        onclick="location.href='@Url.Action("Index", "Home")'" />
+                                        onclick="location.href='@Url.Action("Logout", "Account")'" />
                                 }
                             </h4>
                         </th>
@@ -91,7 +91,7 @@
                    </td>
                     <td class="link">
                     <input type="button" value="Добавить в корзину" 
-                        onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {userId = user!.Id, id = item.Id, count = 1})'" />   
+                        onclick="location.href='@Url.Action("AddProductToBasket", "Basket", new {userId = user!.UserId, id = item.Id, count = 1})'" />   
                     </td>
                 </tr>
             }
@@ -103,7 +103,7 @@
     {
     <div class="text-lg-start">
     <input type="button" value="Страница пользователей с заказами" size="100"
-        onclick="location.href='@Url.Action("AdminPageShow", "Home")'" />      
+        onclick="location.href='@Url.Action("AdminPageShow", "Home", new {id = user!.UserId})'" />      
     </div>    
     }
 
@@ -111,7 +111,7 @@
     {
     <div class="text-lg-start">
     <input type="button" value="Страница заказа доставок со складов" size="100"
-        onclick="location.href='@Url.Action("ManagerPageShow", "Home")'" />      
+        onclick="location.href='@Url.Action("ManagerPageShow", "Home", new {id = user!.UserId})'" />      
     </div>    
     }
 

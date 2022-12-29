@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(RetailStoreDataContext))]
-    [Migration("20221229093609_DeleteTable")]
-    partial class DeleteTable
+    [Migration("20221229165951_AddPK")]
+    partial class AddPK
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -408,6 +408,9 @@ namespace Data.Migrations
 
                     b.Property<float>("TotalPurchase")
                         .HasColumnType("real");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

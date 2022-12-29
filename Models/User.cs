@@ -28,7 +28,9 @@ public class User
         Notifications = new HashSet<Notification>();
     }
 
+    [Key]
     public int Id { get; set; }
+    public int UserId { get; set; }
     public string? NickName { get; set; } = default!;
     public string? Password { get; set; } = default!;
     public string? ContactNumber { get; set; } = default!;

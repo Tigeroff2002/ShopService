@@ -49,7 +49,7 @@ public class HomeController : Controller
         {
             user = new User
             {
-                Id = -1,
+                UserId = -1,
                 Role = new Role(RoleType.NonAuthUser)
             };
         }
@@ -82,7 +82,7 @@ public class HomeController : Controller
         {
             user = new User
             {
-                Id = -1,
+                UserId = -1,
                 Role = new Role(RoleType.NonAuthUser)
             };
         }
@@ -115,7 +115,7 @@ public class HomeController : Controller
         {
             user = new User
             {
-                Id = -1,
+                UserId = -1,
                 Role = new Role(RoleType.NonAuthUser)
             };
         }
@@ -148,7 +148,7 @@ public class HomeController : Controller
         {
             user = new User
             {
-                Id = -1,
+                UserId = -1,
                 Role = new Role(RoleType.NonAuthUser)
             };
         }
@@ -181,7 +181,7 @@ public class HomeController : Controller
         {
             user = new User
             {
-                Id = -1,
+                UserId = -1,
                 Role = new Role(RoleType.NonAuthUser)
             };
         }
@@ -215,7 +215,7 @@ public class HomeController : Controller
             model.Item2.Basket.SummUpProducts = new List<SummUpProduct>();
         }
 
-        model.Item2.Id = -1;
+        model.Item2.UserId = -1;
         model.Item2.Role = new Role(RoleType.NonAuthUser);
 
         model.Item3.DeviceType = new DeviceType();
@@ -259,6 +259,13 @@ public class HomeController : Controller
         {
             model.Item2.Basket.SummUpProducts = new List<SummUpProduct>();
         }
+        else
+        {
+            if (model.Item2.Basket.SummUpProducts.Count == 0 && model.Item2.Basket.TotalCost > 0)
+            {
+                return Content("Ok");
+            }
+        }
 
         model.Item3.DeviceType = new DeviceType();
         model.Item3.Producer = new Producer();
@@ -266,7 +273,7 @@ public class HomeController : Controller
         return View("Index", model);
     }
 
-    [HttpGet("Details/{id:int}")]
+    [HttpGet("{userId:int}/Details/{id:int}")]
     public async Task<IActionResult> Details(int userId, int? id)
     {
         if (id == null)
@@ -295,25 +302,25 @@ public class HomeController : Controller
         return View("Details", (device, user));
     }
 
-    [HttpGet("adminPage")]
-    public async Task<IActionResult> AdminPageShow()
+    [HttpGet("adminPage/{id:int}")]
+    public async Task<IActionResult> AdminPageShow(int id)
     {
+        var user = await _clientsRepository.FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
+
         var users = await _clientsRepository.GetAllUsers(CancellationToken.None)
             .ConfigureAwait(false);
 
-        return View("AdminPage", (users.ToList(), users.First()));
+        return View("AdminPage", (users.ToList(), user));
     }
 
-    [HttpGet("managerPage")]
-    public IActionResult ManagerPageShow()
+    [HttpGet("managerPage/{id:int}")]
+    public async Task<IActionResult> ManagerPageShow(int id)
     {
         var houses = SeedWarehousesProducts();
 
-        var user = new User
-        {
-            Id = 1,
-            Role = new Role(0)
-        };
+        var user = await _clientsRepository.FindAsync(id, CancellationToken.None)
+            .ConfigureAwait(false);
 
         return View("ManagerPage", (houses, user));
     }
