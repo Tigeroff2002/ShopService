@@ -94,12 +94,13 @@ public class BasketController : Controller
             findedBasket = new Basket(user);
         }
 
-        findedBasket.SummUpProducts = new List<SummUpProduct>();
+        findedBasket.SummUpProducts.Clear();
 
         user!.Basket = findedBasket;
 
-        await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
-            .ConfigureAwait(false);
+        _clientsRepository.Update(user, CancellationToken.None);
+
+        _clientsRepository.SaveChanges();
 
         return View("BasketPage", (findedBasket, user));
     }
@@ -164,7 +165,17 @@ public class BasketController : Controller
 
         //await _summUpProductsRepository.Add(summUpProduct, CancellationToken.None);
 
-        findedBasket.SummUpProducts.Add(summUpProduct);
+        if (findedBasket.SummUpProducts.Any(x => x.Product!.Id == summUpProduct.ProductId))
+        {
+            var index = findedBasket.SummUpProducts.FindIndex(x => x.Product!.Id == summUpProduct.ProductId);
+
+            findedBasket.SummUpProducts.RemoveAt(index);
+        }
+        
+        if (summUpProduct.Quantity != 0)
+        {
+            findedBasket.SummUpProducts.Add(summUpProduct);
+        }
 
         user.Basket = findedBasket;
 

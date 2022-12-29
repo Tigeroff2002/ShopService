@@ -50,7 +50,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .Add(order);
     }
 
@@ -68,7 +68,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .Remove(order);
     }
 
@@ -91,7 +91,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .FirstOrDefault(o => o.Equals(order))!
             .ConfirmCreatedOrder();
 
@@ -128,7 +128,7 @@ public sealed class OrdersRepository
 
         return _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders.ToList();
+            .OldOrders.ToList();
     }
 
     public void PayOrder(User user, Order order, CancellationToken token)
@@ -141,7 +141,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .FirstOrDefault(o => o.Equals(order))!
             .PayConfirmedOrder();
 
@@ -158,7 +158,7 @@ public sealed class OrdersRepository
 
         _context.Clients
             .FirstOrDefault(u => u.Equals(user))!
-            .Orders!
+            .OldOrders!
             .FirstOrDefault(o => o.Equals(order))!
             .isGot = true;
 

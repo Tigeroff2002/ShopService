@@ -36,7 +36,6 @@ public class User
     public float TotalPurchase { get; set; } = default!;
     public float Discount { get; set; } = default!;
     public virtual Basket? Basket { get; set; } = default!;
-    public virtual Order? Order { get; set; } = default;
 
     public virtual List<Order>? OldOrders { get; set; } = default!;
     public virtual ICollection<Review> Reviews { get; set; } = default!;

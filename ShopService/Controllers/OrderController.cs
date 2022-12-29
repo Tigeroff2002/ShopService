@@ -31,8 +31,8 @@ public class OrderController : Controller
         _logger.LogInformation("Order Controller was started just now");
     }
 
-    [HttpGet("{userId:int}/createOrder/{id:int}")]
-    public async Task<IActionResult> CreateOrder(int userId, int id)
+    [HttpGet("{userId:int}/createOrder")]
+    public async Task<IActionResult> CreateOrder(int userId)
     {
         if (ModelState.IsValid)
         {
@@ -59,11 +59,6 @@ public class OrderController : Controller
 
             var order = new Order(user);
 
-            order.ShippedDate = DateTime.Today;
-
-            order.OrderDate = DateTime.Now;
-
-
             if (findedBasket!.SummUpProducts == null)
             {
                 order.SummUpProducts = new List<SummUpProduct>();
@@ -77,6 +72,15 @@ public class OrderController : Controller
             }
 
             order.ResultCost = order.CalculateResultCost();
+
+            if (order.ResultCost == 0)
+            {
+                return RedirectToAction("BasketPage", (findedBasket, user));
+            }
+
+            order.ShippedDate = DateTime.Today;
+
+            order.OrderDate = DateTime.Now;
 
             await _ordersRepository.AddOrderAsync(order, CancellationToken.None);
 
