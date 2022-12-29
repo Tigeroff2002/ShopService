@@ -11,7 +11,7 @@ public class Basket
     public int BasketStatusId { get; set; }
     public int ClientId { get; set; }
     public virtual User? Client { get; set; }
-    public virtual ICollection<SummUpProduct>? SummUpProducts { get; set; }
+    public virtual List<SummUpProduct> SummUpProducts { get; set; }
     public float? TotalCost { get; set; }
 
     public Basket()

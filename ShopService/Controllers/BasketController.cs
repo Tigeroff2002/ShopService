@@ -38,7 +38,15 @@ public class BasketController : Controller
 
         var findedBasket = _basketsRepository.FindLastBasket(userId, CancellationToken.None);
 
-        //return Content(findedBasket.SummUpProducts.Count.ToString());
+        if (findedBasket == null)
+        {
+            findedBasket = new Basket(user);
+
+            await _basketsRepository.AddBasketAsync(findedBasket, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            _basketsRepository.SaveChanges();
+        }
 
         if (user!.Basket == null)
         {
@@ -149,7 +157,7 @@ public class BasketController : Controller
             TotalPrice = product.Cost * count
         };
 
-        await _summUpProductsRepository.Add(summUpProduct, CancellationToken.None);
+        //await _summUpProductsRepository.Add(summUpProduct, CancellationToken.None);
 
         return summUpProduct;
     }

@@ -7,10 +7,9 @@ public class Order
 {
     [Key]
     public int Id { get; set; }
+    public int BasketId { get; set; }
     public virtual User? Client { get; set; }
-    public virtual IList<SummUpProduct> SummUpProducts { get; set; }
     public float? ResultCost { get; set; }
-    public virtual Shipping? Shipping { get; set; }
     public DateTime OrderDate { get; set; }
     public DateTime ShippedDate { get; set; }
     public bool isReadyForConfirmation { get; set; } = false;
@@ -22,6 +21,8 @@ public class Order
     public bool isDeleted { get; set; } = false;
 
     public string? OrderDescription { get; set; }
+
+    public virtual List<SummUpProduct> SummUpProducts { get; set; }
 
     public Order()
     {
@@ -35,8 +36,6 @@ public class Order
         isReadyForConfirmation = default;
         isReadyForPayment = default;
         isPayd = default;
-
-        SummUpProducts = new List<SummUpProduct>();
 
         OrderDescription = CreateDescription();
     }
