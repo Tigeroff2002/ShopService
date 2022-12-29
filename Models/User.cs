@@ -21,6 +21,8 @@ public class User
         TotalPurchase = 0;
         Discount = 0.00f;
 
+        Basket = new Basket(this);
+
         Orders = new HashSet<Order>();
         Reviews = new HashSet<Review>();
         Notifications = new HashSet<Notification>();

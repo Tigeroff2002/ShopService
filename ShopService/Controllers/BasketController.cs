@@ -169,14 +169,19 @@ public class BasketController : Controller
 
         newBasket.TotalCost = newBasket.CalculateTotalPrice();
 
-        user!.Basket = newBasket;
-
         await _basketsRepository.AddBasketAsync(newBasket, CancellationToken.None)
             .ConfigureAwait(false);
 
-        //_basketsRepository.SaveChanges();
+        var newUser = user;
 
-        return View("BasketPage", (newBasket, user));
+        newUser!.Basket = newBasket;
+
+        await _clientsRepository.AddAsync(newUser, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        _basketsRepository.SaveChanges();
+
+        return RedirectToAction("AuthIndex", "Home", new {id = user!.Id});
     }
 
     private async Task<SummUpProduct> TryAddProductToBasket(int id, int count)

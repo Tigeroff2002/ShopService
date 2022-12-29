@@ -204,6 +204,17 @@ public class HomeController : Controller
         if (model.Item1.Count == 0)
             throw new ArgumentException();
 
+
+        if (model.Item2.Basket == null)
+        {
+            model.Item2.Basket = new Basket(model.Item2);
+        }
+
+        if (model.Item2.Basket.SummUpProducts == null)
+        {
+            model.Item2.Basket.SummUpProducts = new List<SummUpProduct>();
+        }
+
         model.Item2.Id = -1;
         model.Item2.Role = new Role(RoleType.NonAuthUser);
 
@@ -237,6 +248,16 @@ public class HomeController : Controller
         if (model.Item2 == null)
         {
             throw new ArgumentNullException();
+        }
+
+        if (model.Item2.Basket == null)
+        {
+            model.Item2.Basket = new Basket(model.Item2);
+        }
+
+        if (model.Item2.Basket.SummUpProducts == null)
+        {
+            model.Item2.Basket.SummUpProducts = new List<SummUpProduct>();
         }
 
         model.Item3.DeviceType = new DeviceType();
