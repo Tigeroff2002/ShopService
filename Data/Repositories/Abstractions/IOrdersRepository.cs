@@ -10,6 +10,8 @@ public interface IOrdersRepository
 
     void UpdateOrder(Order order, CancellationToken token);
 
+    void DeleteOrder(Order order, CancellationToken token);
+
     void ConfirmOrder(User user, Order order, CancellationToken token);
 
     void PayOrder(User user, Order order, CancellationToken token);

@@ -221,6 +221,15 @@ public sealed class OrdersRepository
         return findedOrder;
     }
 
+    public void DeleteOrder(Order order, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+
+        token.ThrowIfCancellationRequested();
+
+        _context.Orders.Remove(order);
+    }
+
     private readonly ILogger<OrdersRepository> _logger;
     private readonly IRepositoryContext _context;
 }

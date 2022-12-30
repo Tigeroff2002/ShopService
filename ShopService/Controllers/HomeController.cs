@@ -293,6 +293,16 @@ public class HomeController : Controller
             return View("Details", (device, new User { Id = -1, Role = new Role(RoleType.NonAuthUser)}));
         }
 
+        if (user.Basket == null)
+        {
+            user.Basket = new Basket(user);
+        }
+
+        if (user.Basket.SummUpProducts == null)
+        {
+            user.Basket.SummUpProducts = new List<SummUpProduct>();
+        }
+
         return View("Details", (device, user));
     }
 

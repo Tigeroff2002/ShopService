@@ -24,7 +24,7 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddRazorPages();
 
 builder.Services.AddDbContext<RetailStoreDataContext>(opt =>
-    opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RetailStore;Integrated Security=True"))
+    opt.UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Shop;Integrated Security=True"))
     .AddScoped<IRepositoryContext, RepositoryContext>()
     .AddScoped<IBasketsRepository, BasketsRepository>()
     .AddScoped<IClientsRepository, ClientsRepository>()

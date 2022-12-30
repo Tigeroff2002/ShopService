@@ -307,36 +307,19 @@ public class OrderController : Controller
         var user = await _clientsRepository.FindAsync(order!.Id, CancellationToken.None)
             .ConfigureAwait(false);
 
-        var findedBasket = _basketsRepository.FindLastBasket(order!.BasketId, CancellationToken.None);
-
-        if (findedBasket == null)
-        {
-            findedBasket = user!.Basket;
-        }
-
-        if (findedBasket!.SummUpProducts == null)
-        {
-            order.SummUpProducts = new List<SummUpProduct>();
-        }
-
-        order.SummUpProducts = findedBasket!.SummUpProducts!.ToList();
-
-        if (order.SummUpProducts.Count == 0)
-        {
-            order = SeedTestOrder(user);
-        }
-
-        order.ResultCost = order.CalculateResultCost();
-
-        order.OrderDate = DateTime.Now;
-
-        order.ShippedDate = DateTime.Today.AddDays(1);
-
         order.isDeleted = true;
 
         order.OrderDescription = "Deleted By Admin";
 
-        _orderManager.CancelOrder(order, CancellationToken.None);
+        //_orderManager.CancelOrder(order, CancellationToken.None);
+
+        _ordersRepository.DeleteOrder(order, CancellationToken.None);
+
+        var index = user!.OldOrders!.FindIndex(x => x.Id == id);
+
+        user!.OldOrders!.RemoveAt(index);
+
+        _clientsRepository.Update(user, CancellationToken.None);
 
         _ordersRepository.SaveChanges();
 
